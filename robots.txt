@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://arminus.github.io/sitemap.xml
+Sitemap: https://arminus.co.in/sitemap.xml
