@@ -1,47 +1,38 @@
 import Link from "next/link";
+import Image from "next/image";
+import type { Metadata } from "next";
 import {
   ArrowRight,
   BadgeCheck,
   BrainCircuit,
   Building2,
-  Clock3,
   Globe2,
-  GraduationCap,
   Handshake,
-  SearchCheck,
   ShieldCheck,
-  Sparkles,
-  UsersRound
+  type LucideIcon,
 } from "lucide-react";
 import { LottieMoment } from "@/components/LottieMoment";
 import { Magnetic, ParallaxLayer, Reveal } from "@/components/Motion";
+import { withSiteBasePath } from "@/lib/site-path";
+import { serviceItems } from "@/lib/services";
 
-const services = [
-  {
-    title: "IT Staffing",
-    copy: "Specialist recruiters for permanent, contractual, and project-based technology hiring.",
-    icon: UsersRound,
-    id: "it-staffing"
+export const metadata: Metadata = {
+  title: "IT Staffing Company in India",
+  description:
+    "Hire technology talent with Arminus, an IT staffing company in India for contract staffing, permanent recruitment, executive search, IT staff augmentation, and workforce solutions.",
+  alternates: {
+    canonical: "https://arminus.co.in"
   },
-  {
-    title: "Executive Search",
-    copy: "Confidential senior hiring for department heads, VPs, CXOs, directors, and strategic leaders.",
-    icon: SearchCheck,
-    id: "executive"
-  },
-  {
-    title: "Contract Staffing",
-    copy: "Flexible deployment models for short-term, long-term, onsite, offshore, and hybrid teams.",
-    icon: Clock3,
-    id: "contract"
-  },
-  {
-    title: "Training",
-    copy: "Recruitment, technology, and soft-skills training that strengthens employability and delivery.",
-    icon: GraduationCap,
-    id: "training"
-  }
-];
+  keywords: [
+    "IT staffing company in India",
+    "IT recruitment agency India",
+    "contract staffing services India",
+    "IT staff augmentation India",
+    "permanent recruitment IT",
+    "executive search technology",
+    "manpower consulting company India"
+  ]
+};
 
 const industries = ["IT", "Telecom", "Automotive", "Insurance", "Cloud", "Data", "AI", "DevOps"];
 
@@ -89,18 +80,17 @@ export default function Home() {
   return (
     <main>
       <section className="hero">
-        <div className="logo-sweep" />
         <div className="container hero-grid">
-          <div>
+          <div className="hero-copy-block">
             <Reveal>
               <span className="eyebrow">Global IT Staffing</span>
               <h1>
-                Hire sharper tech teams with the <span>Power of Us.</span>
+                Hire technology talent with the <span>Power of Us.</span>
               </h1>
               <p className="hero-copy">
-                Arminus connects employers with qualified IT, Telecom, Automotive, and Insurance talent through
-                permanent hiring, contract staffing, executive search, and workforce support across India, USA, and
-                Europe.
+                Arminus is a manpower consulting and staffing partner for employers that need qualified technology,
+                telecom, automotive, and insurance talent across permanent recruitment, contract staffing, executive
+                search, and staff augmentation.
               </p>
               <div className="hero-actions">
                 <Magnetic>
@@ -118,8 +108,7 @@ export default function Home() {
                 {[
                   ["2009", "Founded"],
                   ["80+", "Recruitment team"],
-                  ["4", "Office regions"],
-                  ["24h", "Support mindset"]
+                  ["India", "Kolkata, Gurugram, Bengaluru"],
                 ].map(([value, label]) => (
                   <div className="proof-item" key={label}>
                     <div className="proof-value">{value}</div>
@@ -130,50 +119,47 @@ export default function Home() {
             </Reveal>
           </div>
 
-          <ParallaxLayer className="talent-orbit" distance={-42}>
-            <div className="orbit-core">
-              <div className="orbit-badge">
-                <strong>360°</strong>
-                <span>Hiring support from brief to onboarding</span>
-              </div>
-            </div>
-            <div className="arc-card">
-              <strong>Requirement</strong>
-              <span>Role clarity, domain fit, hiring model, location, urgency.</span>
-            </div>
-            <div className="arc-card">
-              <strong>Shortlist</strong>
-              <span>Screened candidates matched to skills, attitude, and availability.</span>
-            </div>
-            <div className="arc-card">
-              <strong>Deployment</strong>
-              <span>Permanent, contract, onsite, offshore, and hybrid support.</span>
+          <ParallaxLayer className="hero-visual" distance={-42}>
+            <div className="hero-feature image-frame hero-feature-prominent">
+              <Image
+                src={withSiteBasePath("/arminus/team-banner.jpg")}
+                alt="Arminus recruitment team"
+                fill
+                sizes="(max-width: 980px) 100vw, 58vw"
+                priority
+              />
             </div>
           </ParallaxLayer>
         </div>
       </section>
 
       <section className="section">
-        <div className="container">
-          <Reveal>
-            <span className="eyebrow">Solutions</span>
-            <h2 className="section-title">Workforce models built around hiring reality.</h2>
-            <p className="section-copy">
-              Arminus helps teams move from open requirements to onboarded talent with a practical mix of domain
-              knowledge, recruiter reach, and flexible delivery models.
-            </p>
-          </Reveal>
-          <div className="grid-4" style={{ marginTop: 38 }}>
-            {services.map((service, index) => {
+        <div className="container home-solutions">
+          <div>
+            <Reveal>
+              <span className="eyebrow">Solutions</span>
+              <h2 className="section-title">Recruitment services built around real hiring needs.</h2>
+              <p className="section-copy">
+                Arminus helps employers move from open requirements to shortlisted, interviewed, and onboarded talent
+                through staffing, executive hiring, contract deployment, resume advisory, and training support.
+              </p>
+            </Reveal>
+          </div>
+          <div className="solutions-grid">
+            {serviceItems.map((service, index) => {
               const Icon = service.icon;
               return (
                 <Reveal delay={index * 0.08} key={service.title}>
-                  <Link className="card service-card" href={`/solutions#${service.id}`}>
-                    <span className="icon-chip">
-                      <Icon size={23} />
-                    </span>
-                    <h3>{service.title}</h3>
-                    <p>{service.copy}</p>
+                  <Link className="home-solution-card" href={`/services/${service.slug}`}>
+                    <span className="home-solution-accent" aria-hidden="true" />
+                    <div className="home-solution-head">
+                      <span className="service-icon-chip" aria-hidden="true">
+                        <Icon size={24} strokeWidth={2.1} />
+                      </span>
+                      <span className="home-solution-tag">{service.kicker}</span>
+                    </div>
+                    <h3>{service.shortTitle}</h3>
+                    <p>{service.summary}</p>
                   </Link>
                 </Reveal>
               );
@@ -192,10 +178,10 @@ export default function Home() {
           <div>
             <Reveal>
               <span className="eyebrow">Talent Pipeline</span>
-              <h2 className="section-title">A hiring journey that feels controlled from day one.</h2>
+              <h2 className="section-title">From manpower brief to joined candidate.</h2>
               <p className="section-copy">
-                The new site turns Arminus’ operational process into a visible story: from requirements and sourcing to
-                shortlist, interview movement, onboarding, and consultant support.
+                A clear, controlled process from open requirement to joined candidate — built around how the best
+                employers actually hire.
               </p>
             </Reveal>
             <div className="steps" style={{ marginTop: 30 }}>
@@ -222,8 +208,8 @@ export default function Home() {
               <span className="eyebrow">Global Delivery</span>
               <h2 className="section-title">India delivery strength with international reach.</h2>
               <p className="section-copy">
-                Arminus operates from Kolkata, Gurugram, Bengaluru, USA, and Europe-facing entities, giving employers a
-                practical partner for local, offshore, onsite, and hybrid hiring needs.
+                Arminus operates across Kolkata, Gurugram, Bengaluru, USA, and Europe-facing entities, giving employers
+                a practical partner for local, offshore, onsite, and hybrid staffing needs.
               </p>
               <div className="badge-list">
                 {industries.map((industry) => (
@@ -236,18 +222,48 @@ export default function Home() {
           </div>
           <ParallaxLayer className="image-stack" distance={58}>
             <div className="image-main">
-              <img
-                src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1100&q=80"
-                alt="Recruitment team reviewing hiring pipeline"
+              <Image
+                src={withSiteBasePath("/arminus/home-about-banner.jpg")}
+                alt="Arminus home about banner"
+                fill
+                sizes="(max-width: 980px) 100vw, 55vw"
               />
             </div>
             <div className="image-small">
-              <img
-                src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80"
-                alt="Workforce planning discussion"
+              <Image
+                src={withSiteBasePath("/arminus/banner-one.jpg")}
+                alt="Arminus banner one"
+                fill
+                sizes="(max-width: 980px) 100vw, 32vw"
               />
             </div>
           </ParallaxLayer>
+        </div>
+      </section>
+
+      <section className="section-tight">
+        <div className="container">
+          <Reveal>
+            <span className="eyebrow">Our Team</span>
+            <h2 className="section-title">People behind every placement.</h2>
+            <p className="section-copy">
+              Arminus has operated since 2009 with a recruitment team that understands technology, telecom, automotive,
+              and insurance hiring from the inside.
+            </p>
+          </Reveal>
+          <div className="image-strip" style={{ marginTop: 34 }}>
+            {[
+              ["/arminus/team-banner.jpg", "Arminus recruitment team"],
+              ["/arminus/team-banner-one.jpg", "Arminus team at work"],
+              ["/arminus/home-about-banner.jpg", "Arminus office"]
+            ].map(([src, label], index) => (
+              <Reveal delay={index * 0.06} key={label as string}>
+                <div className="image-frame">
+                  <Image src={withSiteBasePath(src as string)} alt={label as string} fill sizes="(max-width: 980px) 100vw, 30vw" />
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -255,18 +271,18 @@ export default function Home() {
         <div className="container">
           <Reveal>
             <span className="eyebrow">Why Arminus</span>
-            <h2 className="section-title">Designed for serious hiring conversations.</h2>
+            <h2 className="section-title">Practical staffing support for serious hiring conversations.</h2>
           </Reveal>
           <div className="grid-3" style={{ marginTop: 34 }}>
             {[
-              [ShieldCheck, "Transparent control", "Regular reporting and clear communication across hiring movement."],
+              [ShieldCheck, "Process clarity", "Requirement, shortlist, interview, onboarding, and support shown as one controlled path."],
               [BrainCircuit, "Technology fluency", "Recruiters understand software, cloud, analytics, AI, DevOps, and enterprise delivery roles."],
-              [Globe2, "Multi-location support", "Useful for organizations that need staffing support across multiple operating regions."],
-              [BadgeCheck, "Qualified recruiters", "More than 80% of staff come from BE, BTech, or MBA backgrounds."],
+              [Globe2, "Multi-location support", "Useful for organizations hiring across India, USA, and Europe-linked operations."],
+              [BadgeCheck, "Qualified recruiters", "Recruitment strength is presented as a core Arminus operating advantage."],
               [Handshake, "Consultant care", "Payroll, joining, and support coordination are part of the staffing experience."],
-              [Building2, "Enterprise mindset", "Built for long-term client relationships, not one-off resume forwarding."]
+              [Building2, "Enterprise mindset", "The page is designed for employer confidence, not just resume forwarding."]
             ].map(([Icon, title, copy], index) => {
-              const TypedIcon = Icon as typeof Sparkles;
+              const TypedIcon = Icon as LucideIcon;
               return (
                 <Reveal delay={index * 0.05} key={title as string}>
                   <div className="card service-card">
@@ -287,7 +303,7 @@ export default function Home() {
         <div className="container">
           <Reveal>
             <span className="eyebrow">Proof</span>
-            <h2 className="section-title">Client and consultant trust, cleaned up and made credible.</h2>
+            <h2 className="section-title">Client and consultant trust, made readable.</h2>
           </Reveal>
           <div className="grid-3" style={{ marginTop: 34 }}>
             {testimonials.map((testimonial, index) => (
@@ -307,10 +323,10 @@ export default function Home() {
         <div className="container">
           <Reveal>
             <div className="cta-band">
-              <h2>Ready to make hiring move faster without losing quality?</h2>
+              <h2>Ready to turn an open requirement into a shortlist?</h2>
               <p>
-                Start with a role brief. Arminus can map the hiring model, shortlist path, and delivery support needed
-                for your team.
+                Start with the role, location, hiring model, urgency, and skills. Arminus can map the right staffing
+                path and move the requirement into action.
               </p>
               <Link className="button button-secondary" href="/contact">
                 Talk to Arminus <ArrowRight size={18} />
