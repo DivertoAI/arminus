@@ -80,6 +80,9 @@ export default function Home() {
   return (
     <main>
       <section className="hero">
+        <span className="hero-ring" aria-hidden="true" />
+        <span className="hero-blob-red" aria-hidden="true" />
+        <span className="hero-dot-grid" aria-hidden="true" />
         <div className="container hero-grid">
           <div className="hero-copy-block">
             <Reveal>

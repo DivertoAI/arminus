@@ -373,7 +373,65 @@ img {
   color: var(--deep-navy);
 }
 
+/* ── Hero decorative shapes ── */
+
+.hero-ring {
+  position: absolute;
+  top: 20px;
+  right: -110px;
+  width: 680px;
+  height: 680px;
+  border-radius: 50%;
+  border: 1px solid rgba(2, 135, 212, 0.13);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-ring::before {
+  content: '';
+  position: absolute;
+  inset: 56px;
+  border-radius: 50%;
+  border: 1px solid rgba(2, 135, 212, 0.08);
+}
+
+.hero-ring::after {
+  content: '';
+  position: absolute;
+  inset: 124px;
+  border-radius: 50%;
+  border: 1px solid rgba(218, 47, 56, 0.12);
+}
+
+.hero-blob-red {
+  position: absolute;
+  bottom: -60px;
+  left: -80px;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(218, 47, 56, 0.10) 0%, transparent 68%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-dot-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(2, 135, 212, 0.18) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: 0 0;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,0.08) 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,0.08) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── end hero shapes ── */
+
 .hero-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   align-items: center;
   gap: 34px;
@@ -381,7 +439,20 @@ img {
 }
 
 .hero-copy-block {
+  position: relative;
   max-width: 640px;
+  padding-left: 22px;
+}
+
+.hero-copy-block::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 4px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--primary-blue) 0%, var(--arminus-red) 100%);
 }
 
 .hero h1 {
@@ -393,10 +464,18 @@ img {
 }
 
 .hero h1 span {
-  background: linear-gradient(90deg, var(--primary-blue) 30%, var(--arminus-red) 100%);
+  background: linear-gradient(165deg, var(--primary-blue) 25%, var(--arminus-red) 80%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.hero-copy-block .eyebrow {
+  color: var(--arminus-red);
+}
+
+.hero-copy-block .eyebrow::before {
+  background: var(--arminus-red);
 }
 
 .hero-copy {
@@ -433,6 +512,14 @@ img {
 .proof-item {
   border-left: 2px solid rgba(2, 135, 212, 0.28);
   padding-left: 14px;
+}
+
+.hero-proof .proof-item:last-child {
+  border-left-color: rgba(218, 47, 56, 0.30);
+}
+
+.hero-proof .proof-item:last-child .proof-value {
+  color: var(--arminus-red);
 }
 
 .proof-value {
@@ -503,6 +590,18 @@ img {
   background:
     linear-gradient(180deg, rgba(10, 143, 216, 0.06), rgba(255, 255, 255, 0.96)),
     var(--white);
+}
+
+.hero-feature::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 0 0 24px 24px;
+  background: linear-gradient(90deg, var(--primary-blue), var(--arminus-red));
+  z-index: 3;
 }
 
 .hero-feature img {
@@ -702,10 +801,36 @@ img {
 }
 
 .section-benefits {
+  position: relative;
+  overflow: hidden;
   background:
     radial-gradient(circle at 6% 6%, rgba(2, 135, 212, 0.10), transparent 44%),
     radial-gradient(circle at 94% 90%, rgba(218, 47, 56, 0.06), transparent 36%),
     var(--soft-sky);
+}
+
+.section-benefits::before {
+  content: '';
+  position: absolute;
+  top: -160px;
+  right: -160px;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  border: 1px solid rgba(2, 135, 212, 0.10);
+  pointer-events: none;
+}
+
+.section-benefits::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: -100px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  border: 1px solid rgba(218, 47, 56, 0.12);
+  pointer-events: none;
 }
 
 .section-benefits .grid-3 .card:nth-child(even) .icon-chip {
@@ -1063,6 +1188,30 @@ img {
   color: var(--white);
 }
 
+.dark-band::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.dark-band::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -60px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  border: 1px solid rgba(218, 47, 56, 0.18);
+  pointer-events: none;
+}
+
 .dark-band .section-title {
   color: var(--white);
 }
@@ -1279,6 +1428,12 @@ img {
   margin-top: 26px;
 }
 
+/* Red accent on the section title for Global Delivery and similar split sections */
+.split .section-title em {
+  color: var(--arminus-red);
+  font-style: normal;
+}
+
 .badge {
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -1350,6 +1505,30 @@ img {
     linear-gradient(135deg, #0287d4 0%, #054e8a 48%, #be1c22 100%),
     url("/arminus/team-banner.jpg") center/cover;
   color: var(--white);
+}
+
+.cta-band::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.cta-band::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  left: 30%;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  pointer-events: none;
 }
 
 .cta-band .button-secondary {
