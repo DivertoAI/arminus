@@ -887,23 +887,94 @@ img {
 }
 
 .service-overview-card {
+  position: relative;
   display: grid;
   gap: 16px;
   min-height: 280px;
+  overflow: hidden;
   border: 1px solid var(--line);
+  border-top: 3px solid var(--primary-blue);
   border-radius: 24px;
   padding: 28px;
   background:
-    radial-gradient(circle at 12% 12%, rgba(2, 135, 212, 0.13), transparent 46%),
-    linear-gradient(180deg, rgba(2, 135, 212, 0.10) 0, transparent 4px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 252, 254, 0.98));
+    radial-gradient(circle at 0% 0%, rgba(2, 135, 212, 0.20), transparent 50%),
+    linear-gradient(135deg, rgba(2, 135, 212, 0.10) 0%, transparent 55%),
+    var(--white);
   box-shadow: 0 18px 44px rgba(6, 24, 39, 0.06);
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+/* Decorative corner arc — blue cards */
+.service-overview-card::before {
+  content: '';
+  position: absolute;
+  top: -70px;
+  left: -70px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 2px solid rgba(2, 135, 212, 0.14);
+  pointer-events: none;
+}
+
+.service-overview-card::after {
+  content: '';
+  position: absolute;
+  top: -34px;
+  left: -34px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(2, 135, 212, 0.09);
+  pointer-events: none;
+}
+
+/* Red treatment — even cards */
+.services-overview-grid .service-overview-card:nth-child(even) {
+  border-top-color: var(--arminus-red);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(218, 47, 56, 0.18), transparent 50%),
+    linear-gradient(225deg, rgba(218, 47, 56, 0.09) 0%, transparent 55%),
+    var(--white);
+}
+
+.services-overview-grid .service-overview-card:nth-child(even)::before {
+  top: -70px;
+  left: auto;
+  right: -70px;
+  border-color: rgba(218, 47, 56, 0.16);
+}
+
+.services-overview-grid .service-overview-card:nth-child(even)::after {
+  top: -34px;
+  left: auto;
+  right: -34px;
+  border-color: rgba(218, 47, 56, 0.10);
+}
+
+.services-overview-grid .service-overview-card:nth-child(even) .service-icon-chip {
+  background: linear-gradient(180deg, rgba(218, 47, 56, 0.14), rgba(218, 47, 56, 0.05));
+  border-color: rgba(218, 47, 56, 0.18);
+  color: var(--arminus-red);
+}
+
+.services-overview-grid .service-overview-card:nth-child(even) .service-kicker {
+  color: var(--arminus-red);
+}
+
+.services-overview-grid .service-overview-card:nth-child(even) .service-overview-link {
+  color: var(--arminus-red);
+}
+
+.services-overview-grid .service-overview-card:nth-child(even):hover {
+  border-color: rgba(218, 47, 56, 0.30);
+  border-top-color: var(--arminus-red);
 }
 
 .service-overview-card:hover {
   transform: translateY(-4px);
   border-color: rgba(2, 135, 212, 0.34);
+  border-top-color: var(--primary-blue);
   box-shadow: 0 24px 56px rgba(6, 24, 39, 0.08);
 }
 
@@ -949,18 +1020,34 @@ img {
   gap: 14px;
   overflow: hidden;
   border: 1px solid rgba(6, 24, 39, 0.08);
+  border-top: 3px solid var(--primary-blue);
   border-radius: 24px;
   padding: 24px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(249, 252, 254, 0.98)),
+    radial-gradient(circle at 0% 0%, rgba(2, 135, 212, 0.18), transparent 52%),
+    linear-gradient(135deg, rgba(2, 135, 212, 0.08) 0%, transparent 55%),
     var(--white);
   box-shadow: 0 18px 44px rgba(6, 24, 39, 0.06);
   transition: transform 190ms ease, box-shadow 190ms ease, border-color 190ms ease;
 }
 
+/* Decorative corner arc — blue odd cards */
+.solutions-grid .home-solution-card:nth-child(odd)::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: -50px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 2px solid rgba(2, 135, 212, 0.13);
+  pointer-events: none;
+}
+
 .home-solution-card:hover {
   transform: translateY(-5px);
   border-color: rgba(2, 135, 212, 0.38);
+  border-top-color: var(--primary-blue);
   box-shadow: 0 24px 56px rgba(6, 24, 39, 0.09);
 }
 
@@ -968,9 +1055,8 @@ img {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 14% 14%, rgba(2, 135, 212, 0.22), transparent 32%),
-    linear-gradient(180deg, rgba(2, 135, 212, 0.16) 0, transparent 4px),
-    linear-gradient(135deg, rgba(2, 135, 212, 0.10), rgba(2, 135, 212, 0.02) 42%, transparent 70%);
+    radial-gradient(circle at 14% 14%, rgba(2, 135, 212, 0.18), transparent 38%),
+    linear-gradient(135deg, rgba(2, 135, 212, 0.08), transparent 60%);
   pointer-events: none;
 }
 
@@ -1013,11 +1099,31 @@ img {
   line-height: 1.68;
 }
 
+.solutions-grid .home-solution-card:nth-child(even) {
+  border-top-color: var(--arminus-red);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(218, 47, 56, 0.18), transparent 52%),
+    linear-gradient(225deg, rgba(218, 47, 56, 0.08) 0%, transparent 55%),
+    var(--white);
+}
+
+.solutions-grid .home-solution-card:nth-child(even)::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  left: auto;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 2px solid rgba(218, 47, 56, 0.14);
+  pointer-events: none;
+}
+
 .solutions-grid .home-solution-card:nth-child(even) .home-solution-accent {
   background:
-    radial-gradient(circle at 86% 14%, rgba(218, 47, 56, 0.16), transparent 32%),
-    linear-gradient(180deg, rgba(218, 47, 56, 0.10) 0, transparent 4px),
-    linear-gradient(225deg, rgba(218, 47, 56, 0.07), transparent 60%);
+    radial-gradient(circle at 86% 14%, rgba(218, 47, 56, 0.18), transparent 38%),
+    linear-gradient(225deg, rgba(218, 47, 56, 0.08), transparent 60%);
 }
 
 .solutions-grid .home-solution-card:nth-child(even) .home-solution-tag {
@@ -1027,13 +1133,14 @@ img {
 }
 
 .solutions-grid .home-solution-card:nth-child(even) .service-icon-chip {
-  background: linear-gradient(180deg, rgba(218, 47, 56, 0.13), rgba(218, 47, 56, 0.05));
-  border-color: rgba(218, 47, 56, 0.16);
+  background: linear-gradient(180deg, rgba(218, 47, 56, 0.14), rgba(218, 47, 56, 0.05));
+  border-color: rgba(218, 47, 56, 0.18);
   color: var(--arminus-red);
 }
 
 .solutions-grid .home-solution-card:nth-child(even):hover {
   border-color: rgba(218, 47, 56, 0.32);
+  border-top-color: var(--arminus-red);
 }
 
 .image-strip {
