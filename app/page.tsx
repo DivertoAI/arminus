@@ -267,7 +267,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section" style={{ background: "var(--soft-sky)" }}>
+      <section className="section section-benefits">
         <div className="container">
           <Reveal>
             <span className="eyebrow">Why Arminus</span>

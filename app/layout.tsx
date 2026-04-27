@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Manrope, Playfair_Display } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
+import { withSiteBasePath } from "@/lib/site-path";
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-manrope",
   display: "swap"
 });
 
@@ -20,18 +22,47 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL("https://arminus.co.in"),
   title: {
-    default: "Arminus | Global IT Staffing and Workforce Solutions",
+    default: "Arminus | IT Staffing Company in India",
     template: "%s | Arminus"
   },
   description:
-    "Arminus helps employers hire IT, telecom, automotive, and insurance talent through permanent hiring, contract staffing, executive search, and training-led workforce solutions.",
+    "Arminus is an IT staffing company in India offering contract staffing, permanent recruitment, executive search, IT staff augmentation, and workforce solutions.",
+  keywords: [
+    "IT staffing company in India",
+    "IT recruitment agency India",
+    "contract staffing services",
+    "IT staff augmentation",
+    "permanent recruitment",
+    "executive search India",
+    "technology recruitment agency",
+    "manpower consulting India",
+    "recruitment and staffing firm",
+    "Ceipal careers"
+  ],
+  alternates: {
+    canonical: "https://arminus.co.in"
+  },
   openGraph: {
-    title: "Arminus | Global IT Staffing and Workforce Solutions",
+    title: "Arminus | IT Staffing Company in India",
     description:
-      "Premium IT staffing, contract hiring, executive search, and workforce support across India, USA, and Europe.",
+      "Contract staffing, permanent recruitment, executive search, IT staff augmentation, and workforce support across India, USA, and Europe.",
     url: "https://arminus.co.in",
     siteName: "Arminus",
-    type: "website"
+    type: "website",
+    images: [
+      {
+        url: "/arminus-logo.png",
+        width: 1580,
+        height: 996,
+        alt: "Arminus team work"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Arminus | IT Staffing Company in India",
+    description:
+      "IT staffing, contract staffing, permanent recruitment, executive search, and workforce solutions for technology teams."
   },
   robots: {
     index: true,
@@ -46,13 +77,13 @@ function Footer() {
         <div className="footer-grid">
           <div>
             <Link className="brand" href="/" aria-label="Arminus home">
-              <span className="brand-mark">A</span>
-              <span className="brand-text">
-                <span className="brand-name">
-                  Armin<span>us</span>
-                </span>
-                <span className="brand-tagline">The Power of Us</span>
-              </span>
+              <Image
+                className="brand-logo"
+                src={withSiteBasePath("/arminus-logo.png")}
+                alt="Arminus team work"
+                width={240}
+                height={151}
+              />
             </Link>
             <p style={{ marginTop: 18 }}>
               Global manpower consulting and staffing services for IT, Telecom, Automotive, and Insurance teams.
@@ -94,11 +125,13 @@ export default function RootLayout({
 }>) {
   const organizationSchema = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "StaffingAgency",
     name: "Arminus Software Pvt Ltd",
     url: "https://arminus.co.in",
     email: "contactus@arminus.com",
     telephone: ["+91 33 40601004", "+1 732 481 9410"],
+    description:
+      "IT staffing company in India offering contract staffing, permanent recruitment, executive search, IT staff augmentation, and workforce solutions.",
     sameAs: [
       "https://www.linkedin.com/company/665038",
       "https://www.facebook.com/ArminusSoftware",
@@ -114,13 +147,14 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${manrope.variable} ${playfair.variable}`}>
       <body>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
         <div className="page-shell">
+          <div className="brand-bar" />
           <SiteHeader />
           {children}
           <Footer />
