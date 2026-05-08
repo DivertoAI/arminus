@@ -2106,6 +2106,25 @@ img {
     transform: none;
   }
 
+  /* About mobile only: keep blob below CTA and behind image */
+  .about-layer-fix .hero-v2-copy {
+    position: relative;
+    z-index: 4;
+  }
+
+  .about-layer-fix .hero-v2-visual {
+    position: relative;
+    z-index: 2;
+    margin-top: 6px;
+  }
+
+  .about-layer-fix .hero-v2-blob {
+    inset: auto -18px -30px -18px;
+    width: auto;
+    height: 74%;
+    border-radius: 44% 56% 42% 58% / 52% 48% 52% 48%;
+  }
+
 }
 
 /* ── SEARCH BAR ── */
