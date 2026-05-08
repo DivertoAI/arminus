@@ -1,50 +1,116 @@
 import type { Metadata } from "next";
-import { CeipalEmbed } from "@/components/CeipalEmbed";
-import { Reveal } from "@/components/Motion";
+import Image from "next/image";
+import Link from "next/link";
+import { Users2, Sparkles, BarChart3, ArrowRight } from "lucide-react";
+import { withSiteBasePath } from "@/lib/site-path";
+import { CareersClient } from "@/components/CareersClient";
 
 export const metadata: Metadata = {
-  title: "Careers",
+  title: "IT Jobs and Ceipal Careers",
   description:
-    "Explore Arminus job openings through the Ceipal ATS career page and submit your resume for IT staffing opportunities."
+    "Explore current IT jobs through the Arminus Ceipal careers portal and apply for contract, permanent, project, and staffing opportunities.",
+  alternates: { canonical: "https://arminus.co.in/careers" },
+  keywords: [
+    "Arminus careers", "Arminus jobs", "IT jobs India",
+    "contract IT jobs", "Ceipal careers", "submit resume IT staffing",
+  ]
 };
+
+const sideCards = [
+  { icon: Users2,   value: "52+",       label: "Open Roles",       tone: "blue" },
+  { icon: Sparkles, value: "Join Our",  label: "Team",             tone: "red"  },
+  { icon: BarChart3,value: "Build Your",label: "Career",           tone: "blue" },
+] as const;
 
 export default function CareersPage() {
   return (
     <main>
-      <section className="subpage-hero">
-        <div className="container">
-          <Reveal>
-            <span className="eyebrow">Careers</span>
-            <h1>Find roles backed by a staffing team that stays involved.</h1>
-            <p>
-              Arminus helps candidates discover project, contract, and permanent opportunities with structured
-              coordination from application through joining support.
-            </p>
-          </Reveal>
+
+      {/* ══════════════════ HERO ══════════════════ */}
+      <section className="hero-v2 careers-hero">
+
+        {/* LEFT ── copy */}
+        <div className="hero-v2-copy">
+          <h1 className="hero-v2-heading careers-heading">
+            Find current openings<br />
+            through the{" "}
+            <span className="hero-v2-blue">Arminus</span>
+            <br />
+            <span className="careers-gradient-text">careers portal.</span>
+          </h1>
+
+          <span className="hero-v2-redline" aria-hidden="true" />
+
+          <p className="hero-v2-sub">
+            Discover exciting career opportunities across project, contract, and
+            permanent roles. Apply easily through our portal and take the next
+            step in your career.
+          </p>
+
+          <div className="hero-v2-actions">
+            <Link className="button button-primary" href="mailto:contactus@arminus.com?subject=Resume%20submission">
+              Submit Resume <ArrowRight size={18} />
+            </Link>
+            <Link className="button button-outline" href="/contact">
+              Contact Us
+            </Link>
+          </div>
+
         </div>
+
+        {/* RIGHT ── photo + floating cards */}
+        <div className="hero-v2-visual">
+          <Image
+            src={withSiteBasePath("/hero-art/dots-grid.png")}
+            alt="" aria-hidden="true"
+            width={220} height={180}
+            className="hero-v2-dotgrid"
+          />
+
+          <div className="hero-v2-photo-wrap">
+            <span className="hero-v2-blob" aria-hidden="true" />
+            <Image
+              src={withSiteBasePath("/team-banner-one.jpg")}
+              alt="Arminus team collaborating"
+              fill
+              priority
+              sizes="52vw"
+              className="hero-v2-photo"
+            />
+          </div>
+
+          {/* Floating stat cards */}
+          <div className="careers-side-cards">
+            {sideCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <div className={`careers-side-card ${card.tone === "red" ? "careers-side-card-red" : ""}`} key={card.label}>
+                  <span className={`careers-side-icon ${card.tone === "red" ? "careers-side-icon-red" : ""}`}>
+                    <Icon size={20} strokeWidth={1.8} />
+                  </span>
+                  <div>
+                    <div className="careers-side-value">{card.value}</div>
+                    <div className="careers-side-label">{card.label}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Ribbon inside section — clipped naturally by section overflow:hidden */}
+        <Image
+          src={withSiteBasePath("/hero-art/bottom-ribbon.png")}
+          alt="" aria-hidden="true"
+          width={480} height={260}
+          className="hero-v2-swoosh careers-swoosh"
+        />
+
       </section>
 
-      <section className="section">
-        <div className="container">
-          <Reveal>
-            <CeipalEmbed />
-          </Reveal>
-        </div>
-      </section>
+      {/* ══════════════════ SEARCH + JOBS ══════════════════ */}
+      <CareersClient />
 
-      <section className="section-tight" style={{ background: "var(--soft-sky)" }}>
-        <div className="container">
-          <Reveal>
-            <span className="eyebrow">Candidate Support</span>
-            <h2 className="section-title">A cleaner path from profile to opportunity.</h2>
-            <p className="section-copy">
-              The careers experience is prepared for Ceipal integration and keeps candidate content server-rendered.
-              Once the embed code is available, live jobs and resume submission can be activated inside the same
-              polished page.
-            </p>
-          </Reveal>
-        </div>
-      </section>
     </main>
   );
 }

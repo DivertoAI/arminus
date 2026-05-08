@@ -5,6 +5,9 @@ const nextConfig = {
   output: "export",
   basePath: isGithubPagesBuild ? "/arminus" : "",
   assetPrefix: isGithubPagesBuild ? "/arminus/" : "",
+  env: {
+    NEXT_PUBLIC_SITE_BASE_PATH: isGithubPagesBuild ? "/arminus" : ""
+  },
   images: {
     unoptimized: true
   }

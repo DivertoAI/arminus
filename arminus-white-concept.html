@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Arminus White Theme Redesign Concept</title>
+    <style>
+      :root {
+        --blue: #0a8fd8;
+        --cyan: #18c7f3;
+        --navy: #061827;
+        --red: #e31e24;
+        --soft: #eaf8fe;
+        --line: rgba(6, 24, 39, 0.1);
+        --muted: #60707c;
+        --ink: #122232;
+        --bg: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 84% 10%, rgba(24, 199, 243, 0.08), transparent 16%),
+          radial-gradient(circle at 10% 28%, rgba(10, 143, 216, 0.08), transparent 18%),
+          linear-gradient(180deg, #ffffff 0%, #f7fbfd 100%);
+      }
+      .page {
+        max-width: 1440px;
+        margin: 0 auto;
+        min-height: 100vh;
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(6px);
+      }
+      .shell {
+        padding: 24px 56px 44px;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 18px 0;
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(14px);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+      }
+      .logo {
+        position: relative;
+        width: 60px;
+        height: 44px;
+        flex: 0 0 auto;
+      }
+      .logo .a {
+        position: absolute;
+        left: 2px;
+        top: 4px;
+        color: var(--blue);
+        font-size: 38px;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .logo .arc {
+        position: absolute;
+        left: 8px;
+        right: -6px;
+        top: 2px;
+        height: 18px;
+        border-top: 5px solid var(--cyan);
+        border-radius: 999px;
+        transform: rotate(-9deg);
+      }
+      .brand-copy { min-width: 0; }
+      .brand-copy strong {
+        display: block;
+        font-size: 28px;
+        line-height: 1;
+        letter-spacing: 0;
+        color: var(--navy);
+      }
+      .brand-copy strong span { color: var(--red); }
+      .brand-copy small {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 13px;
+        font-style: italic;
+      }
+      .nav-wrap {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        color: var(--navy);
+        font-size: 15px;
+        font-weight: 700;
+      }
+      .nav a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .nav a:hover { color: var(--blue); }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        padding: 13px 20px;
+        font-weight: 800;
+        text-decoration: none;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        white-space: nowrap;
+      }
+      .btn:hover { transform: translateY(-1px); }
+      .btn.primary {
+        color: #fff;
+        background: linear-gradient(135deg, var(--blue), var(--cyan));
+        box-shadow: 0 14px 34px rgba(10, 143, 216, 0.18);
+      }
+      .btn.secondary {
+        color: var(--navy);
+        background: #fff;
+        border-color: rgba(6, 24, 39, 0.12);
+      }
+      .menu-btn {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 999px;
+        border: 1px solid rgba(6, 24, 39, 0.14);
+        background: #fff;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .menu-btn span {
+        width: 18px;
+        height: 2px;
+        background: var(--navy);
+        position: relative;
+        display: block;
+      }
+      .menu-btn span::before,
+      .menu-btn span::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 18px;
+        height: 2px;
+        background: var(--navy);
+      }
+      .menu-btn span::before { top: -6px; }
+      .menu-btn span::after { top: 6px; }
+      .mobile-drawer {
+        display: none;
+        padding: 14px 0 0;
+        border-top: 1px solid var(--line);
+      }
+      .mobile-drawer.open { display: block; }
+      .mobile-drawer nav {
+        display: grid;
+        gap: 14px;
+        padding: 16px 0 4px;
+      }
+      .mobile-drawer a {
+        color: var(--navy);
+        text-decoration: none;
+        font-weight: 700;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.02fr 0.98fr;
+        gap: 42px;
+        align-items: center;
+        padding: 56px 0 28px;
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--blue);
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .eyebrow::before {
+        content: "";
+        width: 30px;
+        height: 2px;
+        background: var(--red);
+      }
+      h1 {
+        margin: 16px 0 18px;
+        color: var(--navy);
+        font-size: clamp(54px, 6vw, 88px);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+      h1 .accent { color: var(--blue); }
+      .lede {
+        max-width: 690px;
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.72;
+      }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+      }
+      .hero-meta {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 36px;
+      }
+      .stat {
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+      }
+      .stat strong {
+        display: block;
+        color: var(--navy);
+        font-size: 30px;
+        line-height: 1;
+      }
+      .stat span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .visual {
+        position: relative;
+        min-height: 600px;
+      }
+      .hero-panel {
+        position: absolute;
+        inset: 44px 18px 74px 28px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background:
+          linear-gradient(135deg, rgba(10, 143, 216, 0.12), rgba(24, 199, 243, 0.05) 52%, rgba(255, 255, 255, 0.92)),
+          #fff;
+        box-shadow: 0 28px 70px rgba(6, 24, 39, 0.08);
+        overflow: hidden;
+      }
+      .hero-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 34% 36%, rgba(24, 199, 243, 0.18), transparent 12%),
+          radial-gradient(circle at 72% 72%, rgba(227, 30, 36, 0.08), transparent 10%);
+      }
+      .hero-panel::after {
+        content: "";
+        position: absolute;
+        right: -14px;
+        bottom: -18px;
+        width: 430px;
+        height: 430px;
+        border: 13px solid rgba(24, 199, 243, 0.42);
+        border-radius: 50%;
+      }
+      .sweep {
+        position: absolute;
+        right: 0;
+        top: 186px;
+        width: 620px;
+        height: 180px;
+        border-top: 12px solid rgba(24, 199, 243, 0.72);
+        border-radius: 50%;
+        transform: rotate(-15deg);
+        filter: drop-shadow(0 8px 18px rgba(24, 199, 243, 0.22));
+      }
+      .sweep::after {
+        content: "";
+        position: absolute;
+        right: 100px;
+        top: 94px;
+        width: 74px;
+        height: 74px;
+        border-radius: 50%;
+        background: rgba(227, 30, 36, 0.08);
+      }
+      .callout {
+        position: absolute;
+        width: 255px;
+        padding: 18px 18px 17px;
+        border: 1px solid rgba(6, 24, 39, 0.08);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 20px 44px rgba(6, 24, 39, 0.08);
+      }
+      .callout strong {
+        display: block;
+        color: var(--navy);
+        font-size: 17px;
+      }
+      .callout p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+      .callout.one { top: 28px; right: 10px; }
+      .callout.two { bottom: 136px; left: -4px; }
+      .callout.three { bottom: 16px; right: 0; }
+      .section {
+        margin-top: 22px;
+      }
+      .section-title {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin: 54px 0 18px;
+      }
+      .section-title h2 {
+        margin: 0;
+        color: var(--navy);
+        font-size: 34px;
+        line-height: 1.08;
+      }
+      .section-title p {
+        margin: 0;
+        max-width: 560px;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+      .services {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .card {
+        min-height: 196px;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fff;
+      }
+      .card .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: var(--soft);
+        color: var(--blue);
+        font-weight: 900;
+      }
+      .card h3 {
+        margin: 16px 0 10px;
+        color: var(--navy);
+        font-size: 22px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.66;
+      }
+      .card .link {
+        display: inline-flex;
+        margin-top: 16px;
+        color: var(--blue);
+        font-weight: 800;
+        text-decoration: none;
+      }
+      .process {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: stretch;
+      }
+      .process-panel {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(234, 248, 254, 0.78), #fff);
+        padding: 26px;
+      }
+      .timeline {
+        display: grid;
+        gap: 14px;
+      }
+      .step {
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        gap: 16px;
+        align-items: start;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .step:last-child { border-bottom: 0; }
+      .step b {
+        display: inline-flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        color: var(--blue);
+        background: #fff;
+        border: 1px solid rgba(10, 143, 216, 0.14);
+      }
+      .step h4 {
+        margin: 0 0 6px;
+        color: var(--navy);
+        font-size: 20px;
+      }
+      .step p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.66;
+      }
+      .city-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .city {
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fff;
+      }
+      .city strong {
+        display: block;
+        color: var(--navy);
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+      .city span {
+        color: var(--muted);
+        line-height: 1.58;
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 16px;
+        align-items: stretch;
+      }
+      .quote {
+        padding: 28px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(6, 24, 39, 0.03), rgba(255, 255, 255, 0.96));
+      }
+      .quote h3 {
+        margin: 0 0 10px;
+        color: var(--navy);
+        font-size: 26px;
+      }
+      .quote p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+      .jobs {
+        display: grid;
+        gap: 14px;
+      }
+      .job {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 18px 20px;
+        border-radius: 14px;
+        background: #fff;
+        border: 1px solid var(--line);
+      }
+      .job strong {
+        display: block;
+        color: var(--navy);
+        margin-bottom: 6px;
+      }
+      .job span {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+      .job em {
+        align-self: center;
+        color: var(--blue);
+        font-style: normal;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .cta-band {
+        margin-top: 20px;
+        padding: 30px 32px;
+        border-radius: 18px;
+        border: 1px solid rgba(10, 143, 216, 0.14);
+        background: linear-gradient(135deg, rgba(10, 143, 216, 0.08), rgba(24, 199, 243, 0.05), #fff);
+      }
+      .cta-band strong {
+        display: block;
+        color: var(--navy);
+        font-size: 28px;
+        margin-bottom: 8px;
+      }
+      .cta-band p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+        max-width: 720px;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        align-items: center;
+        padding: 34px 0 10px;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        margin-top: 54px;
+      }
+      .footer strong { color: var(--navy); }
+
+      @media (max-width: 1120px) {
+        .shell { padding-inline: 24px; }
+        .hero, .process, .split { grid-template-columns: 1fr; }
+        .visual { min-height: 540px; }
+        .services, .city-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 760px) {
+        .topbar { padding: 12px 0; }
+        .nav, .nav-wrap .btn { display: none; }
+        .menu-btn { display: inline-flex; }
+        .hero { padding-top: 22px; }
+        .hero-meta, .services, .city-grid { grid-template-columns: 1fr; }
+        .section-title { display: block; }
+        .section-title p { margin-top: 10px; }
+        .visual { min-height: 520px; }
+        .hero-panel { inset: 40px 4px 64px; }
+        .callout { width: 220px; }
+        .callout.one { right: -2px; }
+        .callout.two { left: -2px; bottom: 114px; }
+        .callout.three { right: -2px; bottom: 4px; }
+        .footer { display: block; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="shell">
+        <header class="topbar">
+          <div class="brand">
+            <div class="logo" aria-hidden="true">
+              <div class="a">A</div>
+              <div class="arc"></div>
+            </div>
+            <div class="brand-copy">
+              <strong>Armin<span>us</span></strong>
+              <small>team work</small>
+            </div>
+          </div>
+
+          <div class="nav-wrap">
+            <nav class="nav" aria-label="Primary">
+              <a href="#solutions">Solutions</a>
+              <a href="#process">About</a>
+              <a href="#careers">Careers</a>
+              <a href="#contact">Contact</a>
+            </nav>
+            <a class="btn primary" href="#contact">Hire Talent</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+              <span></span>
+            </button>
+          </div>
+
+          <div class="mobile-drawer" id="mobileMenu">
+            <nav aria-label="Mobile">
+              <a href="#solutions">Solutions</a>
+              <a href="#process">About</a>
+              <a href="#careers">Careers</a>
+              <a href="#contact">Contact</a>
+              <a href="#contact">Hire Talent</a>
+            </nav>
+          </div>
+        </header>
+
+        <main>
+          <section class="hero">
+            <div>
+              <div class="eyebrow">Global IT Staffing</div>
+              <h1>Plain white. <span class="accent">Logo-colour</span> confidence.</h1>
+              <p class="lede">
+                A cleaner Arminus redesign inspired by the logo itself: bright white space, sharp navy typography,
+                cyan-blue motion, and a minimal red accent used with restraint. Built to feel premium, modern, and
+                employer-first.
+              </p>
+              <div class="hero-actions">
+                <a class="btn primary" href="#contact">Hire Talent</a>
+                <a class="btn secondary" href="#careers">Explore Jobs</a>
+              </div>
+
+              <div class="hero-meta">
+                <div class="stat"><strong>2009</strong><span>Founded</span></div>
+                <div class="stat"><strong>80+</strong><span>Recruitment team</span></div>
+                <div class="stat"><strong>4</strong><span>Office regions</span></div>
+                <div class="stat"><strong>24h</strong><span>Support mindset</span></div>
+              </div>
+            </div>
+
+            <div class="visual" aria-hidden="true">
+              <div class="sweep"></div>
+              <div class="hero-panel"></div>
+              <div class="callout one">
+                <strong>Talent pipeline</strong>
+                <p>Need clarity, shortlist quality, and onboarding handoff presented in a clean sequence.</p>
+              </div>
+              <div class="callout two">
+                <strong>Global delivery</strong>
+                <p>India, USA, and Europe footprint shown with light diagrams and generous whitespace.</p>
+              </div>
+              <div class="callout three">
+                <strong>Ceipal careers</strong>
+                <p>Job listings stay lightweight and visible without turning the page into a widget dump.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="solutions">
+            <div class="section-title">
+              <h2>Solutions that read like a premium staffing firm.</h2>
+              <p>
+                Keep the structure direct: services first, proof second, then the story. The visual language stays
+                white and restrained, with blue and cyan carrying the energy.
+              </p>
+            </div>
+
+            <div class="services">
+              <article class="card">
+                <div class="badge">01</div>
+                <h3>IT Staffing</h3>
+                <p>Permanent, contractual, and project-based technology hiring with a crisp, easy-to-scan layout.</p>
+                <a class="link" href="#contact">Staffing inquiry</a>
+              </article>
+              <article class="card">
+                <div class="badge">02</div>
+                <h3>Executive Search</h3>
+                <p>Confidential senior hiring for leaders, VPs, directors, and specialist technical roles.</p>
+                <a class="link" href="#contact">Search mandate</a>
+              </article>
+              <article class="card">
+                <div class="badge">03</div>
+                <h3>Contract Staffing</h3>
+                <p>Flexible deployment for short-term, long-term, onsite, offshore, and hybrid teams.</p>
+                <a class="link" href="#contact">Contract staffing</a>
+              </article>
+            </div>
+          </section>
+
+          <section class="section" id="process">
+            <div class="section-title">
+              <h2>Storytelling through simple structure.</h2>
+              <p>
+                This keeps the brand look light and premium while still showing the actual recruiting workflow,
+                geography, and credibility signals.
+              </p>
+            </div>
+
+            <div class="process">
+              <div class="process-panel">
+                <div class="eyebrow">How it works</div>
+                <div class="timeline">
+                  <div class="step">
+                    <b>01</b>
+                    <div>
+                      <h4>Requirement</h4>
+                      <p>Capture role, skills, location, urgency, and hiring model with minimal friction.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <b>02</b>
+                    <div>
+                      <h4>Shortlist</h4>
+                      <p>Match screened candidates on skills, attitude, availability, and client fit.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <b>03</b>
+                    <div>
+                      <h4>Deployment</h4>
+                      <p>Move from offer to onboarding for permanent, contract, onsite, offshore, and hybrid work.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="process-panel">
+                <div class="eyebrow">Coverage</div>
+                <div class="city-grid">
+                  <div class="city">
+                    <strong>Kolkata</strong>
+                    <span>Core delivery and recruiting operations with a strong service backbone.</span>
+                  </div>
+                  <div class="city">
+                    <strong>Gurugram</strong>
+                    <span>Client-facing commercial presence for enterprise hiring conversations.</span>
+                  </div>
+                  <div class="city">
+                    <strong>Bengaluru</strong>
+                    <span>Technology talent access and specialist search across India.</span>
+                  </div>
+                  <div class="city">
+                    <strong>USA / Europe</strong>
+                    <span>Global coverage for hiring support and cross-border workforce delivery.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="section-title">
+              <h2>White space first. Brand color second.</h2>
+              <p>
+                Accent colors mirror the logo: blue for the main call to action, cyan for motion lines and highlights,
+                and red only where it adds sharp brand punctuation.
+              </p>
+            </div>
+
+            <div class="split">
+              <div class="quote">
+                <h3>Design direction</h3>
+                <p>
+                  Use a plain white canvas, thin borders, generous spacing, soft shadows, and a very limited color
+                  palette. The logo’s arc becomes the motion motif across hero lines, section dividers, and process
+                  graphics.
+                </p>
+              </div>
+              <div class="jobs" id="careers">
+                <div class="job">
+                  <div>
+                    <strong>Ceipal careers embed</strong>
+                    <span>Keep job listings clean and lightweight, with a clear apply flow and no visual clutter.</span>
+                  </div>
+                  <em>Live jobs</em>
+                </div>
+                <div class="job">
+                  <div>
+                    <strong>Submit resume</strong>
+                    <span>Restore the broken candidate path with a simple action, not a buried utility link.</span>
+                  </div>
+                  <em>Candidate path</em>
+                </div>
+                <div class="job">
+                  <div>
+                    <strong>Employer CTA</strong>
+                    <span>Make hiring the primary action across the page so the website sells the service clearly.</span>
+                  </div>
+                  <em>Primary goal</em>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="contact">
+            <div class="cta-band">
+              <strong>Designed to feel calm, premium, and fast.</strong>
+              <p>
+                This version keeps the site mostly white, uses the full logo color set with restraint, and takes
+                inspiration from the current Arminus site structure while removing the dated, crowded feel.
+              </p>
+            </div>
+          </section>
+        </main>
+
+        <footer class="footer">
+          <div><strong>Arminus</strong> white-theme redesign concept</div>
+          <div>Blue, cyan, navy, white, and red only</div>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      const btn = document.getElementById("menuBtn");
+      const menu = document.getElementById("mobileMenu");
+      btn?.addEventListener("click", () => {
+        const open = menu.classList.toggle("open");
+        btn.setAttribute("aria-expanded", String(open));
+      });
+      menu?.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          menu.classList.remove("open");
+          btn.setAttribute("aria-expanded", "false");
+        });
+      });
+    </script>
+  </body>
+</html>
