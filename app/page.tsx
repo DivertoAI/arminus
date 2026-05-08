@@ -23,10 +23,10 @@ export const metadata: Metadata = {
 };
 
 const stats = [
-  { icon: Users,     value: "500+",  label: "Happy Clients" },
-  { icon: Target,    value: "10+",   label: "Years Experience" },
-  { icon: Briefcase, value: "1000+", label: "Projects Completed" },
-  { icon: Award,     value: "98%",   label: "Client Satisfaction" },
+  { icon: Users,     value: "500+",  count: 500,  suffix: "+", label: "Happy Clients" },
+  { icon: Target,    value: "10+",   count: 10,   suffix: "+", label: "Years Experience" },
+  { icon: Briefcase, value: "1000+", count: 1000, suffix: "+", label: "Projects Completed" },
+  { icon: Award,     value: "98%",   count: 98,   suffix: "%", label: "Client Satisfaction" },
 ];
 
 export default function Home() {
@@ -97,10 +97,14 @@ export default function Home() {
       {/* ── STATS BAR ── */}
       <div className="container">
         <div className="stat-bar-v2">
-          {stats.map(({ icon: Icon, value, label }) => (
+          {stats.map(({ icon: Icon, value, count, suffix, label }) => (
             <div className="stat-bar-v2-item" key={label}>
               <Icon size={32} strokeWidth={1.6} className="stat-bar-v2-icon" />
-              <span className="stat-bar-v2-value">{value}</span>
+              <span
+                className="stat-bar-v2-value"
+                data-count={count}
+                data-suffix={suffix}
+              >{value}</span>
               <span className="stat-bar-v2-label">{label}</span>
             </div>
           ))}

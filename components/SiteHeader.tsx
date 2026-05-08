@@ -80,7 +80,7 @@ export function SiteHeader() {
 
         <div className="nav-actions">
           <Link className="button button-primary nav-cta" href="/contact">
-            Get Started <ArrowRight size={18} />
+            Hire Talent <ArrowRight size={18} />
           </Link>
           <button
             className="menu-toggle"
@@ -109,7 +109,7 @@ export function SiteHeader() {
             )
           )}
           <Link className="button button-primary mobile-nav-cta" href="/contact" onClick={() => setMenuOpen(false)}>
-            Get Started <ArrowRight size={17} />
+            Hire Talent <ArrowRight size={17} />
           </Link>
         </div>
       </div>

@@ -1619,12 +1619,14 @@ img {
   margin: 0 0 28px;
 }
 
+/* Task 3: improved hero paragraph breathing room */
 .hero-v2-sub {
-  font-size: 1rem;
-  line-height: 1.72;
-  color: #4a5568;
-  max-width: 480px;
+  font-size: 1.08rem;
+  line-height: 1.78;
+  color: #374151;
+  max-width: 500px;
   margin: 0 0 36px;
+  letter-spacing: 0.01em;
 }
 
 .hero-v2-actions {
@@ -1652,16 +1654,17 @@ img {
   background: #f0f4f8;
 }
 
-/* Swoosh accent — anchored to bottom-left of the hero SECTION */
+/* Swoosh accent — Task 2: scaled down + pulled back so it doesn't compete */
 .hero-v2-swoosh {
   position: absolute;
   bottom: -30px;
   left: 0;
-  width: 420px;
+  width: 260px;
   height: auto;
   pointer-events: none;
   z-index: 1;
   mix-blend-mode: multiply;
+  opacity: 0.35;
 }
 
 /* RIGHT ── visual column — full height, no padding */
@@ -1703,7 +1706,7 @@ img {
   z-index: 1;
 }
 
-/* Hero photo — fills full column height with soft organic mask */
+/* Hero photo — Task 1: soft card corners replace the hard organic mask */
 .hero-v2-photo {
   position: absolute;
   inset: 0;
@@ -1711,8 +1714,14 @@ img {
   height: 100%;
   object-fit: cover;
   object-position: center top;
-  border-radius: 48% 0 0 44% / 50% 0 0 50%;
+  border-radius: 24px 0 0 24px;
   z-index: 2;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hero-v2-photo-wrap:hover .hero-v2-photo {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.20);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -2287,4 +2296,193 @@ img {
   .csearch-row { flex-direction: column; }
   .csearch-field { min-width: 100%; }
   .cresults-meta { flex-direction: column; gap: 12px; align-items: flex-start; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   TASK 5 — Stats bar count-up + enhanced value style
+   ═══════════════════════════════════════════════════════ */
+
+.stat-bar-v2-value {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0a1532;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.stat-bar-v2-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5b6871;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TASK 7 — Navbar scrolled state
+   ═══════════════════════════════════════════════════════ */
+
+.site-header.scrolled {
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.09);
+}
+
+/* ═══════════════════════════════════════════════════════
+   TASK 8 — Button micro-interactions
+   ═══════════════════════════════════════════════════════ */
+
+.button-primary:hover {
+  box-shadow: 0 8px 28px rgba(27, 92, 255, 0.38);
+}
+
+.button-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(27, 92, 255, 0.28);
+}
+
+.button-outline:hover {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(10, 21, 50, 0.18);
+}
+
+.button-outline:active {
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════
+   TASK 9 — Gradient card system
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  --grad-primary:  linear-gradient(135deg, #1b4fd8 0%, #2563eb 60%, #3b82f6 100%);
+  --grad-accent:   linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+  --grad-soft:     linear-gradient(135deg, #f0f5ff 0%, #e8f0fe 100%);
+  --card-shadow-rest:  0 4px 24px rgba(27, 60, 138, 0.09);
+  --card-shadow-hover: 0 16px 48px rgba(27, 60, 138, 0.20);
+}
+
+/* ── Service overview cards: three-tier gradient system ──
+   Cards are wrapped in Framer Motion divs (direct grid children),
+   so nth-child targets the wrapper, then descends to the card. ── */
+.services-overview-grid .service-overview-card {
+  border: none;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.services-overview-grid .service-overview-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Tier 1 — soft blue tint (1st, 4th, 7th…) */
+.services-overview-grid > div:nth-child(3n + 1) .service-overview-card {
+  background: var(--grad-soft);
+  box-shadow: var(--card-shadow-rest);
+  color: #1e3a8a;
+}
+
+/* Tier 2 — deep blue gradient (2nd, 5th, 8th…) */
+.services-overview-grid > div:nth-child(3n + 2) .service-overview-card {
+  background: var(--grad-primary);
+  box-shadow: 0 4px 24px rgba(37, 99, 235, 0.28);
+  color: #fff;
+}
+
+/* Tier 3 — accent purple gradient (3rd, 6th, 9th…) */
+.services-overview-grid > div:nth-child(3n + 3) .service-overview-card {
+  background: var(--grad-accent);
+  box-shadow: 0 4px 24px rgba(124, 58, 237, 0.22);
+  color: #fff;
+}
+
+/* Dark-card text overrides */
+.services-overview-grid > div:nth-child(3n + 2) .service-overview-card h2,
+.services-overview-grid > div:nth-child(3n + 2) .service-overview-card p,
+.services-overview-grid > div:nth-child(3n + 3) .service-overview-card h2,
+.services-overview-grid > div:nth-child(3n + 3) .service-overview-card p {
+  color: #fff;
+}
+
+.services-overview-grid > div:nth-child(3n + 2) .service-overview-card p,
+.services-overview-grid > div:nth-child(3n + 3) .service-overview-card p {
+  opacity: 0.88;
+}
+
+.services-overview-grid > div:nth-child(3n + 2) .service-kicker,
+.services-overview-grid > div:nth-child(3n + 3) .service-kicker {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.services-overview-grid > div:nth-child(3n + 2) .service-overview-link,
+.services-overview-grid > div:nth-child(3n + 3) .service-overview-link {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.services-overview-grid > div:nth-child(3n + 2) .feature-card-icon,
+.services-overview-grid > div:nth-child(3n + 3) .feature-card-icon {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.services-overview-grid > div:nth-child(3n + 2) .feature-card-icon svg,
+.services-overview-grid > div:nth-child(3n + 3) .feature-card-icon svg {
+  filter: brightness(0) invert(1);
+}
+
+/* Glassmorphism shimmer on dark cards */
+.services-overview-grid > div:nth-child(3n + 2) .service-overview-card::before,
+.services-overview-grid > div:nth-child(3n + 3) .service-overview-card::before {
+  background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%);
+}
+
+.services-overview-grid > div:nth-child(3n + 2) .service-overview-card::after,
+.services-overview-grid > div:nth-child(3n + 3) .service-overview-card::after {
+  content: '';
+  position: absolute;
+  top: -40px;
+  left: -40px;
+  width: 160px;
+  height: 160px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ── Feature cards (About/detail pages): gradient-border on hover ── */
+.feature-card,
+.detail-card,
+.contact-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.feature-card:hover,
+.detail-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+  border-color: rgba(37, 99, 235, 0.22);
+}
+
+/* ── Services section title gradient ── */
+.services-overview-grid ~ * .section-title,
+#services-grid .section-title {
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Staggered card reveal animation ── */
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-revealed {
+  animation: cardReveal 0.5s ease forwards;
 }
