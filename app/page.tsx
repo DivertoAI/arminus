@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Users, Target, Briefcase, Award } from "lucide-react";
 import { withSiteBasePath } from "@/lib/site-path";
+import { LottieMoment } from "@/components/LottieMoment";
 
 export const metadata: Metadata = {
   title: "IT Staffing Company in India",
@@ -71,14 +72,7 @@ export default function Home() {
           <div className="hero-v2-photo-wrap">
             {/* White blob behind photo */}
             <span className="hero-v2-blob" aria-hidden="true" />
-            <Image
-              src={withSiteBasePath("/team-banner.jpg")}
-              alt="Arminus team collaborating"
-              fill
-              priority
-              sizes="52vw"
-              className="hero-v2-photo"
-            />
+            <LottieMoment />
           </div>
         </div>
 

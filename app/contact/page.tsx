@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Mail, MapPin, Phone, ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/Motion";
 import { withSiteBasePath } from "@/lib/site-path";
+import { ContactHeroLottie } from "@/components/ContactHeroLottie";
 
 export const metadata: Metadata = {
   title: "Contact Arminus for IT Staffing",
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <main>
-      <section className="hero-v2 inner-hero">
+      <section className="hero-v2 inner-hero contact-hero">
 
         <div className="hero-v2-copy">
           <h1 className="hero-v2-heading inner-heading">
@@ -54,13 +55,7 @@ export default function ContactPage() {
           />
           <div className="hero-v2-photo-wrap">
             <span className="hero-v2-blob" aria-hidden="true" />
-            <Image
-              src={withSiteBasePath("/team-banner.jpg")}
-              alt="Arminus team working together"
-              fill priority
-              sizes="52vw"
-              className="hero-v2-photo"
-            />
+            <ContactHeroLottie />
           </div>
         </div>
 

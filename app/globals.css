@@ -157,11 +157,11 @@ img {
 .nav-link:hover,
 .nav-link-active {
   color: var(--blue);
-  background: rgba(27, 92, 255, 0.05);
+  background: rgba(27, 92, 255, 0.035);
 }
 
 .nav-link-active::after {
-  width: 34px;
+  width: 28px;
 }
 
 .nav-actions {
@@ -216,7 +216,11 @@ img {
 }
 
 .nav-cta {
-  padding-inline: 24px;
+  min-height: 46px;
+  padding-inline: 20px;
+  font-size: 0.9rem;
+  letter-spacing: 0;
+  box-shadow: 0 10px 22px rgba(27, 92, 255, 0.2);
 }
 
 .menu-toggle {
@@ -1706,22 +1710,66 @@ img {
   z-index: 1;
 }
 
-/* Hero photo — Task 1: soft card corners replace the hard organic mask */
-.hero-v2-photo {
+/* Hero Lottie visual — non-card presentation for homepage motion art */
+.hero-v2-lottie-shell {
   position: absolute;
-  inset: 0;
+  inset: 0 0 0 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  border-radius: 24px 0 0 24px;
   z-index: 2;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.hero-v2-photo-wrap:hover .hero-v2-photo {
+
+.hero-v2-lottie {
+  width: min(96%, 740px);
+  height: min(90%, 560px);
+  transform: translate(2%, 2%);
+  filter: drop-shadow(0 20px 40px rgba(6, 24, 39, 0.16));
+}
+
+.hero-v2-lottie-fallback {
+  width: min(88%, 680px);
+  height: min(86%, 500px);
+  border-radius: 44% 56% 42% 58% / 50% 44% 56% 50%;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(2, 135, 212, 0.22), rgba(2, 135, 212, 0.06) 45%, transparent 70%),
+    radial-gradient(circle at 75% 78%, rgba(218, 47, 56, 0.2), rgba(218, 47, 56, 0.06) 44%, transparent 70%),
+    linear-gradient(135deg, rgba(238, 245, 251, 0.95), rgba(249, 251, 255, 0.95));
+  box-shadow: 0 20px 60px rgba(6, 24, 39, 0.12);
+}
+
+.hero-v2-photo-wrap:hover .hero-v2-lottie-shell {
   transform: translateY(-4px);
-  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.20);
+}
+
+.hero-v2-photo-wrap:hover .hero-v2-lottie {
+  filter: drop-shadow(0 28px 52px rgba(6, 24, 39, 0.2));
+}
+
+/* Homepage-only balancing refinements */
+.hero-v2:not(.inner-hero):not(.careers-hero) .hero-v2-blob {
+  inset: -72px -8px -28px -28px;
+  background:
+    radial-gradient(72% 62% at 62% 48%, #e9f1fa 0%, #e6eef8 56%, #e1eaf6 100%);
+  border-radius: 46% 54% 40% 60% / 48% 50% 50% 52%;
+}
+
+.hero-v2:not(.inner-hero):not(.careers-hero) .hero-v2-dotgrid {
+  top: 44px;
+  right: 24px;
+  width: 178px;
+  opacity: 0.72;
+}
+
+.hero-v2:not(.inner-hero):not(.careers-hero) .hero-v2-lottie {
+  width: min(86%, 620px);
+  height: min(76%, 470px);
+  transform: translate(1.2%, 9%);
+  filter: drop-shadow(0 16px 34px rgba(6, 24, 39, 0.14));
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1809,6 +1857,11 @@ img {
     width: 100%;
     height: 320px;
   }
+  .hero-v2-lottie {
+    width: 100%;
+    height: 100%;
+    transform: none;
+  }
   .hero-v2-blob {
     width: 380px;
   }
@@ -1861,6 +1914,17 @@ img {
 
 .careers-hero .hero-v2-visual {
   overflow: visible;
+}
+
+.careers-hero-lottie-shell {
+  justify-content: flex-start;
+  padding-left: 20px;
+}
+
+.careers-hero-lottie {
+  width: min(82%, 560px);
+  height: min(82%, 520px);
+  transform: translate(0, 4%);
 }
 
 .careers-heading {
@@ -1953,6 +2017,44 @@ img {
   overflow: visible;
 }
 
+/* About only: keep blob behind team photo */
+.about-layer-fix .hero-v2-photo-wrap {
+  z-index: 2;
+}
+
+.about-layer-fix .hero-v2-blob {
+  z-index: 1;
+}
+
+.about-layer-fix .hero-v2-photo {
+  z-index: 2;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 28px;
+}
+
+.services-hero-lottie-shell {
+  justify-content: center;
+  padding-left: 8px;
+}
+
+.services-hero-lottie {
+  width: min(86%, 600px);
+  height: min(84%, 540px);
+  transform: translate(0, 4%);
+}
+
+.contact-hero-lottie-shell {
+  justify-content: center;
+  padding-left: 0;
+}
+
+.contact-hero-lottie {
+  width: min(82%, 540px);
+  height: min(80%, 500px);
+  transform: translate(0, 3%);
+}
+
 .inner-swoosh {
   bottom: -30px !important;
   z-index: 1 !important;
@@ -1985,6 +2087,25 @@ img {
     padding-top: 24px;
     padding-bottom: 32px;
   }
+
+  .careers-hero-lottie-shell {
+    justify-content: center;
+    padding-left: 0;
+  }
+
+  .careers-hero-lottie {
+    width: min(94%, 440px);
+    height: min(86%, 360px);
+    transform: none;
+  }
+
+  .services-hero-lottie,
+  .contact-hero-lottie {
+    width: min(94%, 430px);
+    height: min(84%, 350px);
+    transform: none;
+  }
+
 }
 
 /* ── SEARCH BAR ── */

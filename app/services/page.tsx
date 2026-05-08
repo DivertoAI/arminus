@@ -5,6 +5,7 @@ import { ArrowRight, Users, Award, BookOpen } from "lucide-react";
 import { Reveal } from "@/components/Motion";
 import { withSiteBasePath } from "@/lib/site-path";
 import { serviceItems } from "@/lib/services";
+import { ServicesHeroLottie } from "@/components/ServicesHeroLottie";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -22,7 +23,7 @@ const sideCards = [
 export default function ServicesPage() {
   return (
     <main>
-      <section className="hero-v2 inner-hero">
+      <section className="hero-v2 inner-hero services-hero">
 
         <div className="hero-v2-copy">
           <h1 className="hero-v2-heading inner-heading">
@@ -56,13 +57,7 @@ export default function ServicesPage() {
           />
           <div className="hero-v2-photo-wrap">
             <span className="hero-v2-blob" aria-hidden="true" />
-            <Image
-              src={withSiteBasePath("/banner-one.jpg")}
-              alt="Arminus services"
-              fill priority
-              sizes="52vw"
-              className="hero-v2-photo"
-            />
+            <ServicesHeroLottie />
           </div>
           <div className="careers-side-cards">
             {sideCards.map((card) => {

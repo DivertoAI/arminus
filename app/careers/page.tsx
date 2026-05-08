@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Users2, Sparkles, BarChart3, ArrowRight } from "lucide-react";
 import { withSiteBasePath } from "@/lib/site-path";
 import { CareersClient } from "@/components/CareersClient";
+import { CareersHeroLottie } from "@/components/CareersHeroLottie";
 
 export const metadata: Metadata = {
   title: "IT Jobs and Ceipal Careers",
@@ -69,14 +70,7 @@ export default function CareersPage() {
 
           <div className="hero-v2-photo-wrap">
             <span className="hero-v2-blob" aria-hidden="true" />
-            <Image
-              src={withSiteBasePath("/team-banner-one.jpg")}
-              alt="Arminus team collaborating"
-              fill
-              priority
-              sizes="52vw"
-              className="hero-v2-photo"
-            />
+            <CareersHeroLottie />
           </div>
 
           {/* Floating stat cards */}

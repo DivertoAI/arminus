@@ -39,7 +39,7 @@ const valueCards = [
 export default function AboutPage() {
   return (
     <main>
-      <section className="hero-v2 inner-hero">
+      <section className="hero-v2 inner-hero about-layer-fix">
 
         <div className="hero-v2-copy">
           <h1 className="hero-v2-heading inner-heading">
