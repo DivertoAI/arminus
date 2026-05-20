@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Award, Building2, Globe2, UsersRound, ArrowRight, Users, MapPin, Briefcase } from "lucide-react";
+import { Award, Building2, Globe2, UsersRound, ArrowRight, Users, MapPin, Briefcase, User } from "lucide-react";
 import { Reveal } from "@/components/Motion";
 import { withSiteBasePath } from "@/lib/site-path";
 
@@ -184,6 +184,70 @@ export default function AboutPage() {
                 </Reveal>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <Reveal>
+            <span className="eyebrow">Leadership</span>
+            <h2 className="section-title">The team behind Arminus.</h2>
+          </Reveal>
+          <div className="profile-grid">
+            <Reveal delay={0.04}>
+              <div className="profile-card">
+                <div className="profile-avatar" aria-hidden="true">
+                  <User size={28} strokeWidth={1.8} />
+                </div>
+                <div className="profile-name">Pankaj Kathuria</div>
+                <div className="profile-role">MD &amp; CEO</div>
+                <p className="profile-bio">
+                  With a distinguished career spanning 44 years, Pankaj is a veteran architect of the global software
+                  landscape. His expertise encompasses the entire lifecycle of technology delivery — from hands-on
+                  engineering to orchestrating mission-critical projects and establishing large-scale Offshore
+                  Development Centers (ODCs) for world-class enterprises. His portfolio includes leading multi-million
+                  dollar initiatives for organizations such as HBO Singapore and Puerto Rico Telephone Company (USA).
+                </p>
+                <p className="profile-edu">
+                  Thapar Institute of Engineering &amp; Technology (Engineering) · IIM Calcutta (Management)
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <div className="profile-card">
+                <div className="profile-avatar" aria-hidden="true">
+                  <User size={28} strokeWidth={1.8} />
+                </div>
+                <div className="profile-name">Ashok Jindal</div>
+                <div className="profile-role">Director, Operations</div>
+                <p className="profile-bio">
+                  With 40 years of experience, Ashok is the operational backbone of Arminus. Before joining forces
+                  with Pankaj in 2012, he held senior leadership roles at Tata and PCL. A specialist in high-value
+                  account management, Ashok has orchestrated multi-million dollar deals for industry leaders including
+                  Tata Motors, Mahindra, and HAL. He oversees Gurugram and NCR operations with a technology-first
+                  approach.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.12}>
+              <div className="profile-card">
+                <div className="profile-avatar" aria-hidden="true">
+                  <User size={28} strokeWidth={1.8} />
+                </div>
+                <div className="profile-name">Tania Kathuria</div>
+                <div className="profile-role">Director, Strategy &amp; Growth</div>
+                <p className="profile-bio">
+                  Tania is a growth-focused leader dedicated to building scalable revenue engines and global
+                  partnerships. At Arminus, she spearheads strategic direction and international expansion. Her
+                  background includes key positions at Accenture and Tata Consultancy Services (TCS), where she led
+                  go-to-market initiatives across global markets.
+                </p>
+                <p className="profile-edu">MBA · NMIMS, Mumbai</p>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>

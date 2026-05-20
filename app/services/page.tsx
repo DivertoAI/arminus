@@ -8,16 +8,16 @@ import { serviceItems } from "@/lib/services";
 import { ServicesHeroLottie } from "@/components/ServicesHeroLottie";
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "Solutions",
   description:
-    "Explore Arminus service lines across HR staffing, executive search, resume writing, and training.",
+    "Five B2B talent solutions — from permanent placement to board-level executive search, government projects, and compliance-led flexible staffing.",
   alternates: { canonical: "https://arminus.co.in/services" }
 };
 
 const sideCards = [
-  { icon: Users,    value: "HR",      label: "Staffing",       tone: "blue" },
+  { icon: Users,    value: "B2B",     label: "Solutions",      tone: "blue" },
   { icon: Award,    value: "Exec",    label: "Search",         tone: "red"  },
-  { icon: BookOpen, value: "Skill",   label: "Training",       tone: "blue" },
+  { icon: BookOpen, value: "Gov",     label: "Tech",           tone: "blue" },
 ] as const;
 
 export default function ServicesPage() {
@@ -27,15 +27,15 @@ export default function ServicesPage() {
 
         <div className="hero-v2-copy">
           <h1 className="hero-v2-heading inner-heading">
-            End-to-end <span className="hero-v2-blue">IT staffing</span><br />
-            <span className="inner-gradient-text">and workforce services.</span>
+            End-to-end <span className="hero-v2-blue">B2B talent</span><br />
+            <span className="inner-gradient-text">solutions for enterprise.</span>
           </h1>
 
           <span className="hero-v2-redline" aria-hidden="true" />
 
           <p className="hero-v2-sub">
-            Four core service lines, each with its own delivery model: HR Staffing,
-            Executive Search, Resume Writing, and Training.
+            Five B2B talent solutions — from permanent placement to board-level executive search,
+            government projects, and compliance-led flexible staffing.
           </p>
 
           <div className="hero-v2-actions">

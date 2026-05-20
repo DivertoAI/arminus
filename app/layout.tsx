@@ -89,16 +89,20 @@ function Footer() {
         </div>
         <div className="footer-column">
           <h3>Company</h3>
-          <Link href="/about">About</Link>
+          <Link href="/about">About Us</Link>
           <Link href="/careers">Careers</Link>
+          <Link href="/nubo">Nubo (NNP)</Link>
           <Link href="/contact">Contact</Link>
         </div>
         <div className="footer-column">
-          <h3>Services</h3>
-          <Link href="/services">Services</Link>
-          <Link href="/services/hr-staffing">HR Staffing</Link>
+          <h3>Solutions</h3>
+          <Link href="/services">All Solutions</Link>
+          <Link href="/services/permanent-placement">Permanent Placement</Link>
+          <Link href="/services/flexible-staffing">Flexible Staffing</Link>
+          <Link href="/services/contract-to-hire">Contract-to-Hire</Link>
+          <Link href="/services/gov-tech">Gov-Tech</Link>
           <Link href="/services/executive-search">Executive Search</Link>
-          <Link href="/services/training">Training</Link>
+          <Link href="/career-labs">Career Labs</Link>
         </div>
         <div className="footer-column">
           <h3>Contact</h3>

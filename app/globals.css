@@ -132,12 +132,12 @@ img {
   align-items: center;
   justify-content: center;
   min-height: 42px;
-  padding: 0 16px;
+  padding: 0 14px;
   border-radius: 999px;
-  color: var(--navy);
-  font-size: 1.01rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  color: #1a2540;
+  font-size: 0.925rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   transition: color 180ms ease, background-color 180ms ease;
 }
 
@@ -145,23 +145,27 @@ img {
   content: "";
   position: absolute;
   left: 50%;
-  bottom: 4px;
+  bottom: 5px;
   width: 0;
-  height: 2px;
+  height: 2.5px;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--blue), var(--red));
   transform: translateX(-50%);
-  transition: width 180ms ease;
+  transition: width 220ms ease;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+  color: var(--blue);
+  background: rgba(27, 92, 255, 0.06);
+}
+
 .nav-link-active {
   color: var(--blue);
-  background: rgba(27, 92, 255, 0.035);
+  background: rgba(27, 92, 255, 0.08);
 }
 
 .nav-link-active::after {
-  width: 28px;
+  width: 36px;
 }
 
 .nav-actions {
@@ -1895,14 +1899,14 @@ img {
   overflow: hidden;
   z-index: 1;
   isolation: isolate;
-  min-height: 560px;
-  max-height: 680px;
-  height: calc(100vh - 68px);
+  min-height: 420px;
+  max-height: 520px;
+  height: clamp(420px, 56vh, 520px);
 }
 
 .careers-hero .hero-v2-copy {
-  padding-top: 40px;
-  padding-bottom: 200px;
+  padding-top: 32px;
+  padding-bottom: 48px;
 }
 
 /* Ribbon same position as homepage — clipped by overflow:hidden,
@@ -2625,4 +2629,224 @@ img {
 
 .card-revealed {
   animation: cardReveal 0.5s ease forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PRD ADDITIONS — Pricing, Resume Score, NNP CTA, Profiles
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Pricing cards ── */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  align-items: stretch;
+}
+.pricing-card {
+  background: #fff;
+  border: 1.5px solid rgba(27,60,138,0.1);
+  border-radius: 20px;
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--card-shadow-rest);
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+.pricing-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-4px);
+}
+.pricing-card-featured {
+  background: linear-gradient(135deg, #1b4fd8 0%, #2563eb 60%, #3b82f6 100%);
+  color: #fff;
+  border-color: transparent;
+  transform: scale(1.04);
+  box-shadow: 0 24px 60px rgba(27,79,216,0.3);
+}
+.pricing-card-featured:hover {
+  transform: scale(1.04) translateY(-4px);
+}
+.pricing-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  width: fit-content;
+}
+.pricing-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: inherit;
+}
+.pricing-price {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: inherit;
+  margin: 8px 0 4px;
+}
+.pricing-price-muted {
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.7;
+}
+.pricing-items {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+.pricing-items li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.pricing-items li::before {
+  content: "✓";
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(27,79,216,0.1);
+  color: #1b4fd8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pricing-card-featured .pricing-items li::before {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+/* ── Resume score upload area ── */
+.resume-score-box {
+  border: 2px dashed rgba(27,79,216,0.3);
+  border-radius: 20px;
+  padding: 48px 32px;
+  text-align: center;
+  background: #f8faff;
+  transition: border-color 200ms ease, background 200ms ease;
+  cursor: pointer;
+}
+.resume-score-box:hover {
+  border-color: rgba(27,79,216,0.6);
+  background: #f0f5ff;
+}
+
+/* ── NNP CTA block ── */
+.nnp-cta {
+  background: linear-gradient(135deg, #1b4fd8 0%, #1e3a8a 100%);
+  border-radius: 28px;
+  padding: 64px 48px;
+  text-align: center;
+  color: #fff;
+  margin: 40px 0;
+}
+.nnp-cta h2 {
+  font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.nnp-cta p {
+  font-size: 1.05rem;
+  opacity: 0.85;
+  max-width: 540px;
+  margin: 0 auto 28px;
+}
+
+/* ── Management profile cards ── */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 40px;
+}
+.profile-card {
+  background: #fff;
+  border: 1.5px solid rgba(27,60,138,0.08);
+  border-radius: 20px;
+  padding: 36px 28px;
+  box-shadow: var(--card-shadow-rest);
+}
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1b4fd8, #2563eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  margin-bottom: 20px;
+}
+.profile-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0c183a;
+  margin-bottom: 2px;
+}
+.profile-role {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #1b4fd8;
+  margin-bottom: 14px;
+}
+.profile-bio {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin-bottom: 12px;
+}
+.profile-edu {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* ── grid-2 utility (reused in Career Labs) ── */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+
+/* ── Responsive overrides ── */
+@media (max-width: 860px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .pricing-card-featured {
+    transform: scale(1);
+  }
+  .pricing-card-featured:hover {
+    transform: translateY(-4px);
+  }
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .nnp-cta {
+    padding: 44px 24px;
+  }
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
 }

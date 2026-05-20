@@ -13,11 +13,13 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Home",       href: "/" },
-  { label: "About Us",  href: "/about" },
-  { label: "Services",  href: "/services" },
-  { label: "Careers",   href: "/careers" },
-  { label: "Contact Us",href: "/contact" },
+  { label: "Home",        href: "/" },
+  { label: "About Us",   href: "/about" },
+  { label: "Solutions",  href: "/services" },
+  { label: "Career Labs",href: "/career-labs" },
+  { label: "Nubo",       href: "/nubo" },
+  { label: "Careers",    href: "/careers" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 function isActive(pathname: string, href: string) {
