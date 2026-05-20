@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight, Server, Zap, GitBranch, Database, TrendingDown, BrainCircuit, Shield } from "lucide-react";
 import { Reveal } from "@/components/Motion";
 import { withSiteBasePath } from "@/lib/site-path";
-import { ContactHeroLottie } from "@/components/ContactHeroLottie";
+import { NuboHeroLottie } from "@/components/NuboHeroLottie";
 
 export const metadata: Metadata = {
   title: "Nubo Native Platform — Private Cloud Solutions",
@@ -97,7 +97,7 @@ export default function NuboPage() {
           />
           <div className="hero-v2-photo-wrap">
             <span className="hero-v2-blob" aria-hidden="true" />
-            <ContactHeroLottie />
+            <NuboHeroLottie />
           </div>
           <div className="careers-side-cards">
             {sideCards.map((card) => (

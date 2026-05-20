@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight, FileText, Mic2, Upload } from "lucide-react";
 import { Reveal } from "@/components/Motion";
 import { withSiteBasePath } from "@/lib/site-path";
-import { ServicesHeroLottie } from "@/components/ServicesHeroLottie";
+import { CareerLabsHeroLottie } from "@/components/CareerLabsHeroLottie";
 
 export const metadata: Metadata = {
   title: "Career Labs",
@@ -56,7 +56,7 @@ export default function CareerLabsPage() {
           />
           <div className="hero-v2-photo-wrap">
             <span className="hero-v2-blob" aria-hidden="true" />
-            <ServicesHeroLottie />
+            <CareerLabsHeroLottie />
           </div>
           <div className="careers-side-cards">
             {sideCards.map((card) => (
