@@ -2134,7 +2134,7 @@ img {
 /* ── SEARCH BAR ── */
 .csearch-wrap {
   padding: 0 max(24px, calc((100vw - 1180px) / 2));
-  margin-top: -28px;
+  margin-top: 32px;
   position: relative;
   z-index: 30;
 }
