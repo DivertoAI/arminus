@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { Search, MapPin, Clock, ArrowRight, ChevronLeft, ChevronRight, Users, Star, BarChart3, RotateCcw } from "lucide-react";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { Search, MapPin, Clock, ArrowRight, ChevronLeft, ChevronRight, Users, Star, BarChart3, RotateCcw, X, Briefcase, Globe, Tag, Mail } from "lucide-react";
 
 /* ── Types ── */
 interface Job {
@@ -64,6 +64,57 @@ function dedupe(jobs: Job[]): Job[] {
   return jobs.filter((j) => (seen.has(j.id) ? false : seen.add(j.id) && true));
 }
 
+/* ── Job Detail Modal ── */
+function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  const title = job.public_job_title || job.position_title;
+  const location = [formatCity(job.city), job.state, job.country].filter(Boolean).join(", ");
+  const subject = encodeURIComponent(`Application: ${title}`);
+  const body = encodeURIComponent(`Hi,\n\nI'd like to apply for the ${title} position (Job ID: ${job.job_id}) based in ${location}.\n\nPlease find my resume attached.\n\nRegards,`);
+
+  return (
+    <div className="cmodal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label={title}>
+      <div className="cmodal" onClick={e => e.stopPropagation()}>
+        <div className="cmodal-header">
+          <div>
+            <div className="cmodal-title">{title}</div>
+            <div className="cmodal-meta">
+              {location && <span><MapPin size={13} /> {location}</span>}
+              {job.tax_terms && <span><Tag size={13} /> {job.tax_terms}</span>}
+              {job.industry && <span><Briefcase size={13} /> {job.industry}</span>}
+              {job.remote_opportunities === 1 && <span><Globe size={13} /> Remote</span>}
+              <span><Clock size={13} /> Posted {timeAgo(job.created)}</span>
+            </div>
+          </div>
+          <button className="cmodal-close" onClick={onClose} aria-label="Close"><X size={22} /></button>
+        </div>
+        <div
+          className="cmodal-body"
+          dangerouslySetInnerHTML={{ __html: job.public_job_desc || "<p>No description available.</p>" }}
+        />
+        <div className="cmodal-footer">
+          <a
+            className="button button-primary"
+            href={`mailto:contactus@arminus.com?subject=${subject}&body=${body}`}
+          >
+            <Mail size={16} /> Apply via Email
+          </a>
+          <button className="button button-outline" onClick={onClose}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function CareersClient() {
   const [allJobs, setAllJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,6 +123,8 @@ export function CareersClient() {
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [pendingKeyword, setPendingKeyword] = useState("");
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const closeModal = useCallback(() => setSelectedJob(null), []);
 
   /* Fetch page 1 immediately, then load remaining pages in the background */
   useEffect(() => {
@@ -279,14 +332,12 @@ export function CareersClient() {
                     </span>
                   </div>
                   <p className="cjob-desc">{stripHtml(job.public_job_desc).slice(0, 140)}…</p>
-                  <a
+                  <button
                     className="cjob-apply"
-                    href={job.apply_job}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    onClick={() => setSelectedJob(job)}
                   >
                     View Details <ArrowRight size={14} />
-                  </a>
+                  </button>
                 </div>
               </article>
             ))}
@@ -299,6 +350,7 @@ export function CareersClient() {
           </div>
         )}
       </div>
+      {selectedJob && <JobModal job={selectedJob} onClose={closeModal} />}
     </>
   );
 }
