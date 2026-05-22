@@ -2988,3 +2988,14 @@ img {
     flex-direction: column;
   }
 }
+
+/* ── Ceipal Widget wrapper ── */
+.ceipal-widget-wrap {
+  max-width: 1180px;
+  margin: 40px auto 60px;
+  padding: 0 20px;
+}
+
+.ceipal-widget-wrap #example-widget-container {
+  width: 100%;
+}

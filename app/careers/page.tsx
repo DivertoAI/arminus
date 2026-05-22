@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Users2, Sparkles, BarChart3, ArrowRight } from "lucide-react";
 import { withSiteBasePath } from "@/lib/site-path";
-import { CareersClient } from "@/components/CareersClient";
+import { CeipalWidget } from "@/components/CeipalWidget";
 import { CareersHeroLottie } from "@/components/CareersHeroLottie";
 
 export const metadata: Metadata = {
@@ -103,7 +103,7 @@ export default function CareersPage() {
       </section>
 
       {/* ══════════════════ SEARCH + JOBS ══════════════════ */}
-      <CareersClient />
+      <CeipalWidget />
 
     </main>
   );
