@@ -229,6 +229,9 @@ export default function AboutPage() {
                   Tata Motors, Mahindra, and HAL. He oversees Gurugram and NCR operations with a technology-first
                   approach.
                 </p>
+                <p className="profile-edu">
+                  B.Tech · IIT Delhi · Masters, University of Waterloo, Canada
+                </p>
               </div>
             </Reveal>
 
