@@ -1460,17 +1460,28 @@ a.bcc-val:hover { color: var(--peach); }
   margin-bottom: 28px;
 }
 
-/* full-bleed auto-scrolling marquee */
+/* full-bleed auto-scrolling + drag-to-scroll marquee */
 .marquee {
   position: relative; overflow: hidden;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
           mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
 }
+.marquee-draggable {
+  overflow-x: scroll;
+  cursor: grab;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  user-select: none;
+}
+.marquee-draggable::-webkit-scrollbar { display: none; }
+.marquee-draggable:active { cursor: grabbing; }
 .marquee-track {
   display: flex; width: max-content; gap: 14px;
   animation: marquee-scroll 34s linear infinite;
 }
 .marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-draggable:active .marquee-track { animation-play-state: paused; }
 @keyframes marquee-scroll {
   from { transform: translateX(0); }
   to   { transform: translateX(calc(-50% - 7px)); }

@@ -250,13 +250,43 @@ function TrustedBy() {
     { n: "QCI",      sub: "Quality Council of India" },
     { n: "ICC",      sub: "Indian Chamber of Commerce" },
   ];
-  const loop = [...partners, ...partners];
+  const loop = [...partners, ...partners, ...partners];
+  const trackRef = useRef(null);
+  const drag = useRef({ active: false, startX: 0, scrollLeft: 0, paused: false });
+
+  const onDown = (e) => {
+    const el = trackRef.current;
+    if (!el) return;
+    drag.current = { active: true, startX: (e.touches ? e.touches[0].pageX : e.pageX) - el.offsetLeft, scrollLeft: el.scrollLeft, paused: true };
+    el.style.animationPlayState = "paused";
+    el.style.cursor = "grabbing";
+  };
+  const onUp = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    drag.current.active = false;
+    el.style.animationPlayState = "running";
+    el.style.cursor = "grab";
+  };
+  const onMove = (e) => {
+    if (!drag.current.active) return;
+    e.preventDefault();
+    const el = trackRef.current;
+    const x = (e.touches ? e.touches[0].pageX : e.pageX) - el.offsetLeft;
+    const walk = (x - drag.current.startX) * 1.4;
+    el.scrollLeft = drag.current.scrollLeft - walk;
+  };
+
   return (
     <section className="trusted-section" aria-label="Trusted by">
       <div className="wrap">
         <div className="trusted-lbl-center">A trusted partner to</div>
       </div>
-      <div className="marquee">
+      <div className="marquee marquee-draggable"
+        ref={trackRef}
+        onMouseDown={onDown} onMouseUp={onUp} onMouseLeave={onUp} onMouseMove={onMove}
+        onTouchStart={onDown} onTouchEnd={onUp} onTouchMove={onMove}
+      >
         <div className="marquee-track">
           {loop.map((p, i) => (
             <div className="trusted-card" key={i} aria-hidden={i >= partners.length}>
