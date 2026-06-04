@@ -1,61 +1,95 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { withSiteBasePath } from "@/lib/site-path";
 
 const CLIENTS = [
-  { name: "Cognizant",          logo: "/logos/cognizant.svg"      },
-  { name: "Capgemini",          logo: "/logos/capgemini.svg"      },
-  { name: "Deloitte",           logo: "/logos/deloitte.svg"       },
-  { name: "PwC",                logo: "/logos/pwc.svg"            },
-  { name: "Indorama",           logo: "/logos/indorama.svg"       },
-  { name: "Hyland",             logo: "/logos/hyland.svg"         },
-  { name: "Xerox",              logo: "/logos/xerox.svg"          },
-  { name: "Lexmark",            logo: "/logos/lexmark.svg"        },
-  { name: "LabVantage",         logo: "/logos/labvantage.svg"     },
-  { name: "UST Global",         logo: "/logos/ust.svg"            },
-  { name: "QCI",                logo: "/logos/qci.svg"            },
-  { name: "Malomatia",          logo: "/logos/malomatia.svg"      },
-  { name: "First American",     logo: "/logos/firstamerican.svg"  },
+  { name: "Cognizant",       logo: "/logos/cognizant.svg"      },
+  { name: "Capgemini",       logo: "/logos/capgemini.svg"      },
+  { name: "Deloitte",        logo: "/logos/deloitte.svg"       },
+  { name: "PwC",             logo: "/logos/pwc.svg"            },
+  { name: "Indorama",        logo: "/logos/indorama.svg"       },
+  { name: "Hyland",          logo: "/logos/hyland.svg"         },
+  { name: "Xerox",           logo: "/logos/xerox.svg"          },
+  { name: "Lexmark",         logo: "/logos/lexmark.svg"        },
+  { name: "LabVantage",      logo: "/logos/labvantage.svg"     },
+  { name: "UST Global",      logo: "/logos/ust.svg"            },
+  { name: "QCI",             logo: "/logos/qci.svg"            },
+  { name: "Malomatia",       logo: "/logos/malomatia.svg"      },
+  { name: "First American",  logo: "/logos/firstamerican.svg"  },
 ];
 
-// Triple for seamless loop
-const ITEMS = [...CLIENTS, ...CLIENTS, ...CLIENTS];
+// Clone 4× for seamless infinite loop
+const ITEMS = [...CLIENTS, ...CLIENTS, ...CLIENTS, ...CLIENTS];
+
+const SPEED = 0.6; // px per frame
 
 export function TrustedBy() {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
+  const wrapRef   = useRef<HTMLDivElement>(null);
+  const rafRef    = useRef<number>(0);
+  const dragging  = useRef(false);
+  const startX    = useRef(0);
+  const startScroll = useRef(0);
+  const paused    = useRef(false);
 
+  /* ── Auto-scroll via rAF ── */
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+
+    // Start in the middle clone so we can scroll both ways
+    el.scrollLeft = el.scrollWidth / 4;
+
+    function tick() {
+      if (!el) return;
+      if (!dragging.current && !paused.current) {
+        el.scrollLeft += SPEED;
+        // Seamless loop: when we reach 3/4 through, jump back to 1/4
+        const quarter = el.scrollWidth / 4;
+        if (el.scrollLeft >= quarter * 3) el.scrollLeft = quarter;
+        if (el.scrollLeft <= 0)           el.scrollLeft = quarter * 2;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    }
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
+
+  /* ── Mouse drag ── */
   const onMouseDown = (e: React.MouseEvent) => {
-    if (!trackRef.current) return;
-    isDragging.current = true;
-    startX.current = e.pageX - trackRef.current.offsetLeft;
-    scrollLeft.current = trackRef.current.scrollLeft;
-    trackRef.current.style.animationPlayState = "paused";
-    trackRef.current.style.cursor = "grabbing";
-  };
-  const onMouseUp = () => {
-    isDragging.current = false;
-    if (trackRef.current) { trackRef.current.style.animationPlayState = "running"; trackRef.current.style.cursor = "grab"; }
+    const el = wrapRef.current;
+    if (!el) return;
+    dragging.current = true;
+    startX.current    = e.pageX;
+    startScroll.current = el.scrollLeft;
+    el.style.cursor  = "grabbing";
   };
   const onMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging.current || !trackRef.current) return;
+    if (!dragging.current || !wrapRef.current) return;
     e.preventDefault();
-    const x = e.pageX - trackRef.current.offsetLeft;
-    trackRef.current.scrollLeft = scrollLeft.current - (x - startX.current) * 1.5;
+    wrapRef.current.scrollLeft = startScroll.current - (e.pageX - startX.current);
   };
+  const onMouseUp = () => {
+    dragging.current = false;
+    if (wrapRef.current) wrapRef.current.style.cursor = "grab";
+  };
+
+  /* ── Touch drag ── */
   const onTouchStart = (e: React.TouchEvent) => {
-    if (!trackRef.current) return;
-    startX.current = e.touches[0].pageX - trackRef.current.offsetLeft;
-    scrollLeft.current = trackRef.current.scrollLeft;
+    const el = wrapRef.current;
+    if (!el) return;
+    startX.current      = e.touches[0].pageX;
+    startScroll.current = el.scrollLeft;
   };
   const onTouchMove = (e: React.TouchEvent) => {
-    if (!trackRef.current) return;
-    const x = e.touches[0].pageX - trackRef.current.offsetLeft;
-    trackRef.current.scrollLeft = scrollLeft.current - (x - startX.current) * 1.5;
+    if (!wrapRef.current) return;
+    wrapRef.current.scrollLeft = startScroll.current - (e.touches[0].pageX - startX.current);
   };
+
+  /* ── Hover: pause auto-scroll ── */
+  const onMouseEnter = () => { paused.current = true; };
+  const onMouseLeave = () => { paused.current = false; dragging.current = false; if (wrapRef.current) wrapRef.current.style.cursor = "grab"; };
 
   return (
     <section className="clients-section">
@@ -63,18 +97,19 @@ export function TrustedBy() {
         <p className="clients-label">Trusted by India&apos;s leading organisations</p>
       </div>
       <div
-        className="clients-track-wrap marquee-draggable"
-        ref={trackRef}
+        ref={wrapRef}
+        className="clients-track-wrap"
         onMouseDown={onMouseDown}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseUp}
         onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseLeave}
+        onMouseEnter={onMouseEnter}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
       >
         <div className="clients-track">
           {ITEMS.map((c, i) => (
-            <div className="client-logo-card" key={i} aria-hidden={i >= CLIENTS.length}>
+            <div className="client-logo-card" key={i}>
               <Image
                 src={withSiteBasePath(c.logo)}
                 alt={c.name}
@@ -82,6 +117,7 @@ export function TrustedBy() {
                 height={48}
                 className="client-logo-img"
                 unoptimized
+                draggable={false}
               />
             </div>
           ))}

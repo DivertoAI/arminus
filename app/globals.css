@@ -1051,19 +1051,18 @@ a.co-val:hover { color: var(--blue); }
   cursor: grab;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
-          mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  user-select: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
 }
 .clients-track-wrap::-webkit-scrollbar { display: none; }
 .clients-track {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   width: max-content;
-  padding: 4px 0;
-  animation: marquee-scroll 40s linear infinite;
+  padding: 8px 0;
 }
-.clients-track-wrap:hover .clients-track { animation-play-state: paused; }
 
 .client-logo-card {
   flex: 0 0 auto;
