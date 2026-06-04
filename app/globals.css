@@ -1024,3 +1024,8 @@ a.co-val:hover { color: var(--blue); }
   transition: color .15s, background .15s;
 }
 .jm-close-btn:hover { color: var(--ink); background: var(--bg-2); }
+
+.jm-loading {
+  display: flex; align-items: center; gap: 12px;
+  padding: 32px 0; color: var(--ink-3); font-size: 0.9rem;
+}

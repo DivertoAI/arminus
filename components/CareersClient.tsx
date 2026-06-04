@@ -26,8 +26,10 @@ interface ApiResponse {
   results: Job[];
 }
 
-const API_BASE = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostings/";
-const CP_ID    = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
+const API_BASE   = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostings/";
+const CP_ID      = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
+const API_KEY    = "N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09";
+const DETAIL_URL = "https://careerapi.ceipal.com/careerPortalWidget/";
 const PAGE_SIZE = 12;
 
 /* ── Helpers ── */
@@ -52,12 +54,37 @@ function dedupe(jobs: Job[]) {
 
 /* ── Job Modal ── */
 function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
+  const [fullDesc, setFullDesc] = useState<string | null>(null);
+  const [descLoading, setDescLoading] = useState(true);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
     document.body.style.overflow = "hidden";
     return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
   }, [onClose]);
+
+  /* Fetch full description from widget detail endpoint */
+  useEffect(() => {
+    setDescLoading(true);
+    const url = `${DETAIL_URL}?job_id=${encodeURIComponent(job.id)}&apikey=${API_KEY}&cp_id=${CP_ID}&themeid=1`;
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.html) {
+          // Extract job description section from the full widget HTML
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data.html, "text/html");
+          // Try to find the description container
+          const descEl = doc.querySelector(".job-description, .jd-content, .job-desc, [class*='description'], .job-detail-body");
+          setFullDesc(descEl ? descEl.innerHTML : data.html);
+        } else {
+          setFullDesc(null);
+        }
+      })
+      .catch(() => setFullDesc(null))
+      .finally(() => setDescLoading(false));
+  }, [job.id]);
 
   const title    = job.public_job_title || job.position_title;
   const location = [formatCity(job.city), job.state, job.country].filter(Boolean).join(", ");
@@ -86,10 +113,19 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
         </div>
 
         {/* Body */}
-        <div
-          className="jm-body"
-          dangerouslySetInnerHTML={{ __html: job.public_job_desc || "<p>No description available.</p>" }}
-        />
+        <div className="jm-body">
+          {descLoading ? (
+            <div className="jm-loading">
+              <div className="jl-spinner" />
+              <span>Loading full description…</span>
+            </div>
+          ) : fullDesc ? (
+            <div dangerouslySetInnerHTML={{ __html: fullDesc }} />
+          ) : (
+            /* fallback: render what we have, converting plain text newlines to <br> */
+            <div dangerouslySetInnerHTML={{ __html: (job.public_job_desc || "No description available.").replace(/\r?\n/g, "<br>") }} />
+          )}
+        </div>
 
         {/* Footer */}
         <div className="jm-foot">
