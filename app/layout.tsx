@@ -1,151 +1,104 @@
 import type { Metadata } from "next";
-import { Manrope, Poppins } from "next/font/google";
-import Image from "next/image";
-import Link from "next/link";
+import { Manrope, Instrument_Serif } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/SiteHeader";
-import { ScrollManager } from "@/components/ScrollManager";
-import { withSiteBasePath } from "@/lib/site-path";
+import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
 
 const manrope = Manrope({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-manrope",
-  display: "swap"
+  display: "swap",
 });
 
-const poppins = Poppins({
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-poppins",
+  weight: ["400"],
+  style: ["italic"],
+  variable: "--font-instrument-serif",
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"]
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://arminus.co.in"),
   title: {
-    default: "Arminus | Staffing and Careers Portal",
-    template: "%s | Arminus"
+    default: "Arminus | IT Staffing & Recruitment Company India",
+    template: "%s | Arminus",
   },
   description:
-    "Arminus is a staffing and consulting company offering recruiting, contract staffing, executive search, and career support through a modern service portal.",
+    "Arminus is a pan-India IT staffing company with 17+ years experience. We deliver permanent placement, contract staffing, executive search & Gov-Tech deployments across Kolkata, Gurugram & Bangalore.",
   keywords: [
-    "IT staffing company in India",
+    "IT staffing company India",
     "IT recruitment agency India",
-    "contract staffing services",
-    "IT staff augmentation",
-    "permanent recruitment",
+    "permanent placement India",
+    "contract staffing services India",
     "executive search India",
-    "technology recruitment agency",
     "manpower consulting India",
-    "recruitment and staffing firm",
-    "Ceipal careers"
+    "IT staff augmentation",
+    "Gov-Tech staffing India",
+    "technology recruitment India",
+    "offshore staffing India",
   ],
-  alternates: {
-    canonical: "https://arminus.co.in"
-  },
   openGraph: {
-    title: "Arminus | Staffing and Careers Portal",
+    title: "Arminus | IT Staffing & Recruitment Company India",
     description:
-      "Contract staffing, permanent recruitment, executive search, IT staff augmentation, and workforce support across India, USA, and Europe.",
+      "Pan-India IT staffing company with 17+ years experience. Permanent placement, contract staffing, executive search & Gov-Tech deployments.",
     url: "https://arminus.co.in",
     siteName: "Arminus",
     type: "website",
-    images: [
-      {
-        url: "/arminus-logo.png",
-        width: 1580,
-        height: 996,
-        alt: "Arminus team work"
-      }
-    ]
+    images: [{ url: "/arminus-logo.png", width: 800, height: 400, alt: "Arminus Software" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arminus | Staffing and Careers Portal",
+    title: "Arminus | IT Staffing & Recruitment Company India",
     description:
-      "IT staffing, contract staffing, permanent recruitment, executive search, and workforce solutions for technology teams."
+      "Pan-India IT staffing company with 17+ years experience in permanent placement, contract staffing & executive search.",
   },
-  robots: {
-    index: true,
-    follow: true
-  }
+  robots: { index: true, follow: true },
 };
 
-function Footer() {
-  return (
-    <footer className="site-footer">
-      <div className="container footer-grid">
-        <div className="footer-brand">
-          <Link className="brand" href="/" aria-label="Arminus home">
-            <Image
-              className="brand-logo"
-              src={withSiteBasePath("/arminus-logo.png")}
-              alt="Arminus team work"
-              width={190}
-              height={120}
-            />
-          </Link>
-          <p>Modern staffing support across IT, telecom, automotive, insurance, and adjacent delivery teams.</p>
-        </div>
-        <div className="footer-column">
-          <h3>Company</h3>
-          <Link href="/about">About Us</Link>
-          <Link href="/careers">Careers</Link>
-          <Link href="/nubo">Nubo (NNP)</Link>
-          <Link href="/contact">Contact</Link>
-        </div>
-        <div className="footer-column">
-          <h3>Solutions</h3>
-          <Link href="/services">All Solutions</Link>
-          <Link href="/services/permanent-placement">Permanent Placement</Link>
-          <Link href="/services/flexible-staffing">Flexible Staffing</Link>
-          <Link href="/services/contract-to-hire">Contract-to-Hire</Link>
-          <Link href="/services/gov-tech">Gov-Tech</Link>
-          <Link href="/services/executive-search">Executive Search</Link>
-          <Link href="/career-labs">Career Labs</Link>
-        </div>
-        <div className="footer-column">
-          <h3>Contact</h3>
-          <a href="mailto:contactus@arminus.com">contactus@arminus.com</a>
-          <a href="tel:+913340601004">IND +91 33 40601004</a>
-          <a href="tel:+17324819410">USA +1 732 481 9410</a>
-        </div>
-      </div>
-      <div className="container footer-bottom">© {new Date().getFullYear()} Arminus Software Pvt Ltd.</div>
-    </footer>
-  );
-}
-
-export default function RootLayout({
-  children
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "StaffingAgency",
-    name: "Arminus Software Pvt Ltd",
-    url: "https://arminus.co.in",
-    email: "contactus@arminus.com",
-    telephone: ["+91 33 40601004", "+1 732 481 9410"],
-    description:
-      "IT staffing company in India offering contract staffing, permanent recruitment, executive search, IT staff augmentation, and workforce solutions.",
-    sameAs: [
-      "https://www.linkedin.com/company/665038",
-      "https://www.facebook.com/ArminusSoftware",
-      "https://twitter.com/ArminusSoftware"
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "StaffingAgency",
+  name: "Arminus Software Pvt Ltd",
+  url: "https://arminus.co.in",
+  logo: "https://arminus.co.in/assets/arminus-logo.png",
+  description:
+    "Pan-India IT staffing company offering permanent placement, contract staffing, executive search, Gov-Tech deployments and Career Labs services.",
+  foundingDate: "2009",
+  numberOfEmployees: { "@type": "QuantitativeValue", value: 200 },
+  email: "contactus@arminus.com",
+  telephone: ["+91-33-40601004", "+1-732-481-9410"],
+  address: {
+    "@type": "PostalAddress",
+    streetAddress:
+      "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V",
+    addressLocality: "Kolkata",
+    postalCode: "700091",
+    addressCountry: "IN",
+  },
+  areaServed: ["India", "United States", "Europe"],
+  sameAs: [
+    "https://www.linkedin.com/company/665038",
+    "https://www.facebook.com/ArminusSoftware",
+    "https://twitter.com/ArminusSoftware",
+  ],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "IT Staffing Services",
+    itemListElement: [
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Permanent Placement" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Flexible Staffing & Compliance" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Contract-to-Hire" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Gov-Tech Staffing" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Executive Search" } },
     ],
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V",
-      addressLocality: "Kolkata",
-      postalCode: "700091",
-      addressCountry: "IN"
-    }
-  };
+  },
+};
 
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${manrope.variable} ${poppins.variable}`}>
+    <html lang="en" className={`${manrope.variable} ${instrumentSerif.variable}`}>
       <head>
         <link rel="preconnect" href="https://jobsapi.ceipal.com" />
         <link rel="preconnect" href="https://careerapi.ceipal.com" />
@@ -153,16 +106,13 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://careerapi.ceipal.com" />
       </head>
       <body>
-        <ScrollManager />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-        <div className="page-shell">
-          <SiteHeader />
-          {children}
-          <Footer />
-        </div>
+        <Nav />
+        {children}
+        <Footer stats />
       </body>
     </html>
   );

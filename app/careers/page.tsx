@@ -1,110 +1,84 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { Users2, Sparkles, BarChart3, ArrowRight } from "lucide-react";
-import { withSiteBasePath } from "@/lib/site-path";
+import { Reveal } from "@/components/Reveal";
+import { PageHero } from "@/components/PageHero";
+import { SectionHead } from "@/components/SectionHead";
+import { BigCTA } from "@/components/BigCTA";
 import { CeipalWidget } from "@/components/CeipalWidget";
-import { CareersHeroLottie } from "@/components/CareersHeroLottie";
 
 export const metadata: Metadata = {
-  title: "IT Jobs and Ceipal Careers",
+  title: "IT Jobs in India | Current Openings | Arminus Careers",
   description:
-    "Explore current IT jobs through the Arminus Ceipal careers portal and apply for contract, permanent, project, and staffing opportunities.",
-  alternates: { canonical: "https://arminus.co.in/careers" },
+    "Browse live IT job openings across permanent, contract, and Gov-Tech roles in Bangalore, Gurugram, Kolkata and remote. Engineering, product, telecom, and finance positions updated daily.",
   keywords: [
-    "Arminus careers", "Arminus jobs", "IT jobs India",
-    "contract IT jobs", "Ceipal careers", "submit resume IT staffing",
-  ]
+    "IT jobs India", "software jobs India", "engineering jobs India", "IT career opportunities",
+    "contract IT jobs India", "permanent IT jobs India", "technology jobs Bangalore",
+    "technology jobs Gurugram", "Gov-Tech jobs India", "IT jobs Kolkata",
+  ],
+  alternates: { canonical: "https://arminus.co.in/careers" },
 };
 
-const sideCards = [
-  { icon: Users2,   value: "52+",       label: "Open Roles",       tone: "blue" },
-  { icon: Sparkles, value: "Join Our",  label: "Team",             tone: "red"  },
-  { icon: BarChart3,value: "Build Your",label: "Career",           tone: "blue" },
-] as const;
+const culture = [
+  { m: "✦", t: "Honest conversations", d: "We'd rather tell you the hard truth than place you in the wrong role." },
+  { m: "◆", t: "AI as a teammate", d: "Generative AI does the paperwork so you can do the work that matters." },
+  { m: "▲", t: "Relationships over transactions", d: "Most of our candidates come back to us for their next move." },
+  { m: "●", t: "Pan-India impact", d: "From private fintech to national Gov-Tech programs across 10+ states." },
+];
 
 export default function CareersPage() {
   return (
     <main>
-
-      {/* ══════════════════ HERO ══════════════════ */}
-      <section className="hero-v2 careers-hero">
-
-        {/* LEFT ── copy */}
-        <div className="hero-v2-copy">
-          <h1 className="hero-v2-heading careers-heading">
-            Find current openings<br />
-            through the{" "}
-            <span className="hero-v2-blue">Arminus</span>
-            <br />
-            <span className="careers-gradient-text">careers portal.</span>
-          </h1>
-
-          <span className="hero-v2-redline" aria-hidden="true" />
-
-          <p className="hero-v2-sub">
-            Discover exciting career opportunities across project, contract, and
-            permanent roles. Apply easily through our portal and take the next
-            step in your career.
-          </p>
-
-          <div className="hero-v2-actions">
-            <Link className="button button-primary" href="mailto:contactus@arminus.com?subject=Resume%20submission">
-              Submit Resume <ArrowRight size={18} />
-            </Link>
-            <Link className="button button-outline" href="/contact">
-              Contact Us
-            </Link>
-          </div>
-
+      <PageHero
+        accent="blue"
+        eyebrow="Careers · Jobs Portal"
+        title={<>Find a role worth <span className="ital blue">moving for.</span></>}
+        lede="Live openings across our client network — from private fintech to national Gov-Tech programs. Every application is read by a human."
+      >
+        <div className="hero-cta" style={{ marginTop: "28px" }}>
+          <Link href="#openings" className="btn btn-blue">Browse open roles <span className="arrow">→</span></Link>
+          <Link href="/career-labs" className="btn btn-ghost">Prep with Career Labs</Link>
         </div>
+      </PageHero>
 
-        {/* RIGHT ── photo + floating cards */}
-        <div className="hero-v2-visual">
-          <Image
-            src={withSiteBasePath("/hero-art/dots-grid.png")}
-            alt="" aria-hidden="true"
-            width={220} height={180}
-            className="hero-v2-dotgrid"
+      {/* LIVE JOBS */}
+      <section className="section" id="openings">
+        <div className="wrap">
+          <SectionHead
+            eyebrow="Live openings"
+            title={<>Current roles across <span className="ital">our client network.</span></>}
+            sub="Positions updated daily — permanent, contract, and Gov-Tech roles across India."
           />
-
-          <div className="hero-v2-photo-wrap">
-            <span className="hero-v2-blob" aria-hidden="true" />
-            <CareersHeroLottie />
-          </div>
-
-          {/* Floating stat cards */}
-          <div className="careers-side-cards">
-            {sideCards.map((card) => {
-              const Icon = card.icon;
-              return (
-                <div className={`careers-side-card ${card.tone === "red" ? "careers-side-card-red" : ""}`} key={card.label}>
-                  <span className={`careers-side-icon ${card.tone === "red" ? "careers-side-icon-red" : ""}`}>
-                    <Icon size={20} strokeWidth={1.8} />
-                  </span>
-                  <div>
-                    <div className="careers-side-value">{card.value}</div>
-                    <div className="careers-side-label">{card.label}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <CeipalWidget />
         </div>
-
-        {/* Ribbon inside section — clipped naturally by section overflow:hidden */}
-        <Image
-          src={withSiteBasePath("/hero-art/bottom-ribbon.png")}
-          alt="" aria-hidden="true"
-          width={480} height={260}
-          className="hero-v2-swoosh careers-swoosh"
-        />
-
       </section>
 
-      {/* ══════════════════ SEARCH + JOBS ══════════════════ */}
-      <CeipalWidget />
+      {/* CULTURE */}
+      <section className="culture-section">
+        <div className="wrap">
+          <SectionHead
+            eyebrow="Why Arminus"
+            title={<>The kind of firm <span className="ital">people stay in touch with.</span></>}
+            sub="Most of our candidates come back to us for their next move. Here's why."
+            align="center"
+          />
+          <Reveal stagger className="culture-grid">
+            {culture.map(c => (
+              <div className="culture-card" key={c.t}>
+                <div className="culture-mark">{c.m}</div>
+                <h4>{c.t}</h4>
+                <p>{c.d}</p>
+              </div>
+            ))}
+          </Reveal>
+        </div>
+      </section>
 
+      <BigCTA
+        heading={<>Don&apos;t see the <span className="ital">right role?</span></>}
+        lede="Send us your résumé anyway. Most of our placements start with a conversation long before the perfect opening appears."
+        primary={{ href: "mailto:contactus@arminus.com?subject=Resume%20Submission", label: "Send your résumé" }}
+        secondary={{ href: "/career-labs", label: "Get interview-ready" }}
+      />
     </main>
   );
 }

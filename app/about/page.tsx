@@ -1,259 +1,166 @@
 import type { Metadata } from "next";
-import React from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { Award, Building2, Globe2, UsersRound, ArrowRight, Users, MapPin, Briefcase, User } from "lucide-react";
-import { Reveal } from "@/components/Motion";
-import { withSiteBasePath } from "@/lib/site-path";
+import { Reveal } from "@/components/Reveal";
+import { PageHero } from "@/components/PageHero";
+import { SectionHead } from "@/components/SectionHead";
+import { BigCTA } from "@/components/BigCTA";
 
 export const metadata: Metadata = {
-  title: "About Arminus Software",
+  title: "About Arminus | 17 Years IT Staffing Excellence | India",
   description:
-    "Learn about Arminus Software, a manpower consulting and IT staffing company serving IT, Telecom, Automotive, and Insurance hiring across India, USA, and Europe.",
-  alternates: { canonical: "https://arminus.co.in/about" },
+    "Founded in 2009, Arminus has placed 15,000+ professionals and served 175+ clients across IT, Telecom, Automotive & Government sectors. Leadership team from IIT Delhi, IIM Calcutta, Accenture & TCS.",
   keywords: [
-    "Arminus Software", "manpower consulting company", "IT staffing company India",
-    "technology recruitment agency", "global staffing company", "HR staffing firm"
-  ]
+    "Arminus Software about", "IT staffing company history India", "manpower consulting firm India",
+    "technology recruitment firm", "Pankaj Kathuria Arminus", "IIT IIM staffing company",
+    "IT staffing Kolkata", "recruitment agency Gurugram", "staffing company Bangalore",
+  ],
+  alternates: { canonical: "https://arminus.co.in/about" },
 };
 
-const sideCards = [
-  { icon: Briefcase, value: "15+",    label: "Years Active",   tone: "blue" },
-  { icon: Users,     value: "150+",   label: "Clients Served", tone: "red"  },
-  { icon: MapPin,    value: "3",      label: "Cities",         tone: "blue" },
-] as const;
-
-const footprint = [
-  [Building2, "Kolkata",      "Bengal Eco Intelligent Park, Sector V, Salt Lake City."],
-  [Building2, "Gurugram",     "JMD Megapolis, Sohna Road, Gurugram."],
-  [Building2, "Bengaluru",    "HSR Layout 5th Sector, Bengaluru."],
-  [Globe2,    "USA and Europe","Operations that support India, USA, and Europe-facing work."],
+const stats = [
+  { num: "17+", lbl: "Years of recruiting" },
+  { num: "175+", lbl: "Clients served" },
+  { num: "15K+", lbl: "Professionals placed" },
+  { num: "600K+", lbl: "Active talent pool" },
 ];
 
-const valueCards = [
-  [UsersRound, "Team-first delivery", "Delivery feels collaborative, responsive, and practical."],
-  [Award,      "Long-view support",   "The firm balances immediate hiring support with long-term trust."],
-  [Globe2,     "Cross-market reach",  "Content and structure support both local and global staffing conversations."],
+const offices = [
+  { tag: "Headquarters", name: "Kolkata", d: "Strategy, leadership and our central recruitment engine. Bengal Eco Intelligent Park, Sector V.", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=900&q=80&auto=format&fit=crop" },
+  { tag: "NCR Operations", name: "Gurugram", d: "Account operations and large-scale Gov-Tech deployments. JMD Megapolis, Sohna Road.", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80&auto=format&fit=crop" },
+  { tag: "Engineering Desk", name: "Bangalore", d: "IT and engineering specialist recruitment. HSR Layout 5th Sector.", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80&auto=format&fit=crop" },
+];
+
+const leaders = [
+  {
+    name: "Pankaj Kathuria", role: "MD & CEO", rev: false,
+    pull: "44 years architecting the global software landscape.",
+    bio: "A veteran architect of the global software landscape, Pankaj's expertise encompasses the entire lifecycle of technology delivery — from hands-on engineering to orchestrating mission-critical projects and establishing large-scale Offshore Development Centers (ODCs) for world-class enterprises. His portfolio includes leading multi-million dollar initiatives for organizations such as HBO Singapore and the Puerto Rico Telephone Company (USA).",
+    edu: [["Engineering", "Thapar Institute of Engineering & Technology"], ["Management", "IIM Calcutta"]],
+    img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80&auto=format&fit=crop&crop=faces",
+  },
+  {
+    name: "Ashok Jindal", role: "Director — Operations", rev: true,
+    pull: "40 years; the operational backbone of Arminus.",
+    bio: "Before joining forces with Pankaj in 2012, Ashok held senior leadership roles at Tata and PCL. A specialist in high-value account management, he has orchestrated multi-million dollar deals for industry leaders including Tata Motors, Mahindra, and HAL. He oversees Gurugram and NCR operations with a technology-first approach.",
+    edu: [["Engineering", "B.Tech, IIT Delhi"], ["Management", "Masters, University of Waterloo, Canada"]],
+    img: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=600&q=80&auto=format&fit=crop&crop=faces",
+  },
+  {
+    name: "Tania Kathuria", role: "Director — Strategy & Growth", rev: false,
+    pull: "Building scalable revenue engines and global partnerships.",
+    bio: "A growth-focused leader, Tania spearheads strategic direction and international expansion at Arminus. Her background includes key positions at Accenture and Tata Consultancy Services (TCS), where she led go-to-market initiatives across global markets.",
+    edu: [["Education", "MBA, NMIMS Mumbai"], ["Leads", "Strategy & global growth"]],
+    img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80&auto=format&fit=crop&crop=faces",
+  },
 ];
 
 export default function AboutPage() {
   return (
     <main>
-      <section className="hero-v2 inner-hero about-layer-fix">
+      <PageHero
+        accent="blue"
+        eyebrow="About Arminus"
+        title={<>Empowering innovation through <span className="ital blue">top talent.</span></>}
+        lede="Nearly two decades of specialist recruitment, a proprietary talent database, and a leadership team with deep pedigree across global delivery and large-account operations."
+      />
 
-        <div className="hero-v2-copy">
-          <h1 className="hero-v2-heading inner-heading">
-            We are <span className="hero-v2-blue">Arminus</span> —<br />
-            <span className="inner-gradient-text">your IT staffing partner.</span>
-          </h1>
-
-          <span className="hero-v2-redline" aria-hidden="true" />
-
-          <p className="hero-v2-sub">
-            Two decades of placing the right talent across contract, permanent, and executive
-            roles in India and the USA.
-          </p>
-
-          <div className="hero-v2-actions">
-            <Link className="button button-primary" href="/services">
-              Our Services <ArrowRight size={18} />
-            </Link>
-            <Link className="button button-outline" href="/contact">
-              Contact Us
-            </Link>
+      {/* MISSION */}
+      <section className="about-mission">
+        <div className="wrap">
+          <div className="about-mission-grid">
+            <Reveal>
+              <div>
+                <div className="sec-eyebrow"><span className="ln" /> Our philosophy</div>
+                <h2 className="sec-title">The Power of <span className="ital">Us.</span></h2>
+                <p className="sec-sub" style={{ maxWidth: "56ch", marginTop: "18px" }}>
+                  The &lsquo;Power of Us&rsquo; is a fusion of technology and empathy. By empowering our teams with
+                  generative AI tools, we spend less time on paperwork and more time on what matters —
+                  building relationships with India&apos;s top professionals.
+                </p>
+                <div className="pow-tagline" style={{ marginTop: "24px" }}>
+                  <span className="pow-tagline-pre">Powered by Humans.</span>
+                  <span className="pow-tagline-post">Accelerated by AI.</span>
+                </div>
+              </div>
+            </Reveal>
+            <Reveal>
+              <div className="about-stats">
+                {stats.map(s => (
+                  <div className="ast" key={s.lbl}>
+                    <div className="ast-num">{s.num}</div>
+                    <div className="ast-lbl">{s.lbl}</div>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
           </div>
         </div>
+      </section>
 
-        <div className="hero-v2-visual">
-          <Image
-            src={withSiteBasePath("/hero-art/dots-grid.png")}
-            alt="" aria-hidden="true"
-            width={220} height={180}
-            className="hero-v2-dotgrid"
+      {/* OFFICES */}
+      <section className="section tint">
+        <div className="wrap">
+          <SectionHead
+            eyebrow="Where we are"
+            title={<>Three cities. <span className="ital">One team.</span></>}
+            sub="A pan-India footprint that puts our recruiters close to both clients and talent."
           />
-          <div className="hero-v2-photo-wrap">
-            <span className="hero-v2-blob" aria-hidden="true" />
-            <Image
-              src={withSiteBasePath("/team-banner.jpg")}
-              alt="Arminus team collaborating"
-              fill priority
-              sizes="52vw"
-              className="hero-v2-photo"
-            />
-          </div>
-          <div className="careers-side-cards">
-            {sideCards.map((card) => {
-              const Icon = card.icon;
-              return (
-                <div className={`careers-side-card ${card.tone === "red" ? "careers-side-card-red" : ""}`} key={card.label}>
-                  <span className={`careers-side-icon ${card.tone === "red" ? "careers-side-icon-red" : ""}`}>
-                    <Icon size={20} strokeWidth={1.8} />
-                  </span>
-                  <div>
-                    <div className="careers-side-value">{card.value}</div>
-                    <div className="careers-side-label">{card.label}</div>
+          <Reveal stagger className="office-grid">
+            {offices.map(o => (
+              <article className="office-card" key={o.name}>
+                <div className="office-photo">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={o.img} alt={o.name} />
+                  <div className="ovl" />
+                  <span className="office-tag">{o.tag}</span>
+                </div>
+                <div className="office-body"><h3>{o.name}</h3><p>{o.d}</p></div>
+              </article>
+            ))}
+          </Reveal>
+        </div>
+      </section>
+
+      {/* LEADERS */}
+      <section className="leaders-section" id="leadership">
+        <div className="wrap">
+          <SectionHead
+            eyebrow="Leadership"
+            title={<>Built by people who&apos;ve <span className="ital">done it before.</span></>}
+            sub="Three leaders. 84+ combined years of building global delivery, large-account operations, and revenue engines that scale across markets."
+          />
+          <div className="leaders-stack">
+            {leaders.map(l => (
+              <Reveal key={l.name}>
+                <div className={`leader-grid ${l.rev ? "rev" : ""}`}>
+                  <div className="leader-photo">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={l.img} alt={l.name} />
+                    <span className="leader-photo-tag">{l.role}</span>
+                  </div>
+                  <div className="leader-text">
+                    <div className="leader-name">{l.name}</div>
+                    <p className="leader-pull">{l.pull}</p>
+                    <p className="leader-bio">{l.bio}</p>
+                    <div className="leader-edu">
+                      {l.edu.map(e => (
+                        <div key={e[0]}><div className="ek">{e[0]}</div><div className="ed">{e[1]}</div></div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <Image
-          src={withSiteBasePath("/hero-art/bottom-ribbon.png")}
-          alt="" aria-hidden="true"
-          width={480} height={260}
-          className="hero-v2-swoosh inner-swoosh"
-        />
-      </section>
-
-      <section className="section-tight">
-        <div className="container">
-          <Reveal>
-            <div className="info-band">
-              <div className="contact-card">
-                <h3>Founded in 2009</h3>
-                <p>A staffing practice shaped around the realities of tech-led hiring.</p>
-              </div>
-              <div className="contact-card">
-                <h3>Multi-location team</h3>
-                <p>Delivery support spans Kolkata, Gurugram, Bengaluru, and offshore-facing work.</p>
-              </div>
-              <div className="contact-card">
-                <h3>Business focus</h3>
-                <p>IT, Telecom, Automotive, Insurance, and adjacent enterprise hiring needs.</p>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="section-soft">
-        <div className="container split-grid">
-          <Reveal>
-            <div>
-              <span className="eyebrow">Story</span>
-              <h2 className="section-title">Collective strength, practical delivery.</h2>
-              <p className="section-copy">
-                The original "Power of Us" idea becomes a cleaner visual and editorial system here: the team, the
-                process, and the service promise work together instead of competing for attention.
-              </p>
-              <p className="section-copy">
-                That approach keeps the brand readable while still supporting actual hiring conversations, candidate
-                support, and service discovery.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="contact-meta-grid">
-              {valueCards.map(([Icon, title, copy]) => {
-                const TypedIcon = Icon as React.ElementType;
-                return (
-                  <div className="detail-card" key={title as string}>
-                    <span className="icon-badge" aria-hidden="true">
-                      <TypedIcon size={22} strokeWidth={2.1} />
-                    </span>
-                    <h3>{title as string}</h3>
-                    <p>{copy as string}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <Reveal>
-            <span className="eyebrow">Operating Footprint</span>
-            <h2 className="section-title">A staffing partner across business regions.</h2>
-          </Reveal>
-          <div className="grid-4" style={{ marginTop: 34 }}>
-            {footprint.map(([Icon, title, copy], index) => {
-              const TypedIcon = Icon as React.ElementType;
-              return (
-                <Reveal delay={index * 0.05} key={title as string}>
-                  <article className="feature-card">
-                    <span className="feature-card-icon" aria-hidden="true">
-                      <TypedIcon size={22} strokeWidth={2.1} />
-                    </span>
-                    <h3>{title as string}</h3>
-                    <p>{copy as string}</p>
-                  </article>
-                </Reveal>
-              );
-            })}
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
-          <Reveal>
-            <span className="eyebrow">Leadership</span>
-            <h2 className="section-title">The team behind Arminus.</h2>
-          </Reveal>
-          <div className="profile-grid">
-            <Reveal delay={0.04}>
-              <div className="profile-card">
-                <div className="profile-avatar" aria-hidden="true">
-                  <User size={28} strokeWidth={1.8} />
-                </div>
-                <div className="profile-name">Pankaj Kathuria</div>
-                <div className="profile-role">MD &amp; CEO</div>
-                <p className="profile-bio">
-                  With a distinguished career spanning 44 years, Pankaj is a veteran architect of the global software
-                  landscape. His expertise encompasses the entire lifecycle of technology delivery — from hands-on
-                  engineering to orchestrating mission-critical projects and establishing large-scale Offshore
-                  Development Centers (ODCs) for world-class enterprises. His portfolio includes leading multi-million
-                  dollar initiatives for organizations such as HBO Singapore and Puerto Rico Telephone Company (USA).
-                </p>
-                <p className="profile-edu">
-                  Thapar Institute of Engineering &amp; Technology (Engineering) · IIM Calcutta (Management)
-                </p>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.08}>
-              <div className="profile-card">
-                <div className="profile-avatar" aria-hidden="true">
-                  <User size={28} strokeWidth={1.8} />
-                </div>
-                <div className="profile-name">Ashok Jindal</div>
-                <div className="profile-role">Director, Operations</div>
-                <p className="profile-bio">
-                  With 40 years of experience, Ashok is the operational backbone of Arminus. Before joining forces
-                  with Pankaj in 2012, he held senior leadership roles at Tata and PCL. A specialist in high-value
-                  account management, Ashok has orchestrated multi-million dollar deals for industry leaders including
-                  Tata Motors, Mahindra, and HAL. He oversees Gurugram and NCR operations with a technology-first
-                  approach.
-                </p>
-                <p className="profile-edu">
-                  B.Tech · IIT Delhi · Masters, University of Waterloo, Canada
-                </p>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.12}>
-              <div className="profile-card">
-                <div className="profile-avatar" aria-hidden="true">
-                  <User size={28} strokeWidth={1.8} />
-                </div>
-                <div className="profile-name">Tania Kathuria</div>
-                <div className="profile-role">Director, Strategy &amp; Growth</div>
-                <p className="profile-bio">
-                  Tania is a growth-focused leader dedicated to building scalable revenue engines and global
-                  partnerships. At Arminus, she spearheads strategic direction and international expansion. Her
-                  background includes key positions at Accenture and Tata Consultancy Services (TCS), where she led
-                  go-to-market initiatives across global markets.
-                </p>
-                <p className="profile-edu">MBA · NMIMS, Mumbai</p>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
+      <BigCTA
+        heading={<>Let&apos;s build something <span className="ital">together.</span></>}
+        lede="Whether you're hiring, looking for your next role, or exploring Nubo — our team is one conversation away."
+        primary={{ href: "/contact", label: "Get in touch" }}
+        secondary={{ href: "/careers", label: "See open roles" }}
+      />
     </main>
   );
 }

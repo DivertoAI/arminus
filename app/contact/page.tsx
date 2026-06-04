@@ -1,113 +1,81 @@
 import type { Metadata } from "next";
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Mail, MapPin, Phone, ArrowRight } from "lucide-react";
-import { Reveal } from "@/components/Motion";
-import { withSiteBasePath } from "@/lib/site-path";
-import { ContactHeroLottie } from "@/components/ContactHeroLottie";
+import { Reveal } from "@/components/Reveal";
+import { PageHero } from "@/components/PageHero";
+import { SectionHead } from "@/components/SectionHead";
+import { ContactForm } from "@/components/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact Arminus for IT Staffing",
+  title: "Contact Arminus | IT Staffing Inquiry | Kolkata Gurugram Bangalore",
   description:
-    "Contact Arminus for IT staffing, contract staffing, permanent recruitment, executive search, staff augmentation, candidate support, and workforce consulting.",
-  alternates: { canonical: "https://arminus.co.in/contact" },
+    "Contact Arminus for IT staffing, executive search, Career Labs, or Nubo platform inquiries. Offices in Kolkata (HQ), Gurugram & Bangalore. We respond within 1 business day.",
   keywords: [
-    "contact IT staffing company", "hire IT talent India", "contract staffing inquiry",
-    "executive search inquiry", "IT recruitment agency contact", "manpower consulting contact"
-  ]
+    "contact Arminus", "IT staffing inquiry India", "hire IT talent India",
+    "recruitment agency contact", "staffing company Kolkata", "staffing company Gurugram",
+    "IT recruitment Bangalore", "submit hiring brief India",
+  ],
+  alternates: { canonical: "https://arminus.co.in/contact" },
 };
+
+const offices = [
+  { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", focus: "Strategy & leadership", email: "contactus@arminus.com", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=600&q=80&auto=format&fit=crop" },
+  { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", focus: "Operations & Gov-Tech", email: "contactus@arminus.com", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&q=80&auto=format&fit=crop" },
+  { tag: "Engineering Desk", name: "Bangalore", addr: "HSR Layout 5th Sector, Bengaluru, Karnataka", focus: "IT & engineering", email: "contactus@arminus.com", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
+];
 
 export default function ContactPage() {
   return (
     <main>
-      <section className="hero-v2 inner-hero contact-hero">
-
-        <div className="hero-v2-copy">
-          <h1 className="hero-v2-heading inner-heading">
-            Let&apos;s start a<br />
-            <span className="inner-gradient-text">conversation.</span>
-          </h1>
-
-          <span className="hero-v2-redline" aria-hidden="true" />
-
-          <p className="hero-v2-sub">
-            Share your hiring requirement, staffing model, location, and timeline.
-            The Arminus team responds within one business day.
-          </p>
-
-          <div className="hero-v2-actions">
-            <Link className="button button-primary" href="mailto:contactus@arminus.com">
-              Email Us <ArrowRight size={18} />
-            </Link>
-            <Link className="button button-outline" href="tel:+913340601004">
-              Call IND
-            </Link>
-          </div>
-        </div>
-
-        <div className="hero-v2-visual">
-          <Image
-            src={withSiteBasePath("/hero-art/dots-grid.png")}
-            alt="" aria-hidden="true"
-            width={220} height={180}
-            className="hero-v2-dotgrid"
-          />
-          <div className="hero-v2-photo-wrap">
-            <span className="hero-v2-blob" aria-hidden="true" />
-            <ContactHeroLottie />
-          </div>
-        </div>
-
-        <Image
-          src={withSiteBasePath("/hero-art/bottom-ribbon.png")}
-          alt="" aria-hidden="true"
-          width={480} height={260}
-          className="hero-v2-swoosh inner-swoosh"
-        />
-      </section>
+      <PageHero
+        accent="blue"
+        eyebrow="Contact Arminus"
+        title={<>One conversation from <span className="ital blue">the right hire.</span></>}
+        lede="Share a brief, ask a question, or just start a conversation. Our team gets back within one business day."
+      />
 
       <section className="section">
-        <div className="container contact-grid">
-          <Reveal>
-            <form className="contact-form" action="mailto:contactus@arminus.com" method="post">
-              <div className="field-grid">
-                <input name="name" placeholder="Name" required />
-                <input name="company" placeholder="Company" />
+        <div className="wrap">
+          <div className="contact-layout">
+            <div>
+              <SectionHead
+                eyebrow="Get in touch"
+                title={<>Tell us what <span className="ital">you need.</span></>}
+                sub="Whether you're hiring, job-seeking, or exploring Nubo — we're one message away."
+              />
+              <div className="contact-quick">
+                <div className="cfq"><div className="cfq-lbl">Email</div><a className="cfq-val" href="mailto:contactus@arminus.com">contactus@arminus.com</a></div>
+                <div className="cfq"><div className="cfq-lbl">India</div><a className="cfq-val" href="tel:+913340601004">+91 33 40601004</a></div>
+                <div className="cfq"><div className="cfq-lbl">USA</div><a className="cfq-val" href="tel:+17324819410">+1 732 481 9410</a></div>
+                <div className="cfq"><div className="cfq-lbl">Offices</div><div className="cfq-val">Kolkata · Gurugram · Bangalore</div></div>
               </div>
-              <div className="field-grid">
-                <input name="email" placeholder="Work email" type="email" required />
-                <input name="phone" placeholder="Phone" />
-              </div>
-              <input name="role" placeholder="Role or staffing requirement" />
-              <textarea name="message" placeholder="Tell us about your hiring need" required />
-              <button className="button button-primary" type="submit">
-                Send inquiry
-              </button>
-            </form>
-          </Reveal>
-
-          <Reveal>
-            <div className="contact-meta-grid">
-              {[
-                [MapPin, "Kolkata",  "Bengal Eco Intelligent Park, Sector V, Salt Lake City, Kolkata 700091."],
-                [MapPin, "Gurugram", "Unit 1237, 12th floor, JMD Megapolis, Sohna Road, Gurugram 122018."],
-                [MapPin, "Bengaluru","365 Shared Space, HSR Layout 5th Sector, Bengaluru 560102."],
-                [Phone,  "Phone",    "IND +91 33 40601004 / USA +1 732 481 9410."],
-                [Mail,   "Email",    "contactus@arminus.com"],
-              ].map(([Icon, title, copy]) => {
-                const TypedIcon = Icon as React.ElementType;
-                return (
-                  <article className="contact-card" key={title as string}>
-                    <span className="feature-card-icon" aria-hidden="true">
-                      <TypedIcon size={22} strokeWidth={2.1} />
-                    </span>
-                    <h3>{title as string}</h3>
-                    <p>{copy as string}</p>
-                  </article>
-                );
-              })}
             </div>
+            <ContactForm />
+          </div>
+        </div>
+      </section>
+
+      {/* OFFICES */}
+      <section className="section tint">
+        <div className="wrap">
+          <SectionHead
+            eyebrow="Our offices"
+            title={<>Three cities. <span className="ital">Always nearby.</span></>}
+          />
+          <Reveal stagger className="co-grid">
+            {offices.map(o => (
+              <div className="co-card" key={o.name}>
+                <div className="co-photo">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={o.img} alt={o.name} />
+                  <span className="co-tag">{o.tag}</span>
+                </div>
+                <div className="co-body">
+                  <h3>{o.name}</h3>
+                  <div className="co-line"><div className="co-lbl">Address</div><div className="co-val">{o.addr}</div></div>
+                  <div className="co-line"><div className="co-lbl">Focus</div><div className="co-val">{o.focus}</div></div>
+                  <div className="co-line"><div className="co-lbl">Email</div><a className="co-val" href={`mailto:${o.email}`}>{o.email}</a></div>
+                </div>
+              </div>
+            ))}
           </Reveal>
         </div>
       </section>
