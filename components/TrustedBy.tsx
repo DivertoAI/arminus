@@ -1,17 +1,26 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
+import Image from "next/image";
+import { withSiteBasePath } from "@/lib/site-path";
 
-const PARTNERS = [
-  { name: "PwC",     sub: "Big Four · Advisory" },
-  { name: "Deloitte",sub: "Big Four · Consulting" },
-  { name: "KPMG",    sub: "Big Four · Audit & Tax" },
-  { name: "EY",      sub: "Big Four · Assurance" },
-  { name: "QCI",     sub: "Quality Council of India" },
-  { name: "ICC",     sub: "Indian Chamber of Commerce" },
+const CLIENTS = [
+  { name: "Cognizant",          logo: "/logos/cognizant.svg"      },
+  { name: "Capgemini",          logo: "/logos/capgemini.svg"      },
+  { name: "Deloitte",           logo: "/logos/deloitte.svg"       },
+  { name: "PwC",                logo: "/logos/pwc.svg"            },
+  { name: "Indorama",           logo: "/logos/indorama.svg"       },
+  { name: "Hyland",             logo: "/logos/hyland.svg"         },
+  { name: "Xerox",              logo: "/logos/xerox.svg"          },
+  { name: "Lexmark",            logo: "/logos/lexmark.svg"        },
+  { name: "LabVantage",         logo: "/logos/labvantage.svg"     },
+  { name: "UST Global",         logo: "/logos/ust.svg"            },
+  { name: "QCI",                logo: "/logos/qci.svg"            },
+  { name: "Malomatia",          logo: "/logos/malomatia.svg"      },
+  { name: "First American",     logo: "/logos/firstamerican.svg"  },
 ];
 
-// Triple to fill the marquee
-const ITEMS = [...PARTNERS, ...PARTNERS, ...PARTNERS];
+// Triple for seamless loop
+const ITEMS = [...CLIENTS, ...CLIENTS, ...CLIENTS];
 
 export function TrustedBy() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -19,58 +28,63 @@ export function TrustedBy() {
   const startX = useRef(0);
   const scrollLeft = useRef(0);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const onMouseDown = (e: React.MouseEvent) => {
     if (!trackRef.current) return;
     isDragging.current = true;
     startX.current = e.pageX - trackRef.current.offsetLeft;
     scrollLeft.current = trackRef.current.scrollLeft;
+    trackRef.current.style.animationPlayState = "paused";
+    trackRef.current.style.cursor = "grabbing";
   };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const onMouseUp = () => {
+    isDragging.current = false;
+    if (trackRef.current) { trackRef.current.style.animationPlayState = "running"; trackRef.current.style.cursor = "grab"; }
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
     if (!isDragging.current || !trackRef.current) return;
     e.preventDefault();
     const x = e.pageX - trackRef.current.offsetLeft;
-    const walk = (x - startX.current) * 1.5;
-    trackRef.current.scrollLeft = scrollLeft.current - walk;
+    trackRef.current.scrollLeft = scrollLeft.current - (x - startX.current) * 1.5;
   };
-
-  const handleMouseUp = () => { isDragging.current = false; };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
+  const onTouchStart = (e: React.TouchEvent) => {
     if (!trackRef.current) return;
     startX.current = e.touches[0].pageX - trackRef.current.offsetLeft;
     scrollLeft.current = trackRef.current.scrollLeft;
   };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const onTouchMove = (e: React.TouchEvent) => {
     if (!trackRef.current) return;
     const x = e.touches[0].pageX - trackRef.current.offsetLeft;
-    const walk = (x - startX.current) * 1.5;
-    trackRef.current.scrollLeft = scrollLeft.current - walk;
+    trackRef.current.scrollLeft = scrollLeft.current - (x - startX.current) * 1.5;
   };
 
   return (
-    <section className="trusted-section">
-      <div className="trusted-lbl-center">Trusted by India&apos;s leading firms</div>
-      <div className="marquee">
-        <div
-          className="marquee-draggable"
-          ref={trackRef}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-        >
-          <div className="marquee-track">
-            {ITEMS.map((p, i) => (
-              <div key={i} className="trusted-card">
-                <div className="trusted-name">{p.name}</div>
-                <div className="trusted-sub">{p.sub}</div>
-              </div>
-            ))}
-          </div>
+    <section className="clients-section">
+      <div className="wrap">
+        <p className="clients-label">Trusted by India&apos;s leading organisations</p>
+      </div>
+      <div
+        className="clients-track-wrap marquee-draggable"
+        ref={trackRef}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}
+        onMouseMove={onMouseMove}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+      >
+        <div className="clients-track">
+          {ITEMS.map((c, i) => (
+            <div className="client-logo-card" key={i} aria-hidden={i >= CLIENTS.length}>
+              <Image
+                src={withSiteBasePath(c.logo)}
+                alt={c.name}
+                width={140}
+                height={48}
+                className="client-logo-img"
+                unoptimized
+              />
+            </div>
+          ))}
         </div>
       </div>
     </section>
