@@ -4,7 +4,7 @@ import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
-import { CeipalWidget } from "@/components/CeipalWidget";
+import { CareersClient } from "@/components/CareersClient";
 
 export const metadata: Metadata = {
   title: "IT Jobs in India | Current Openings | Arminus Careers",
@@ -48,7 +48,7 @@ export default function CareersPage() {
             title={<>Current roles across <span className="ital">our client network.</span></>}
             sub="Positions updated daily — permanent, contract, and Gov-Tech roles across India."
           />
-          <CeipalWidget />
+          <CareersClient />
         </div>
       </section>
 
