@@ -93,10 +93,13 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
 
         {/* Footer */}
         <div className="jm-foot">
-          <a className="btn btn-blue" href={`mailto:contactus@arminus.com?subject=${subject}&body=${body}`}>
-            Apply via email <span className="arrow">→</span>
+          <a className="btn btn-blue" href={job.apply_job} target="_blank" rel="noopener noreferrer">
+            Apply Now <span className="arrow">→</span>
           </a>
-          <button className="btn btn-ghost" onClick={onClose}>Close</button>
+          <a className="btn btn-ghost" href={`mailto:contactus@arminus.com?subject=${subject}&body=${body}`}>
+            Apply via email
+          </a>
+          <button className="jm-close-btn" onClick={onClose}>Close</button>
         </div>
       </div>
     </div>

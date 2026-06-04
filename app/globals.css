@@ -1017,3 +1017,10 @@ a.co-val:hover { color: var(--blue); }
   .jm-head,.jm-body,.jm-foot { padding-left: 20px; padding-right: 20px; }
   .jm-foot { flex-direction: column; }
 }
+
+.jm-close-btn {
+  margin-left: auto; font-size: 0.88rem; font-weight: 600;
+  color: var(--ink-3); padding: 10px 16px; border-radius: var(--r-md);
+  transition: color .15s, background .15s;
+}
+.jm-close-btn:hover { color: var(--ink); background: var(--bg-2); }
