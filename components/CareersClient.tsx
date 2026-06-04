@@ -247,7 +247,7 @@ export function CareersClient() {
             const title    = job.public_job_title || job.position_title;
             const location = [formatCity(job.city), job.country].filter(Boolean).join(", ");
             return (
-              <article className="jl-card" key={job.id}>
+              <article className="jl-card" key={job.id} onClick={() => setSelectedJob(job)} role="button" tabIndex={0} onKeyDown={e => e.key === "Enter" && setSelectedJob(job)}>
                 <div className="jl-card-top">
                   <div className="jl-card-tags">
                     {job.tax_terms   && <span className="jl-tag">{job.tax_terms}</span>}
@@ -264,9 +264,9 @@ export function CareersClient() {
                   </div>
                 )}
                 <p className="jl-excerpt">{stripHtml(job.public_job_desc).slice(0, 130)}…</p>
-                <button className="jl-cta" onClick={() => setSelectedJob(job)}>
+                <span className="jl-cta">
                   View details <span className="arrow">→</span>
-                </button>
+                </span>
               </article>
             );
           })}

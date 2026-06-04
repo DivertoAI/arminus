@@ -898,7 +898,7 @@ a.co-val:hover { color: var(--blue); }
   display: flex; flex-direction: column; gap: 10px;
   box-shadow: var(--shadow-card);
   transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
-  cursor: default;
+  cursor: pointer;
 }
 .jl-card:hover {
   box-shadow: var(--shadow-pop);
