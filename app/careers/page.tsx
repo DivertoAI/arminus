@@ -5,6 +5,7 @@ import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
 import { CareersClient } from "@/components/CareersClient";
+import { CeipalWidget } from "@/components/CeipalWidget";
 
 export const metadata: Metadata = {
   title: "IT Jobs in India | Current Openings | Arminus Careers",
@@ -49,6 +50,12 @@ export default function CareersPage() {
             sub="Positions updated daily — permanent, contract, and Gov-Tech roles across India."
           />
           <CareersClient />
+
+          {/* ── Ceipal widget for comparison ── */}
+          <div style={{ marginTop: "64px", paddingTop: "48px", borderTop: "1px solid var(--line)" }}>
+            <p style={{ fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--ink-3)", marginBottom: "24px" }}>Ceipal widget (for comparison)</p>
+            <CeipalWidget />
+          </div>
         </div>
       </section>
 
