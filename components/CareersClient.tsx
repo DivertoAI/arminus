@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback } from "react";
+import { CeipalWidget } from "@/components/CeipalWidget";
 
 /* ── Types ── */
 interface Job {
@@ -52,12 +53,8 @@ function dedupe(jobs: Job[]) {
   return jobs.filter(j => seen.has(j.id) ? false : (seen.add(j.id), true));
 }
 
-/* ── Job Modal ── */
-function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
-  const [widgetHtml, setWidgetHtml] = useState<string | null>(null);
-  const [loading, setLoading]       = useState(true);
-
-  /* Close on Escape, lock scroll */
+/* ── Job overlay — mounts the Ceipal widget with job_id pre-loaded ── */
+function JobOverlay({ job, onClose }: { job: Job; onClose: () => void }) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
@@ -65,71 +62,17 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
     return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
   }, [onClose]);
 
-  /* Fetch the full Ceipal widget HTML for this job (includes Easy Apply) */
-  useEffect(() => {
-    setLoading(true);
-    const url = `${WIDGET_URL}?job_id=${encodeURIComponent(job.id)}&apikey=${API_KEY}&cp_id=${CP_ID}&themeid=1`;
-    fetch(url, { headers: { "X-Referer-Host": window.location.hostname } })
-      .then(r => r.json())
-      .then(data => setWidgetHtml(data?.html || null))
-      .catch(() => setWidgetHtml(null))
-      .finally(() => setLoading(false));
-  }, [job.id]);
-
-  const title    = job.public_job_title || job.position_title;
-  const location = [formatCity(job.city), job.state, job.country].filter(Boolean).join(", ");
-  const subject  = encodeURIComponent(`Application: ${title}`);
-  const body     = encodeURIComponent(`Hi,\n\nI'd like to apply for the ${title} position (Job ID: ${job.job_id}) in ${location}.\n\nPlease find my resume attached.\n\nRegards,`);
-
   return (
-    <div className="jm-overlay" onClick={onClose} role="dialog" aria-modal aria-label={title}>
-      <div className="jm-panel" onClick={e => e.stopPropagation()}>
-
-        {/* Header */}
-        <div className="jm-head">
-          <div className="jm-head-main">
-            <h2 className="jm-title">{title}</h2>
-            <div className="jm-chips">
-              {location         && <span className="jm-chip">📍 {location}</span>}
-              {job.tax_terms    && <span className="jm-chip">{job.tax_terms}</span>}
-              {job.industry     && <span className="jm-chip">{job.industry}</span>}
-              {job.remote_opportunities === 1 && <span className="jm-chip jm-chip-blue">Remote</span>}
-              <span className="jm-chip">🕐 {timeAgo(job.created)}</span>
-            </div>
-          </div>
+    <div className="jm-overlay" onClick={onClose} role="dialog" aria-modal aria-label="Job detail">
+      <div className="jm-panel jm-panel-widget" onClick={e => e.stopPropagation()}>
+        <div className="jm-head jm-head-slim">
+          <span className="jm-head-hint">Scroll inside to read the full description</span>
           <button className="jm-close" onClick={onClose} aria-label="Close">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
-
-        {/* Body — Ceipal widget HTML when loaded, fallback otherwise */}
-        <div className="jm-body">
-          {loading ? (
-            <div className="jm-loading">
-              <div className="jl-spinner" />
-              <span>Loading job details…</span>
-            </div>
-          ) : widgetHtml ? (
-            /* Full Ceipal widget HTML — includes Easy Apply button, full description, contact details */
-            <div className="jm-widget-body" dangerouslySetInnerHTML={{ __html: widgetHtml }} />
-          ) : (
-            /* Fallback if widget fetch fails (e.g. localhost CORS) */
-            <>
-              <div dangerouslySetInnerHTML={{ __html: (job.public_job_desc || "No description available.").replace(/\r?\n/g, "<br>") }} />
-              <div className="jm-foot" style={{ paddingLeft: 0, paddingRight: 0, borderTop: "1px solid var(--line)", marginTop: 24 }}>
-                <a className="btn btn-blue" href={job.apply_job} target="_blank" rel="noopener noreferrer">Apply Now <span className="arrow">→</span></a>
-                <a className="btn btn-ghost" href={`mailto:contactus@arminus.com?subject=${subject}&body=${body}`}>Apply via email</a>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Footer — only show close (Apply button is inside widget HTML) */}
-        <div className="jm-foot">
-          {!widgetHtml && !loading && (
-            <a className="btn btn-blue" href={job.apply_job} target="_blank" rel="noopener noreferrer">Apply Now <span className="arrow">→</span></a>
-          )}
-          <button className="jm-close-btn" style={{ marginLeft: widgetHtml ? "0" : "auto" }} onClick={onClose}>Close</button>
+        <div className="jm-body jm-body-widget">
+          <CeipalWidget jobId={job.id} containerId="jm-widget-container" />
         </div>
       </div>
     </div>
@@ -320,7 +263,7 @@ export function CareersClient() {
         </div>
       )}
 
-      {selectedJob && <JobModal job={selectedJob} onClose={closeModal} />}
+      {selectedJob && <JobOverlay job={selectedJob} onClose={closeModal} />}
     </div>
   );
 }

@@ -1100,3 +1100,18 @@ a.co-val:hover { color: var(--blue); }
   padding-bottom: 16px; border-bottom: 1px solid var(--line);
   margin-bottom: 24px;
 }
+
+/* Widget panel variant */
+.jm-panel-widget { width: min(1000px, 96vw); max-height: 92vh; }
+.jm-head-slim {
+  padding: 14px 24px;
+  min-height: auto;
+  background: var(--bg-2);
+}
+.jm-head-hint {
+  font-size: 0.78rem; color: var(--ink-3); font-weight: 500;
+}
+.jm-body-widget {
+  flex: 1; overflow-y: auto; padding: 0;
+}
+.jm-body-widget .ceipal-widget-wrap { margin: 0; }

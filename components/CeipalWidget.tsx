@@ -2,14 +2,27 @@
 
 import { useEffect, useRef } from "react";
 
-export function CeipalWidget() {
+interface CeipalWidgetProps {
+  /** If provided, widget opens directly to that job detail */
+  jobId?: string;
+  /** Container id — must be unique per instance */
+  containerId?: string;
+}
+
+export function CeipalWidget({ jobId, containerId = "example-widget-container" }: CeipalWidgetProps) {
   const mounted = useRef(false);
 
   useEffect(() => {
     if (mounted.current) return;
     mounted.current = true;
 
-    // Remove any previously injected script to avoid duplicates on hot-reload
+    // If a jobId is passed, put it in the URL so the widget reads it
+    if (jobId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("job_id", jobId);
+      window.history.replaceState({}, "", url.toString());
+    }
+
     const existing = document.querySelector('script[data-ceipal-api-key]');
     if (existing) existing.remove();
 
@@ -23,12 +36,17 @@ export function CeipalWidget() {
 
     return () => {
       script.remove();
+      mounted.current = false;
+      // Clean job_id from URL on unmount
+      const url = new URL(window.location.href);
+      url.searchParams.delete("job_id");
+      window.history.replaceState({}, "", url.toString());
     };
-  }, []);
+  }, [jobId]);
 
   return (
     <div className="ceipal-widget-wrap">
-      <div id="example-widget-container" />
+      <div id={containerId} />
     </div>
   );
 }
