@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { CeipalWidget } from "@/components/CeipalWidget";
 
 /* ── Types ── */
 interface Job {
@@ -53,8 +52,11 @@ function dedupe(jobs: Job[]) {
   return jobs.filter(j => seen.has(j.id) ? false : (seen.add(j.id), true));
 }
 
-/* ── Job overlay — mounts the Ceipal widget with job_id pre-loaded ── */
+/* ── Job overlay — fetches Ceipal widget HTML and renders it ── */
 function JobOverlay({ job, onClose }: { job: Job; onClose: () => void }) {
+  const [html, setHtml] = useState<string | null>(null);
+  const [fetching, setFetching] = useState(true);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
@@ -62,17 +64,45 @@ function JobOverlay({ job, onClose }: { job: Job; onClose: () => void }) {
     return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
   }, [onClose]);
 
+  useEffect(() => {
+    setFetching(true);
+    setHtml(null);
+    // No custom headers → simple CORS request, no preflight; Origin is sent automatically
+    fetch(
+      `${WIDGET_URL}?job_id=${encodeURIComponent(job.id)}&apikey=${API_KEY}&cp_id=${CP_ID}&themeid=1`
+    )
+      .then(r => r.json())
+      .then(data => { setHtml(data?.html || null); setFetching(false); })
+      .catch(() => { setHtml(null); setFetching(false); });
+  }, [job.id]);
+
+  const title = job.public_job_title || job.position_title;
+
   return (
     <div className="jm-overlay" onClick={onClose} role="dialog" aria-modal aria-label="Job detail">
       <div className="jm-panel jm-panel-widget" onClick={e => e.stopPropagation()}>
         <div className="jm-head jm-head-slim">
-          <span className="jm-head-hint">Scroll inside to read the full description</span>
+          <span className="jm-head-hint">{title}</span>
           <button className="jm-close" onClick={onClose} aria-label="Close">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div className="jm-body jm-body-widget">
-          <CeipalWidget jobId={job.id} containerId="jm-widget-container" />
+          {fetching ? (
+            <div className="jl-state"><div className="jl-spinner" /><p>Loading job details…</p></div>
+          ) : html ? (
+            <div className="ceipal-widget-html" dangerouslySetInnerHTML={{ __html: html }} />
+          ) : (
+            /* Fallback: couldn't fetch — show description + direct apply link */
+            <div className="jm-fallback">
+              <h2 className="jm-fallback-title">{title}</h2>
+              <p className="jm-fallback-loc">{[job.city, job.country].filter(Boolean).join(", ")}</p>
+              <div className="jm-fallback-desc" dangerouslySetInnerHTML={{ __html: job.public_job_desc }} />
+              <a className="btn btn-blue" href={job.apply_job} target="_blank" rel="noopener noreferrer">
+                Apply Now →
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>
