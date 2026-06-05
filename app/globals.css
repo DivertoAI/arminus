@@ -1008,8 +1008,55 @@ a.co-val:hover { color: var(--blue); }
 .jm-body strong { font-weight: 700; color: var(--ink); }
 .jm-foot {
   padding: 20px 32px; border-top: 1px solid var(--line);
-  display: flex; gap: 12px; flex-shrink: 0;
+  display: flex; gap: 12px; flex-shrink: 0; align-items: center;
 }
+
+/* ── Modal loc row ── */
+.jm-loc-row {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.88rem; color: var(--ink-3); font-weight: 500;
+}
+
+/* ── Modal meta strip ── */
+.jm-meta-strip {
+  display: flex; flex-wrap: wrap; gap: 24px;
+  padding: 16px 20px; background: var(--bg-2);
+  border-radius: var(--r-md); margin-bottom: 24px;
+}
+.jm-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.jm-meta-label { font-size: 0.72rem; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.jm-meta-val { font-size: 0.88rem; font-weight: 600; color: var(--ink); }
+
+/* ── Modal sections ── */
+.jm-section { margin-bottom: 24px; }
+.jm-section-label {
+  font-size: 0.72rem; font-weight: 700; color: var(--ink-3);
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;
+}
+
+/* ── Pay badges ── */
+.jm-pay-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.jm-pay-badge {
+  font-size: 0.84rem; font-weight: 600; color: var(--ink);
+  background: var(--bg-2); border: 1px solid var(--line);
+  padding: 6px 14px; border-radius: var(--r-md);
+}
+
+/* ── Skill tags ── */
+.jm-skills-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.jm-skill {
+  font-size: 0.8rem; font-weight: 500; color: var(--ink-2);
+  background: var(--blue-soft); border: 1px solid transparent;
+  padding: 4px 12px; border-radius: 999px;
+}
+
+/* ── Description ── */
+.jm-desc { font-size: 0.91rem; line-height: 1.75; color: var(--ink-2); }
+.jm-desc h1,.jm-desc h2,.jm-desc h3 { font-size: 0.97rem; font-weight: 700; color: var(--ink); margin: 18px 0 6px; }
+.jm-desc ul,.jm-desc ol { padding-left: 20px; margin: 8px 0; }
+.jm-desc li { margin-bottom: 4px; }
+.jm-desc p { margin-bottom: 10px; }
+.jm-desc strong { font-weight: 700; color: var(--ink); }
 
 /* Responsive */
 @media (max-width: 1024px) { .jl-grid { grid-template-columns: 1fr 1fr; } }

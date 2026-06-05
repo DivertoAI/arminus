@@ -3,21 +3,37 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 
 /* ── Types ── */
+interface PayRate {
+  pay_rate_currency: string;
+  pay_rate: string;
+  pay_rate_pay_frequency_type: string;
+  pay_rate_employment_type: string;
+  min_pay_rate: string;
+  max_pay_rate?: string;
+}
+
 interface Job {
   id: string;
-  job_id: number;
   position_title: string;
   public_job_title: string;
   city: string;
   state: string;
   country: string;
-  remote_opportunities: number;
+  remote_opportunities: string | number;
   updated: string;
   created: string;
   public_job_desc: string;
+  requisition_description: string;
   apply_job: string;
+  apply_job_without_registration: string;
   tax_terms: string;
   industry: string;
+  employment_type: string;
+  skills: string;
+  pay_rates: PayRate[];
+  closing_date: string;
+  job_code: string;
+  job_status: string;
 }
 
 interface ApiResponse {
@@ -26,10 +42,8 @@ interface ApiResponse {
   results: Job[];
 }
 
-const API_BASE   = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostings/";
-const CP_ID      = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
-const API_KEY    = "N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09";
-const WIDGET_URL = "https://careerapi.ceipal.com/careerPortalWidget/";
+const API_BASE = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostings/";
+const CP_ID    = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
 const PAGE_SIZE = 12;
 
 /* ── Helpers ── */
@@ -51,12 +65,20 @@ function dedupe(jobs: Job[]) {
   const seen = new Set<string>();
   return jobs.filter(j => seen.has(j.id) ? false : (seen.add(j.id), true));
 }
+function isRemote(v: string | number) {
+  return v === 1 || v === "1" || String(v).toLowerCase() === "yes";
+}
+function payLabel(pr: PayRate) {
+  const rate = pr.pay_rate && pr.pay_rate !== "N/A" ? pr.pay_rate : null;
+  const min  = pr.min_pay_rate && pr.min_pay_rate !== "" ? pr.min_pay_rate : null;
+  const max  = pr.max_pay_rate && pr.max_pay_rate !== "N/A" && pr.max_pay_rate !== "" ? pr.max_pay_rate : null;
+  if (!rate && !min && !max) return null;
+  const amount = rate ?? (min && max ? `${min}–${max}` : min ?? max);
+  return `${pr.pay_rate_currency ?? "USD"} ${amount} / ${pr.pay_rate_pay_frequency_type}`;
+}
 
-/* ── Job overlay — fetches Ceipal widget HTML and renders it ── */
-function JobOverlay({ job, onClose }: { job: Job; onClose: () => void }) {
-  const [html, setHtml] = useState<string | null>(null);
-  const [fetching, setFetching] = useState(true);
-
+/* ── Job Detail Modal ── */
+function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
@@ -64,45 +86,110 @@ function JobOverlay({ job, onClose }: { job: Job; onClose: () => void }) {
     return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
   }, [onClose]);
 
-  useEffect(() => {
-    setFetching(true);
-    setHtml(null);
-    // No custom headers → simple CORS request, no preflight; Origin is sent automatically
-    fetch(
-      `${WIDGET_URL}?job_id=${encodeURIComponent(job.id)}&apikey=${API_KEY}&cp_id=${CP_ID}&themeid=1`
-    )
-      .then(r => r.json())
-      .then(data => { setHtml(data?.html || null); setFetching(false); })
-      .catch(() => { setHtml(null); setFetching(false); });
-  }, [job.id]);
-
-  const title = job.public_job_title || job.position_title;
+  const title       = job.public_job_title || job.position_title;
+  const location    = [formatCity(job.city), job.state, job.country].filter(Boolean).join(", ");
+  const description = job.public_job_desc?.trim() || job.requisition_description || "";
+  const applyUrl    = job.apply_job_without_registration || job.apply_job;
+  const skills      = job.skills ? job.skills.split(",").map(s => s.trim()).filter(Boolean) : [];
+  const taxTerms    = job.tax_terms ? job.tax_terms.split(",").map(t => t.trim()).filter(Boolean) : [];
+  const validPay    = (job.pay_rates ?? []).map(payLabel).filter(Boolean) as string[];
 
   return (
-    <div className="jm-overlay" onClick={onClose} role="dialog" aria-modal aria-label="Job detail">
-      <div className="jm-panel jm-panel-widget" onClick={e => e.stopPropagation()}>
-        <div className="jm-head jm-head-slim">
-          <span className="jm-head-hint">{title}</span>
+    <div className="jm-overlay" onClick={onClose} role="dialog" aria-modal aria-label={title}>
+      <div className="jm-panel" onClick={e => e.stopPropagation()}>
+
+        {/* ── Header ── */}
+        <div className="jm-head">
+          <div className="jm-head-left">
+            <div className="jm-chips" style={{ marginBottom: 12 }}>
+              {job.employment_type && <span className="jm-chip">{job.employment_type}</span>}
+              {taxTerms.map(t => <span key={t} className="jm-chip">{t}</span>)}
+              {isRemote(job.remote_opportunities) && <span className="jm-chip jm-chip-blue">Remote</span>}
+              {job.industry && <span className="jm-chip">{job.industry}</span>}
+            </div>
+            <h2 className="jm-title">{title}</h2>
+            {location && (
+              <div className="jm-loc-row">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+                {location}
+              </div>
+            )}
+          </div>
           <button className="jm-close" onClick={onClose} aria-label="Close">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
           </button>
         </div>
-        <div className="jm-body jm-body-widget">
-          {fetching ? (
-            <div className="jl-state"><div className="jl-spinner" /><p>Loading job details…</p></div>
-          ) : html ? (
-            <div className="ceipal-widget-html" dangerouslySetInnerHTML={{ __html: html }} />
-          ) : (
-            /* Fallback: couldn't fetch — show description + direct apply link */
-            <div className="jm-fallback">
-              <h2 className="jm-fallback-title">{title}</h2>
-              <p className="jm-fallback-loc">{[job.city, job.country].filter(Boolean).join(", ")}</p>
-              <div className="jm-fallback-desc" dangerouslySetInnerHTML={{ __html: job.public_job_desc }} />
-              <a className="btn btn-blue" href={job.apply_job} target="_blank" rel="noopener noreferrer">
-                Apply Now →
-              </a>
+
+        {/* ── Body ── */}
+        <div className="jm-body">
+
+          {/* Meta strip */}
+          <div className="jm-meta-strip">
+            {job.job_code && (
+              <div className="jm-meta-item">
+                <span className="jm-meta-label">Job code</span>
+                <span className="jm-meta-val">{job.job_code}</span>
+              </div>
+            )}
+            {job.closing_date && job.closing_date !== "null" && job.closing_date.trim() && (
+              <div className="jm-meta-item">
+                <span className="jm-meta-label">Closes</span>
+                <span className="jm-meta-val">{job.closing_date.split(" ")[0]}</span>
+              </div>
+            )}
+            <div className="jm-meta-item">
+              <span className="jm-meta-label">Posted</span>
+              <span className="jm-meta-val">{timeAgo(job.created)}</span>
+            </div>
+          </div>
+
+          {/* Pay */}
+          {validPay.length > 0 && (
+            <div className="jm-section">
+              <p className="jm-section-label">Compensation</p>
+              <div className="jm-pay-list">
+                {validPay.map((p, i) => <span key={i} className="jm-pay-badge">{p}</span>)}
+              </div>
             </div>
           )}
+
+          {/* Skills */}
+          {skills.length > 0 && (
+            <div className="jm-section">
+              <p className="jm-section-label">Skills</p>
+              <div className="jm-skills-list">
+                {skills.map(s => <span key={s} className="jm-skill">{s}</span>)}
+              </div>
+            </div>
+          )}
+
+          {/* Description */}
+          {description ? (
+            <div className="jm-section">
+              <p className="jm-section-label">About the role</p>
+              <div className="jm-desc" dangerouslySetInnerHTML={{ __html: description }} />
+            </div>
+          ) : (
+            <div className="jm-section">
+              <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>
+                Full description available after clicking Apply.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* ── Footer ── */}
+        <div className="jm-foot">
+          {applyUrl && (
+            <a className="btn btn-blue" href={applyUrl} target="_blank" rel="noopener noreferrer">
+              Apply Now →
+            </a>
+          )}
+          <button className="btn btn-ghost" onClick={onClose}>Close</button>
         </div>
       </div>
     </div>
@@ -111,22 +198,25 @@ function JobOverlay({ job, onClose }: { job: Job; onClose: () => void }) {
 
 /* ── Main component ── */
 export function CareersClient() {
-  const [allJobs,      setAllJobs]      = useState<Job[]>([]);
-  const [loading,      setLoading]      = useState(true);
-  const [loadingMore,  setLoadingMore]  = useState(false);
-  const [error,        setError]        = useState(false);
-  const [page,         setPage]         = useState(1);
-  const [keyword,      setKeyword]      = useState("");
-  const [pending,      setPending]      = useState("");
-  const [selectedJob,  setSelectedJob]  = useState<Job | null>(null);
+  const [allJobs,     setAllJobs]     = useState<Job[]>([]);
+  const [loading,     setLoading]     = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error,       setError]       = useState(false);
+  const [page,        setPage]        = useState(1);
+  const [keyword,     setKeyword]     = useState("");
+  const [pending,     setPending]     = useState("");
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const closeModal = useCallback(() => setSelectedJob(null), []);
 
-  /* Fetch — page 1 immediately, rest in background */
+  /* Fetch page 1 immediately, rest in background */
   useEffect(() => {
     async function loadAll() {
       setLoading(true); setError(false);
       try {
-        const r1 = await fetch(API_BASE, { method: "POST", body: new URLSearchParams({ cp_id: CP_ID, page: "1" }) });
+        const r1 = await fetch(API_BASE, {
+          method: "POST",
+          body: new URLSearchParams({ cp_id: CP_ID, page: "1" }),
+        });
         if (!r1.ok) throw new Error();
         const d1: ApiResponse = await r1.json();
         const first = dedupe(d1.results ?? []);
@@ -136,8 +226,10 @@ export function CareersClient() {
           setLoadingMore(true);
           const rest = await Promise.allSettled(
             Array.from({ length: d1.num_pages - 1 }, (_, i) =>
-              fetch(API_BASE, { method: "POST", body: new URLSearchParams({ cp_id: CP_ID, page: String(i + 2) }) })
-                .then(r => r.json() as Promise<ApiResponse>)
+              fetch(API_BASE, {
+                method: "POST",
+                body: new URLSearchParams({ cp_id: CP_ID, page: String(i + 2) }),
+              }).then(r => r.json() as Promise<ApiResponse>)
             )
           );
           const extra: Job[] = [];
@@ -145,7 +237,9 @@ export function CareersClient() {
           setAllJobs(dedupe([...first, ...extra]));
           setLoadingMore(false);
         }
-      } catch { setError(true); setLoading(false); }
+      } catch {
+        setError(true); setLoading(false);
+      }
     }
     loadAll();
   }, []);
@@ -156,9 +250,13 @@ export function CareersClient() {
     const kw = keyword.toLowerCase();
     return allJobs.filter(j =>
       (j.public_job_title || j.position_title).toLowerCase().includes(kw) ||
-      stripHtml(j.public_job_desc).toLowerCase().includes(kw) ||
-      j.city.toLowerCase().includes(kw) || j.country.toLowerCase().includes(kw) ||
-      (j.industry || "").toLowerCase().includes(kw) || (j.tax_terms || "").toLowerCase().includes(kw)
+      stripHtml(j.public_job_desc || j.requisition_description).toLowerCase().includes(kw) ||
+      (j.skills || "").toLowerCase().includes(kw) ||
+      (j.city || "").toLowerCase().includes(kw) ||
+      (j.country || "").toLowerCase().includes(kw) ||
+      (j.industry || "").toLowerCase().includes(kw) ||
+      (j.tax_terms || "").toLowerCase().includes(kw) ||
+      (j.employment_type || "").toLowerCase().includes(kw)
     );
   }, [allJobs, keyword]);
 
@@ -173,7 +271,6 @@ export function CareersClient() {
     document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  /* Pagination numbers */
   const pages: (number | "…")[] = [];
   if (totalPages <= 6) { for (let i = 1; i <= totalPages; i++) pages.push(i); }
   else {
@@ -186,10 +283,12 @@ export function CareersClient() {
 
   return (
     <div className="jl-root">
-      {/* ── Search bar ── */}
+      {/* Search */}
       <div className="jl-search">
         <div className="jl-search-inner">
-          <svg className="jl-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg className="jl-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
           <input
             className="jl-input"
             type="text"
@@ -200,7 +299,9 @@ export function CareersClient() {
           />
           {pending && (
             <button className="jl-clear" onClick={reset} aria-label="Clear">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
             </button>
           )}
         </div>
@@ -209,7 +310,7 @@ export function CareersClient() {
         </button>
       </div>
 
-      {/* ── Results header ── */}
+      {/* Results header */}
       <div className="jl-meta" id="jl-results">
         {!loading && (
           <span className="jl-count">
@@ -232,7 +333,7 @@ export function CareersClient() {
         )}
       </div>
 
-      {/* ── Job grid ── */}
+      {/* Grid */}
       {loading ? (
         <div className="jl-state">
           <div className="jl-spinner" />
@@ -252,34 +353,42 @@ export function CareersClient() {
           {pageJobs.map(job => {
             const title    = job.public_job_title || job.position_title;
             const location = [formatCity(job.city), job.country].filter(Boolean).join(", ");
+            const desc     = stripHtml(job.public_job_desc || job.requisition_description || "");
             return (
-              <article className="jl-card" key={job.id} onClick={() => setSelectedJob(job)} role="button" tabIndex={0} onKeyDown={e => e.key === "Enter" && setSelectedJob(job)}>
+              <article
+                className="jl-card"
+                key={job.id}
+                onClick={() => setSelectedJob(job)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => e.key === "Enter" && setSelectedJob(job)}
+              >
                 <div className="jl-card-top">
                   <div className="jl-card-tags">
-                    {job.tax_terms   && <span className="jl-tag">{job.tax_terms}</span>}
-                    {job.industry    && <span className="jl-tag jl-tag-muted">{job.industry}</span>}
-                    {job.remote_opportunities === 1 && <span className="jl-tag jl-tag-blue">Remote</span>}
+                    {job.tax_terms    && <span className="jl-tag">{job.tax_terms.split(",")[0].trim()}</span>}
+                    {job.industry     && <span className="jl-tag jl-tag-muted">{job.industry}</span>}
+                    {isRemote(job.remote_opportunities) && <span className="jl-tag jl-tag-blue">Remote</span>}
                   </div>
                   <span className="jl-date">{timeAgo(job.created)}</span>
                 </div>
                 <h3 className="jl-title">{title}</h3>
                 {location && (
                   <div className="jl-location">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
                     {location}
                   </div>
                 )}
-                <p className="jl-excerpt">{stripHtml(job.public_job_desc).slice(0, 130)}…</p>
-                <span className="jl-cta">
-                  View details <span className="arrow">→</span>
-                </span>
+                {desc && <p className="jl-excerpt">{desc.slice(0, 130)}…</p>}
+                <span className="jl-cta">View details <span className="arrow">→</span></span>
               </article>
             );
           })}
         </div>
       )}
 
-      {/* ── Bottom pagination ── */}
+      {/* Bottom pagination */}
       {!loading && totalPages > 1 && (
         <div className="jl-pag-bottom">
           <div className="jl-pagination">
@@ -293,7 +402,7 @@ export function CareersClient() {
         </div>
       )}
 
-      {selectedJob && <JobOverlay job={selectedJob} onClose={closeModal} />}
+      {selectedJob && <JobModal job={selectedJob} onClose={closeModal} />}
     </div>
   );
 }
