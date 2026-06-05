@@ -1088,3 +1088,10 @@ a.co-val:hover { color: var(--blue); }
   max-width: 130px;
   filter: none;
 }
+
+.compare-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-3);
+  padding-bottom: 16px; border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+}
