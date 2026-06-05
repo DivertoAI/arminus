@@ -962,11 +962,16 @@ a.co-val:hover { color: var(--blue); }
 }
 .jm-panel {
   background: #fff; border-radius: var(--r-xl);
-  width: min(720px, 100%); max-height: 88vh;
+  width: min(960px, 96vw); max-height: 92vh;
   display: flex; flex-direction: column;
   box-shadow: 0 40px 100px rgba(15,26,42,0.25);
   overflow: hidden;
 }
+/* Clean up widget-specific chrome inside modal */
+.jm-widget-body { font-family: var(--font-sans); }
+.jm-widget-body a[href*="Back"],
+.jm-widget-body .printbtn,
+.jm-widget-body .print-btn { display: none !important; }
 .jm-head {
   display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
   padding: 28px 32px 22px;

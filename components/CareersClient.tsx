@@ -29,7 +29,7 @@ interface ApiResponse {
 const API_BASE   = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostings/";
 const CP_ID      = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
 const API_KEY    = "N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09";
-const DETAIL_URL = "https://careerapi.ceipal.com/careerPortalWidget/";
+const WIDGET_URL = "https://careerapi.ceipal.com/careerPortalWidget/";
 const PAGE_SIZE = 12;
 
 /* ── Helpers ── */
@@ -54,9 +54,10 @@ function dedupe(jobs: Job[]) {
 
 /* ── Job Modal ── */
 function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
-  const [fullDesc, setFullDesc] = useState<string | null>(null);
-  const [descLoading, setDescLoading] = useState(true);
+  const [widgetHtml, setWidgetHtml] = useState<string | null>(null);
+  const [loading, setLoading]       = useState(true);
 
+  /* Close on Escape, lock scroll */
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
@@ -64,26 +65,15 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
     return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
   }, [onClose]);
 
-  /* Fetch full description from widget detail endpoint */
+  /* Fetch the full Ceipal widget HTML for this job (includes Easy Apply) */
   useEffect(() => {
-    setDescLoading(true);
-    const url = `${DETAIL_URL}?job_id=${encodeURIComponent(job.id)}&apikey=${API_KEY}&cp_id=${CP_ID}&themeid=1`;
-    fetch(url)
+    setLoading(true);
+    const url = `${WIDGET_URL}?job_id=${encodeURIComponent(job.id)}&apikey=${API_KEY}&cp_id=${CP_ID}&themeid=1`;
+    fetch(url, { headers: { "X-Referer-Host": window.location.hostname } })
       .then(r => r.json())
-      .then(data => {
-        if (data?.html) {
-          // Extract job description section from the full widget HTML
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(data.html, "text/html");
-          // Try to find the description container
-          const descEl = doc.querySelector(".job-description, .jd-content, .job-desc, [class*='description'], .job-detail-body");
-          setFullDesc(descEl ? descEl.innerHTML : data.html);
-        } else {
-          setFullDesc(null);
-        }
-      })
-      .catch(() => setFullDesc(null))
-      .finally(() => setDescLoading(false));
+      .then(data => setWidgetHtml(data?.html || null))
+      .catch(() => setWidgetHtml(null))
+      .finally(() => setLoading(false));
   }, [job.id]);
 
   const title    = job.public_job_title || job.position_title;
@@ -112,30 +102,34 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
           </button>
         </div>
 
-        {/* Body */}
+        {/* Body — Ceipal widget HTML when loaded, fallback otherwise */}
         <div className="jm-body">
-          {descLoading ? (
+          {loading ? (
             <div className="jm-loading">
               <div className="jl-spinner" />
-              <span>Loading full description…</span>
+              <span>Loading job details…</span>
             </div>
-          ) : fullDesc ? (
-            <div dangerouslySetInnerHTML={{ __html: fullDesc }} />
+          ) : widgetHtml ? (
+            /* Full Ceipal widget HTML — includes Easy Apply button, full description, contact details */
+            <div className="jm-widget-body" dangerouslySetInnerHTML={{ __html: widgetHtml }} />
           ) : (
-            /* fallback: render what we have, converting plain text newlines to <br> */
-            <div dangerouslySetInnerHTML={{ __html: (job.public_job_desc || "No description available.").replace(/\r?\n/g, "<br>") }} />
+            /* Fallback if widget fetch fails (e.g. localhost CORS) */
+            <>
+              <div dangerouslySetInnerHTML={{ __html: (job.public_job_desc || "No description available.").replace(/\r?\n/g, "<br>") }} />
+              <div className="jm-foot" style={{ paddingLeft: 0, paddingRight: 0, borderTop: "1px solid var(--line)", marginTop: 24 }}>
+                <a className="btn btn-blue" href={job.apply_job} target="_blank" rel="noopener noreferrer">Apply Now <span className="arrow">→</span></a>
+                <a className="btn btn-ghost" href={`mailto:contactus@arminus.com?subject=${subject}&body=${body}`}>Apply via email</a>
+              </div>
+            </>
           )}
         </div>
 
-        {/* Footer */}
+        {/* Footer — only show close (Apply button is inside widget HTML) */}
         <div className="jm-foot">
-          <a className="btn btn-blue" href={job.apply_job} target="_blank" rel="noopener noreferrer">
-            Apply Now <span className="arrow">→</span>
-          </a>
-          <a className="btn btn-ghost" href={`mailto:contactus@arminus.com?subject=${subject}&body=${body}`}>
-            Apply via email
-          </a>
-          <button className="jm-close-btn" onClick={onClose}>Close</button>
+          {!widgetHtml && !loading && (
+            <a className="btn btn-blue" href={job.apply_job} target="_blank" rel="noopener noreferrer">Apply Now <span className="arrow">→</span></a>
+          )}
+          <button className="jm-close-btn" style={{ marginLeft: widgetHtml ? "0" : "auto" }} onClick={onClose}>Close</button>
         </div>
       </div>
     </div>
