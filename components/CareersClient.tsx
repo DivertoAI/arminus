@@ -42,9 +42,10 @@ interface ApiResponse {
   results: Job[];
 }
 
-const API_BASE = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostings/";
-const CP_ID    = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
-const PAGE_SIZE = 12;
+const API_BASE    = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostings/";
+const DETAIL_BASE = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostingDetails/";
+const CP_ID       = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
+const PAGE_SIZE   = 12;
 
 /* ── Helpers ── */
 function formatCity(raw: string) {
@@ -77,8 +78,24 @@ function payLabel(pr: PayRate) {
   return `${pr.pay_rate_currency ?? "USD"} ${amount} / ${pr.pay_rate_pay_frequency_type}`;
 }
 
+/* ── Richer detail shape returned by Job Posting Details API ── */
+interface JobDetail extends Job {
+  duration: string;
+  experience: string;
+  min_experience: string;
+  work_authorization: string;
+  number_of_positions: number;
+  address: string;
+  department: string;
+  contact_person: string;
+  posted: string;
+}
+
 /* ── Job Detail Modal ── */
 function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
+  const [detail, setDetail] = useState<JobDetail | null>(null);
+  const [fetching, setFetching] = useState(true);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
@@ -86,13 +103,29 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
     return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
   }, [onClose]);
 
-  const title       = job.public_job_title || job.position_title;
-  const location    = [formatCity(job.city), job.state, job.country].filter(Boolean).join(", ");
-  const description = job.public_job_desc?.trim() || job.requisition_description || "";
-  const applyUrl    = job.apply_job_without_registration || job.apply_job;
-  const skills      = job.skills ? job.skills.split(",").map(s => s.trim()).filter(Boolean) : [];
-  const taxTerms    = job.tax_terms ? job.tax_terms.split(",").map(t => t.trim()).filter(Boolean) : [];
-  const validPay    = (job.pay_rates ?? []).map(payLabel).filter(Boolean) as string[];
+  // Fetch full job details from Job Posting Details API
+  useEffect(() => {
+    setFetching(true);
+    fetch(`${DETAIL_BASE}?job_id=${encodeURIComponent(job.id)}&cp_id=${CP_ID}`)
+      .then(r => r.json())
+      .then(data => {
+        // API may return an object or a single-item array
+        const d = Array.isArray(data) ? data[0] : data;
+        setDetail(d && d.id ? d : null);
+        setFetching(false);
+      })
+      .catch(() => { setDetail(null); setFetching(false); });
+  }, [job.id]);
+
+  // Merge: detail wins where present, listing fills the rest
+  const d         = detail ?? (job as unknown as JobDetail);
+  const title     = d.public_job_title || d.position_title;
+  const location  = [formatCity(d.city), d.state, d.country].filter(Boolean).join(", ");
+  const desc      = d.public_job_desc?.trim() || d.requisition_description || "";
+  const applyUrl  = d.apply_job_without_registration || d.apply_job;
+  const skills    = d.skills ? d.skills.split(",").map(s => s.trim()).filter(Boolean) : [];
+  const taxTerms  = d.tax_terms ? d.tax_terms.split(",").map(t => t.trim()).filter(Boolean) : [];
+  const validPay  = (d.pay_rates ?? []).map(payLabel).filter(Boolean) as string[];
 
   return (
     <div className="jm-overlay" onClick={onClose} role="dialog" aria-modal aria-label={title}>
@@ -102,10 +135,10 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
         <div className="jm-head">
           <div className="jm-head-left">
             <div className="jm-chips" style={{ marginBottom: 12 }}>
-              {job.employment_type && <span className="jm-chip">{job.employment_type}</span>}
+              {d.employment_type && <span className="jm-chip">{d.employment_type}</span>}
               {taxTerms.map(t => <span key={t} className="jm-chip">{t}</span>)}
-              {isRemote(job.remote_opportunities) && <span className="jm-chip jm-chip-blue">Remote</span>}
-              {job.industry && <span className="jm-chip">{job.industry}</span>}
+              {isRemote(d.remote_opportunities) && <span className="jm-chip jm-chip-blue">Remote</span>}
+              {d.industry && <span className="jm-chip">{d.industry}</span>}
             </div>
             <h2 className="jm-title">{title}</h2>
             {location && (
@@ -127,58 +160,90 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
         {/* ── Body ── */}
         <div className="jm-body">
 
-          {/* Meta strip */}
-          <div className="jm-meta-strip">
-            {job.job_code && (
-              <div className="jm-meta-item">
-                <span className="jm-meta-label">Job code</span>
-                <span className="jm-meta-val">{job.job_code}</span>
-              </div>
-            )}
-            {job.closing_date && job.closing_date !== "null" && job.closing_date.trim() && (
-              <div className="jm-meta-item">
-                <span className="jm-meta-label">Closes</span>
-                <span className="jm-meta-val">{job.closing_date.split(" ")[0]}</span>
-              </div>
-            )}
-            <div className="jm-meta-item">
-              <span className="jm-meta-label">Posted</span>
-              <span className="jm-meta-val">{timeAgo(job.created)}</span>
-            </div>
-          </div>
-
-          {/* Pay */}
-          {validPay.length > 0 && (
-            <div className="jm-section">
-              <p className="jm-section-label">Compensation</p>
-              <div className="jm-pay-list">
-                {validPay.map((p, i) => <span key={i} className="jm-pay-badge">{p}</span>)}
-              </div>
-            </div>
-          )}
-
-          {/* Skills */}
-          {skills.length > 0 && (
-            <div className="jm-section">
-              <p className="jm-section-label">Skills</p>
-              <div className="jm-skills-list">
-                {skills.map(s => <span key={s} className="jm-skill">{s}</span>)}
-              </div>
-            </div>
-          )}
-
-          {/* Description */}
-          {description ? (
-            <div className="jm-section">
-              <p className="jm-section-label">About the role</p>
-              <div className="jm-desc" dangerouslySetInnerHTML={{ __html: description }} />
-            </div>
+          {fetching ? (
+            <div className="jl-state"><div className="jl-spinner" /><p>Loading details…</p></div>
           ) : (
-            <div className="jm-section">
-              <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>
-                Full description available after clicking Apply.
-              </p>
-            </div>
+            <>
+              {/* Meta strip */}
+              <div className="jm-meta-strip">
+                {d.job_code && (
+                  <div className="jm-meta-item">
+                    <span className="jm-meta-label">Job code</span>
+                    <span className="jm-meta-val">{d.job_code}</span>
+                  </div>
+                )}
+                {(detail as JobDetail)?.experience && (
+                  <div className="jm-meta-item">
+                    <span className="jm-meta-label">Experience</span>
+                    <span className="jm-meta-val">{(detail as JobDetail).experience}</span>
+                  </div>
+                )}
+                {(detail as JobDetail)?.duration && (
+                  <div className="jm-meta-item">
+                    <span className="jm-meta-label">Duration</span>
+                    <span className="jm-meta-val">{(detail as JobDetail).duration}</span>
+                  </div>
+                )}
+                {(detail as JobDetail)?.number_of_positions > 0 && (
+                  <div className="jm-meta-item">
+                    <span className="jm-meta-label">Openings</span>
+                    <span className="jm-meta-val">{(detail as JobDetail).number_of_positions}</span>
+                  </div>
+                )}
+                {d.closing_date && d.closing_date.trim() && d.closing_date !== "null" && (
+                  <div className="jm-meta-item">
+                    <span className="jm-meta-label">Closes</span>
+                    <span className="jm-meta-val">{d.closing_date.split(" ")[0]}</span>
+                  </div>
+                )}
+                <div className="jm-meta-item">
+                  <span className="jm-meta-label">Posted</span>
+                  <span className="jm-meta-val">{(detail as JobDetail)?.posted || timeAgo(d.created)}</span>
+                </div>
+              </div>
+
+              {/* Pay */}
+              {validPay.length > 0 && (
+                <div className="jm-section">
+                  <p className="jm-section-label">Compensation</p>
+                  <div className="jm-pay-list">
+                    {validPay.map((p, i) => <span key={i} className="jm-pay-badge">{p}</span>)}
+                  </div>
+                </div>
+              )}
+
+              {/* Skills */}
+              {skills.length > 0 && (
+                <div className="jm-section">
+                  <p className="jm-section-label">Skills</p>
+                  <div className="jm-skills-list">
+                    {skills.map(s => <span key={s} className="jm-skill">{s}</span>)}
+                  </div>
+                </div>
+              )}
+
+              {/* Description */}
+              {desc ? (
+                <div className="jm-section">
+                  <p className="jm-section-label">About the role</p>
+                  <div className="jm-desc" dangerouslySetInnerHTML={{ __html: desc }} />
+                </div>
+              ) : (
+                <div className="jm-section">
+                  <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>
+                    Full description available after clicking Apply.
+                  </p>
+                </div>
+              )}
+
+              {/* Contact person (from details API) */}
+              {(detail as JobDetail)?.contact_person && (
+                <div className="jm-section">
+                  <p className="jm-section-label">Contact</p>
+                  <div className="jm-desc" dangerouslySetInnerHTML={{ __html: (detail as JobDetail).contact_person }} />
+                </div>
+              )}
+            </>
           )}
         </div>
 
