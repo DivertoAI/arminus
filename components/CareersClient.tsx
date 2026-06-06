@@ -17,7 +17,9 @@ interface Job {
   position_title: string;
   public_job_title: string;
   city: string;
+  primary_city?: string;
   state: string;
+  primary_state?: string;
   country: string;
   remote_opportunities: string | number;
   updated: string;
@@ -42,17 +44,19 @@ interface ApiResponse {
   results: Job[];
 }
 
-const API_BASE    = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostings/";
-const DETAIL_BASE = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostingDetails/";
-const CP_ID       = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
+const API_BASE    = "https://api.ceipal.com/v2/getJobPostingsList/";
+const DETAIL_BASE = "https://api.ceipal.com/v2/getJobPostingDetails/";
 const PAGE_SIZE   = 12;
+const HEADERS     = { Authorization: `Bearer ${process.env.NEXT_PUBLIC_CEIPAL_ACCESS_TOKEN}` };
 
 /* ── Helpers ── */
-function formatCity(raw: string) {
-  return raw.replace(/^\[/, "").replace(/\]$/, "").split(",")[0]?.trim() ?? raw;
+function formatCity(raw?: string) {
+  if (!raw) return "";
+  return String(raw).replace(/^\[/, "").replace(/\]$/, "").split(",")[0]?.trim() ?? raw;
 }
-function stripHtml(html: string) {
-  return html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+function stripHtml(html?: string) {
+  if (!html) return "";
+  return String(html).replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
 }
 function timeAgo(d: string) {
   if (!d || d === "Today") return "Today";
@@ -106,7 +110,7 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   // Fetch full job details from Job Posting Details API
   useEffect(() => {
     setFetching(true);
-    fetch(`${DETAIL_BASE}?job_id=${encodeURIComponent(job.id)}&cp_id=${CP_ID}`)
+    fetch(`${DETAIL_BASE}${encodeURIComponent(job.id)}/`, { headers: HEADERS })
       .then(r => r.json())
       .then(data => {
         // API may return an object or a single-item array
@@ -120,7 +124,7 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   // Merge: detail wins where present, listing fills the rest
   const d         = detail ?? (job as unknown as JobDetail);
   const title     = d.public_job_title || d.position_title;
-  const location  = [formatCity(d.city), d.state, d.country].filter(Boolean).join(", ");
+  const location  = [formatCity(d.city || d.primary_city), d.state || d.primary_state, d.country].filter(Boolean).join(", ");
   const desc      = d.public_job_desc?.trim() || d.requisition_description || "";
   const applyUrl  = d.apply_job_without_registration || d.apply_job;
   const skills    = d.skills ? d.skills.split(",").map(s => s.trim()).filter(Boolean) : [];
@@ -278,28 +282,32 @@ export function CareersClient() {
     async function loadAll() {
       setLoading(true); setError(false);
       try {
-        const r1 = await fetch(API_BASE, {
-          method: "POST",
-          body: new URLSearchParams({ cp_id: CP_ID, page: "1" }),
-        });
+        const r1 = await fetch(`${API_BASE}?page=1`, { headers: HEADERS });
         if (!r1.ok) throw new Error();
         const d1: ApiResponse = await r1.json();
-        const first = dedupe(d1.results ?? []);
+        const first = dedupe(d1.results ?? []).filter(j => j.job_status?.toLowerCase() === "active");
         setAllJobs(first); setLoading(false);
 
         if ((d1.num_pages ?? 1) > 1) {
           setLoadingMore(true);
-          const rest = await Promise.allSettled(
-            Array.from({ length: d1.num_pages - 1 }, (_, i) =>
-              fetch(API_BASE, {
-                method: "POST",
-                body: new URLSearchParams({ cp_id: CP_ID, page: String(i + 2) }),
-              }).then(r => r.json() as Promise<ApiResponse>)
-            )
-          );
           const extra: Job[] = [];
-          rest.forEach(r => { if (r.status === "fulfilled") extra.push(...(r.value.results ?? [])); });
-          setAllJobs(dedupe([...first, ...extra]));
+          const totalRemaining = d1.num_pages - 1;
+          const CHUNK_SIZE = 5; // Batch requests to avoid 429 Too Many Requests
+          
+          for (let i = 0; i < totalRemaining; i += CHUNK_SIZE) {
+            const chunk = Array.from({ length: Math.min(CHUNK_SIZE, totalRemaining - i) }, (_, idx) =>
+              fetch(`${API_BASE}?page=${i + idx + 2}`, { headers: HEADERS }).then(r => r.json() as Promise<ApiResponse>)
+            );
+            const results = await Promise.allSettled(chunk);
+            results.forEach(r => { if (r.status === "fulfilled") extra.push(...(r.value.results ?? [])); });
+            
+            // Progressively update the UI with active jobs!
+            const allActive = dedupe([...first, ...extra]).filter(j => j.job_status?.toLowerCase() === "active");
+            setAllJobs(allActive);
+            
+            // Sleep slightly to respect Ceipal's rate limit
+            await new Promise(res => setTimeout(res, 300));
+          }
           setLoadingMore(false);
         }
       } catch {
@@ -417,7 +425,7 @@ export function CareersClient() {
         <div className="jl-grid">
           {pageJobs.map(job => {
             const title    = job.public_job_title || job.position_title;
-            const location = [formatCity(job.city), job.country].filter(Boolean).join(", ");
+            const location = [formatCity(job.city || job.primary_city), job.country].filter(Boolean).join(", ");
             const desc     = stripHtml(job.public_job_desc || job.requisition_description || "");
             return (
               <article
