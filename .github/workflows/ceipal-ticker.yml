@@ -1,9 +1,11 @@
 name: Ceipal Ticker
 
 on:
+  push:
+    branches: [main] # Deploy on every push to main
   schedule:
-    - cron: '*/50 * * * *' # Runs every 50 minutes
-  workflow_dispatch: # Allows manual trigger from the GitHub Actions UI
+    - cron: '*/50 * * * *' # Refresh token every 50 minutes
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
   build-and-deploy:
