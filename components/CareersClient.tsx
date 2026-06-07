@@ -302,7 +302,7 @@ export function CareersClient() {
         );
         if (!r1.ok) throw new Error();
         const d1: ApiResponse = await r1.json();
-        const first = dedupe(d1.results ?? []).filter(j => j.job_status?.toLowerCase() === "active");
+        const first = dedupe(d1.results ?? []).filter(j => !HAS_TOKEN || j.job_status?.toLowerCase() === "active");
         setAllJobs(first); setLoading(false);
 
         if ((d1.num_pages ?? 1) > 1) {
@@ -324,7 +324,7 @@ export function CareersClient() {
             results.forEach(r => { if (r.status === "fulfilled") extra.push(...(r.value.results ?? [])); });
             
             // Progressively update the UI with active jobs!
-            const allActive = dedupe([...first, ...extra]).filter(j => j.job_status?.toLowerCase() === "active");
+            const allActive = dedupe([...first, ...extra]).filter(j => !HAS_TOKEN || j.job_status?.toLowerCase() === "active");
             setAllJobs(allActive);
             
             // Sleep slightly to respect Ceipal's rate limit
