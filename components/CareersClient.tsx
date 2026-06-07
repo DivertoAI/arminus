@@ -25,7 +25,8 @@ interface Job {
   updated: string;
   created: string;
   public_job_desc: string;
-  requisition_description: string;
+  requisition_description: string;  // v2 API spelling
+  requistion_description?: string;  // public API typo (missing 'i')
   apply_job: string;
   apply_job_without_registration: string;
   tax_terms: string;
@@ -44,10 +45,19 @@ interface ApiResponse {
   results: Job[];
 }
 
-const API_BASE    = "https://api.ceipal.com/v2/getJobPostingsList/";
-const DETAIL_BASE = "https://api.ceipal.com/v2/getJobPostingDetails/";
-const PAGE_SIZE   = 12;
-const HEADERS     = { Authorization: `Bearer ${process.env.NEXT_PUBLIC_CEIPAL_ACCESS_TOKEN}` };
+// Authenticated v2 API (used in production via GH Actions token)
+const API_V2        = "https://api.ceipal.com/v2/getJobPostingsList/";
+const DETAIL_V2     = "https://api.ceipal.com/v2/getJobPostingDetails/";
+// Public career-portal API (fallback for local dev — no token needed)
+const API_PUBLIC    = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostings/";
+const DETAIL_PUBLIC = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostingDetails/";
+const CP_ID         = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
+const PAGE_SIZE     = 12;
+const TOKEN         = process.env.NEXT_PUBLIC_CEIPAL_ACCESS_TOKEN;
+const HAS_TOKEN     = !!TOKEN && TOKEN !== "undefined";
+const API_BASE      = HAS_TOKEN ? API_V2 : API_PUBLIC;
+const DETAIL_BASE   = HAS_TOKEN ? DETAIL_V2 : DETAIL_PUBLIC;
+const AUTH_HEADERS  = HAS_TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {} as Record<string, string>;
 
 /* ── Helpers ── */
 function formatCity(raw?: string) {
@@ -107,13 +117,15 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
     return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
   }, [onClose]);
 
-  // Fetch full job details from Job Posting Details API
+  // Fetch full job details — v2 (token) or public fallback
   useEffect(() => {
     setFetching(true);
-    fetch(`${DETAIL_BASE}${encodeURIComponent(job.id)}/`, { headers: HEADERS })
+    const url = HAS_TOKEN
+      ? `${DETAIL_BASE}${encodeURIComponent(job.id)}/`
+      : `${DETAIL_BASE}?job_id=${encodeURIComponent(job.id)}&cp_id=${CP_ID}`;
+    fetch(url, { headers: AUTH_HEADERS })
       .then(r => r.json())
       .then(data => {
-        // API may return an object or a single-item array
         const d = Array.isArray(data) ? data[0] : data;
         setDetail(d && d.id ? d : null);
         setFetching(false);
@@ -125,7 +137,7 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   const d         = detail ?? (job as unknown as JobDetail);
   const title     = d.public_job_title || d.position_title;
   const location  = [formatCity(d.city || d.primary_city), d.state || d.primary_state, d.country].filter(Boolean).join(", ");
-  const desc      = d.public_job_desc?.trim() || d.requisition_description || "";
+  const desc      = d.public_job_desc?.trim() || d.requisition_description || d.requistion_description || "";
   const applyUrl  = d.apply_job_without_registration || d.apply_job;
   const skills    = d.skills ? d.skills.split(",").map(s => s.trim()).filter(Boolean) : [];
   const taxTerms  = d.tax_terms ? d.tax_terms.split(",").map(t => t.trim()).filter(Boolean) : [];
@@ -282,7 +294,12 @@ export function CareersClient() {
     async function loadAll() {
       setLoading(true); setError(false);
       try {
-        const r1 = await fetch(`${API_BASE}?page=1`, { headers: HEADERS });
+        const r1 = await fetch(
+          HAS_TOKEN ? `${API_BASE}?page=1` : API_BASE,
+          HAS_TOKEN
+            ? { headers: AUTH_HEADERS }
+            : { method: "POST", body: new URLSearchParams({ cp_id: CP_ID, page: "1" }) }
+        );
         if (!r1.ok) throw new Error();
         const d1: ApiResponse = await r1.json();
         const first = dedupe(d1.results ?? []).filter(j => j.job_status?.toLowerCase() === "active");
@@ -296,7 +313,12 @@ export function CareersClient() {
           
           for (let i = 0; i < totalRemaining; i += CHUNK_SIZE) {
             const chunk = Array.from({ length: Math.min(CHUNK_SIZE, totalRemaining - i) }, (_, idx) =>
-              fetch(`${API_BASE}?page=${i + idx + 2}`, { headers: HEADERS }).then(r => r.json() as Promise<ApiResponse>)
+              fetch(
+                HAS_TOKEN ? `${API_BASE}?page=${i + idx + 2}` : API_BASE,
+                HAS_TOKEN
+                  ? { headers: AUTH_HEADERS }
+                  : { method: "POST", body: new URLSearchParams({ cp_id: CP_ID, page: String(i + idx + 2) }) }
+              ).then(r => r.json() as Promise<ApiResponse>)
             );
             const results = await Promise.allSettled(chunk);
             results.forEach(r => { if (r.status === "fulfilled") extra.push(...(r.value.results ?? [])); });
@@ -323,7 +345,7 @@ export function CareersClient() {
     const kw = keyword.toLowerCase();
     return allJobs.filter(j =>
       (j.public_job_title || j.position_title).toLowerCase().includes(kw) ||
-      stripHtml(j.public_job_desc || j.requisition_description).toLowerCase().includes(kw) ||
+      stripHtml(j.public_job_desc || j.requisition_description || j.requistion_description).toLowerCase().includes(kw) ||
       (j.skills || "").toLowerCase().includes(kw) ||
       (j.city || "").toLowerCase().includes(kw) ||
       (j.country || "").toLowerCase().includes(kw) ||
@@ -426,7 +448,7 @@ export function CareersClient() {
           {pageJobs.map(job => {
             const title    = job.public_job_title || job.position_title;
             const location = [formatCity(job.city || job.primary_city), job.country].filter(Boolean).join(", ");
-            const desc     = stripHtml(job.public_job_desc || job.requisition_description || "");
+            const desc     = stripHtml(job.public_job_desc || job.requisition_description || job.requistion_description || "");
             return (
               <article
                 className="jl-card"
