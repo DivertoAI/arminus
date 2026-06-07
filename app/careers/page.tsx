@@ -5,6 +5,7 @@ import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
 import { CareersClient } from "@/components/CareersClient";
+import type { Job } from "@/components/CareersClient";
 
 export const metadata: Metadata = {
   title: "IT Jobs in India | Current Openings | Arminus Careers",
@@ -18,6 +19,78 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://arminus.co.in/careers" },
 };
 
+const API_KEY = "N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09";
+const CP_ID   = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
+
+/* ── Fetch all jobs at build time (server-side) ── */
+async function fetchAllJobs(): Promise<Job[]> {
+  const token  = process.env.CEIPAL_ACCESS_TOKEN;
+  const useV2  = !!token && token !== "undefined" && token !== "null";
+  const jobs: Job[] = [];
+
+  try {
+    let page = 1;
+    let totalPages = 1;
+
+    do {
+      let res: Response;
+      if (useV2) {
+        res = await fetch(
+          `https://api.ceipal.com/v2/getJobPostingsList/?page=${page}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        // If token is bad fall through to public API
+        if (res.status === 401 || res.status === 403) throw new Error("auth");
+      } else {
+        res = await fetch(
+          `https://apiin.ceipal.com/${API_KEY}/CareerPortalJobPostings/`,
+          { method: "POST", body: new URLSearchParams({ cp_id: CP_ID, page: String(page) }) }
+        );
+      }
+
+      if (!res.ok) break;
+      const data = await res.json();
+      const results: Job[] = data.results ?? [];
+      jobs.push(...(useV2 ? results.filter(j => j.job_status?.toLowerCase() === "active") : results));
+      totalPages = data.num_pages ?? 1;
+      page++;
+    } while (page <= totalPages);
+
+  } catch (e: unknown) {
+    // v2 auth failed — retry with public API
+    if ((e as Error).message === "auth") return fetchPublicJobs();
+    // Other error — return whatever we collected so far
+  }
+
+  return dedupe(jobs);
+}
+
+async function fetchPublicJobs(): Promise<Job[]> {
+  const jobs: Job[] = [];
+  let page = 1;
+  let totalPages = 1;
+
+  do {
+    const res = await fetch(
+      `https://apiin.ceipal.com/${API_KEY}/CareerPortalJobPostings/`,
+      { method: "POST", body: new URLSearchParams({ cp_id: CP_ID, page: String(page) }) }
+    );
+    if (!res.ok) break;
+    const data = await res.json();
+    jobs.push(...(data.results ?? []));
+    totalPages = data.num_pages ?? 1;
+    page++;
+  } while (page <= totalPages);
+
+  return dedupe(jobs);
+}
+
+function dedupe(jobs: Job[]) {
+  const seen = new Set<string>();
+  return jobs.filter(j => seen.has(j.id) ? false : (seen.add(j.id), true));
+}
+
+/* ── Page ── */
 const culture = [
   { m: "✦", t: "Honest conversations", d: "We'd rather tell you the hard truth than place you in the wrong role." },
   { m: "◆", t: "AI as a teammate", d: "Generative AI does the paperwork so you can do the work that matters." },
@@ -25,7 +98,9 @@ const culture = [
   { m: "●", t: "Pan-India impact", d: "From private fintech to national Gov-Tech programs across 10+ states." },
 ];
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const jobs = await fetchAllJobs();
+
   return (
     <main>
       <PageHero
@@ -48,8 +123,7 @@ export default function CareersPage() {
             title={<>Current roles across <span className="ital">our client network.</span></>}
             sub="Positions updated daily — permanent, contract, and Gov-Tech roles across India."
           />
-          <CareersClient />
-
+          <CareersClient initialJobs={jobs} />
         </div>
       </section>
 

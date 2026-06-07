@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 
 /* ── Types ── */
-interface PayRate {
+export interface PayRate {
   pay_rate_currency: string;
   pay_rate: string;
   pay_rate_pay_frequency_type: string;
@@ -12,7 +12,7 @@ interface PayRate {
   max_pay_rate?: string;
 }
 
-interface Job {
+export interface Job {
   id: string;
   position_title: string;
   public_job_title: string;
@@ -25,8 +25,8 @@ interface Job {
   updated: string;
   created: string;
   public_job_desc: string;
-  requisition_description: string;  // v2 API spelling
-  requistion_description?: string;  // public API typo (missing 'i')
+  requisition_description?: string;
+  requistion_description?: string; // public API typo (missing 'i')
   apply_job: string;
   apply_job_without_registration: string;
   tax_terms: string;
@@ -36,28 +36,26 @@ interface Job {
   pay_rates: PayRate[];
   closing_date: string;
   job_code: string;
-  job_status: string;
+  job_status?: string;
 }
 
-interface ApiResponse {
-  count: number;
-  num_pages: number;
-  results: Job[];
+interface JobDetail extends Job {
+  duration: string;
+  experience: string;
+  min_experience: string;
+  work_authorization: string;
+  number_of_positions: number;
+  address: string;
+  department: string;
+  contact_person: string;
+  posted: string;
 }
 
-// Authenticated v2 API (used in production via GH Actions token)
-const API_V2        = "https://api.ceipal.com/v2/getJobPostingsList/";
-const DETAIL_V2     = "https://api.ceipal.com/v2/getJobPostingDetails/";
-// Public career-portal API (fallback for local dev — no token needed)
-const API_PUBLIC    = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostings/";
-const DETAIL_PUBLIC = "https://apiin.ceipal.com/N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09/CareerPortalJobPostingDetails/";
-const CP_ID         = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
-const PAGE_SIZE     = 12;
-const TOKEN         = process.env.NEXT_PUBLIC_CEIPAL_ACCESS_TOKEN;
-const HAS_TOKEN     = !!TOKEN && TOKEN !== "undefined";
-const API_BASE      = HAS_TOKEN ? API_V2 : API_PUBLIC;
-const DETAIL_BASE   = HAS_TOKEN ? DETAIL_V2 : DETAIL_PUBLIC;
-const AUTH_HEADERS  = HAS_TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {} as Record<string, string>;
+/* ── Constants (detail fetch only — no token needed, public endpoint) ── */
+const API_KEY    = "N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09";
+const CP_ID      = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
+const DETAIL_URL = `https://apiin.ceipal.com/${API_KEY}/CareerPortalJobPostingDetails/`;
+const PAGE_SIZE  = 12;
 
 /* ── Helpers ── */
 function formatCity(raw?: string) {
@@ -76,10 +74,6 @@ function timeAgo(d: string) {
   if (diff < 30) return `${diff} days ago`;
   return `${Math.floor(diff / 30)}mo ago`;
 }
-function dedupe(jobs: Job[]) {
-  const seen = new Set<string>();
-  return jobs.filter(j => seen.has(j.id) ? false : (seen.add(j.id), true));
-}
 function isRemote(v: string | number) {
   return v === 1 || v === "1" || String(v).toLowerCase() === "yes";
 }
@@ -91,23 +85,13 @@ function payLabel(pr: PayRate) {
   const amount = rate ?? (min && max ? `${min}–${max}` : min ?? max);
   return `${pr.pay_rate_currency ?? "USD"} ${amount} / ${pr.pay_rate_pay_frequency_type}`;
 }
-
-/* ── Richer detail shape returned by Job Posting Details API ── */
-interface JobDetail extends Job {
-  duration: string;
-  experience: string;
-  min_experience: string;
-  work_authorization: string;
-  number_of_positions: number;
-  address: string;
-  department: string;
-  contact_person: string;
-  posted: string;
+function getDesc(j: Job) {
+  return j.public_job_desc?.trim() || j.requisition_description || j.requistion_description || "";
 }
 
 /* ── Job Detail Modal ── */
 function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
-  const [detail, setDetail] = useState<JobDetail | null>(null);
+  const [detail, setDetail]   = useState<JobDetail | null>(null);
   const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
@@ -117,37 +101,32 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
     return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
   }, [onClose]);
 
-  // Fetch full job details — v2 (token) or public fallback
   useEffect(() => {
     setFetching(true);
-    const url = HAS_TOKEN
-      ? `${DETAIL_BASE}${encodeURIComponent(job.id)}/`
-      : `${DETAIL_BASE}?job_id=${encodeURIComponent(job.id)}&cp_id=${CP_ID}`;
-    fetch(url, { headers: AUTH_HEADERS })
+    fetch(`${DETAIL_URL}?job_id=${encodeURIComponent(job.id)}&cp_id=${CP_ID}`)
       .then(r => r.json())
       .then(data => {
         const d = Array.isArray(data) ? data[0] : data;
-        setDetail(d && d.id ? d : null);
+        setDetail(d?.id ? d : null);
         setFetching(false);
       })
       .catch(() => { setDetail(null); setFetching(false); });
   }, [job.id]);
 
-  // Merge: detail wins where present, listing fills the rest
-  const d         = detail ?? (job as unknown as JobDetail);
-  const title     = d.public_job_title || d.position_title;
-  const location  = [formatCity(d.city || d.primary_city), d.state || d.primary_state, d.country].filter(Boolean).join(", ");
-  const desc      = d.public_job_desc?.trim() || d.requisition_description || d.requistion_description || "";
-  const applyUrl  = d.apply_job_without_registration || d.apply_job;
-  const skills    = d.skills ? d.skills.split(",").map(s => s.trim()).filter(Boolean) : [];
-  const taxTerms  = d.tax_terms ? d.tax_terms.split(",").map(t => t.trim()).filter(Boolean) : [];
-  const validPay  = (d.pay_rates ?? []).map(payLabel).filter(Boolean) as string[];
+  const d        = detail ?? (job as unknown as JobDetail);
+  const title    = d.public_job_title || d.position_title;
+  const location = [formatCity(d.city || d.primary_city), d.state || d.primary_state, d.country].filter(Boolean).join(", ");
+  const desc     = getDesc(d);
+  const applyUrl = d.apply_job_without_registration || d.apply_job;
+  const skills   = d.skills ? d.skills.split(",").map(s => s.trim()).filter(Boolean) : [];
+  const taxTerms = d.tax_terms ? d.tax_terms.split(",").map(t => t.trim()).filter(Boolean) : [];
+  const validPay = (d.pay_rates ?? []).map(payLabel).filter(Boolean) as string[];
 
   return (
     <div className="jm-overlay" onClick={onClose} role="dialog" aria-modal aria-label={title}>
       <div className="jm-panel" onClick={e => e.stopPropagation()}>
 
-        {/* ── Header ── */}
+        {/* Header */}
         <div className="jm-head">
           <div className="jm-head-left">
             <div className="jm-chips" style={{ marginBottom: 12 }}>
@@ -173,14 +152,12 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
           </button>
         </div>
 
-        {/* ── Body ── */}
+        {/* Body */}
         <div className="jm-body">
-
           {fetching ? (
             <div className="jl-state"><div className="jl-spinner" /><p>Loading details…</p></div>
           ) : (
             <>
-              {/* Meta strip */}
               <div className="jm-meta-strip">
                 {d.job_code && (
                   <div className="jm-meta-item">
@@ -188,22 +165,22 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
                     <span className="jm-meta-val">{d.job_code}</span>
                   </div>
                 )}
-                {(detail as JobDetail)?.experience && (
+                {detail?.experience && (
                   <div className="jm-meta-item">
                     <span className="jm-meta-label">Experience</span>
-                    <span className="jm-meta-val">{(detail as JobDetail).experience}</span>
+                    <span className="jm-meta-val">{detail.experience}</span>
                   </div>
                 )}
-                {(detail as JobDetail)?.duration && (
+                {detail?.duration && (
                   <div className="jm-meta-item">
                     <span className="jm-meta-label">Duration</span>
-                    <span className="jm-meta-val">{(detail as JobDetail).duration}</span>
+                    <span className="jm-meta-val">{detail.duration}</span>
                   </div>
                 )}
-                {(detail as JobDetail)?.number_of_positions > 0 && (
+                {detail && (detail.number_of_positions ?? 0) > 0 && (
                   <div className="jm-meta-item">
                     <span className="jm-meta-label">Openings</span>
-                    <span className="jm-meta-val">{(detail as JobDetail).number_of_positions}</span>
+                    <span className="jm-meta-val">{detail.number_of_positions}</span>
                   </div>
                 )}
                 {d.closing_date && d.closing_date.trim() && d.closing_date !== "null" && (
@@ -214,11 +191,10 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
                 )}
                 <div className="jm-meta-item">
                   <span className="jm-meta-label">Posted</span>
-                  <span className="jm-meta-val">{(detail as JobDetail)?.posted || timeAgo(d.created)}</span>
+                  <span className="jm-meta-val">{detail?.posted || timeAgo(d.created)}</span>
                 </div>
               </div>
 
-              {/* Pay */}
               {validPay.length > 0 && (
                 <div className="jm-section">
                   <p className="jm-section-label">Compensation</p>
@@ -228,7 +204,6 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
                 </div>
               )}
 
-              {/* Skills */}
               {skills.length > 0 && (
                 <div className="jm-section">
                   <p className="jm-section-label">Skills</p>
@@ -238,7 +213,6 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
                 </div>
               )}
 
-              {/* Description */}
               {desc ? (
                 <div className="jm-section">
                   <p className="jm-section-label">About the role</p>
@@ -246,24 +220,21 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
                 </div>
               ) : (
                 <div className="jm-section">
-                  <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>
-                    Full description available after clicking Apply.
-                  </p>
+                  <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>Full description available after clicking Apply.</p>
                 </div>
               )}
 
-              {/* Contact person (from details API) */}
-              {(detail as JobDetail)?.contact_person && (
+              {detail?.contact_person && (
                 <div className="jm-section">
                   <p className="jm-section-label">Contact</p>
-                  <div className="jm-desc" dangerouslySetInnerHTML={{ __html: (detail as JobDetail).contact_person }} />
+                  <div className="jm-desc" dangerouslySetInnerHTML={{ __html: detail.contact_person }} />
                 </div>
               )}
             </>
           )}
         </div>
 
-        {/* ── Footer ── */}
+        {/* Footer */}
         <div className="jm-foot">
           {applyUrl && (
             <a className="btn btn-blue" href={applyUrl} target="_blank" rel="noopener noreferrer">
@@ -277,75 +248,20 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   );
 }
 
-/* ── Main component ── */
-export function CareersClient() {
-  const [allJobs,     setAllJobs]     = useState<Job[]>([]);
-  const [loading,     setLoading]     = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error,       setError]       = useState(false);
+/* ── Main component — receives jobs pre-fetched at build time ── */
+export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
   const [page,        setPage]        = useState(1);
   const [keyword,     setKeyword]     = useState("");
   const [pending,     setPending]     = useState("");
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const closeModal = useCallback(() => setSelectedJob(null), []);
 
-  /* Fetch page 1 immediately, rest in background */
-  useEffect(() => {
-    async function loadAll() {
-      setLoading(true); setError(false);
-      try {
-        const r1 = await fetch(
-          HAS_TOKEN ? `${API_BASE}?page=1` : API_BASE,
-          HAS_TOKEN
-            ? { headers: AUTH_HEADERS }
-            : { method: "POST", body: new URLSearchParams({ cp_id: CP_ID, page: "1" }) }
-        );
-        if (!r1.ok) throw new Error();
-        const d1: ApiResponse = await r1.json();
-        const first = dedupe(d1.results ?? []).filter(j => !HAS_TOKEN || j.job_status?.toLowerCase() === "active");
-        setAllJobs(first); setLoading(false);
-
-        if ((d1.num_pages ?? 1) > 1) {
-          setLoadingMore(true);
-          const extra: Job[] = [];
-          const totalRemaining = d1.num_pages - 1;
-          const CHUNK_SIZE = 5; // Batch requests to avoid 429 Too Many Requests
-          
-          for (let i = 0; i < totalRemaining; i += CHUNK_SIZE) {
-            const chunk = Array.from({ length: Math.min(CHUNK_SIZE, totalRemaining - i) }, (_, idx) =>
-              fetch(
-                HAS_TOKEN ? `${API_BASE}?page=${i + idx + 2}` : API_BASE,
-                HAS_TOKEN
-                  ? { headers: AUTH_HEADERS }
-                  : { method: "POST", body: new URLSearchParams({ cp_id: CP_ID, page: String(i + idx + 2) }) }
-              ).then(r => r.json() as Promise<ApiResponse>)
-            );
-            const results = await Promise.allSettled(chunk);
-            results.forEach(r => { if (r.status === "fulfilled") extra.push(...(r.value.results ?? [])); });
-            
-            // Progressively update the UI with active jobs!
-            const allActive = dedupe([...first, ...extra]).filter(j => !HAS_TOKEN || j.job_status?.toLowerCase() === "active");
-            setAllJobs(allActive);
-            
-            // Sleep slightly to respect Ceipal's rate limit
-            await new Promise(res => setTimeout(res, 300));
-          }
-          setLoadingMore(false);
-        }
-      } catch {
-        setError(true); setLoading(false);
-      }
-    }
-    loadAll();
-  }, []);
-
-  /* Client-side filter */
   const filtered = useMemo(() => {
-    if (!keyword.trim()) return allJobs;
+    if (!keyword.trim()) return initialJobs;
     const kw = keyword.toLowerCase();
-    return allJobs.filter(j =>
+    return initialJobs.filter(j =>
       (j.public_job_title || j.position_title).toLowerCase().includes(kw) ||
-      stripHtml(j.public_job_desc || j.requisition_description || j.requistion_description).toLowerCase().includes(kw) ||
+      stripHtml(getDesc(j)).toLowerCase().includes(kw) ||
       (j.skills || "").toLowerCase().includes(kw) ||
       (j.city || "").toLowerCase().includes(kw) ||
       (j.country || "").toLowerCase().includes(kw) ||
@@ -353,7 +269,7 @@ export function CareersClient() {
       (j.tax_terms || "").toLowerCase().includes(kw) ||
       (j.employment_type || "").toLowerCase().includes(kw)
     );
-  }, [allJobs, keyword]);
+  }, [initialJobs, keyword]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageJobs   = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -407,16 +323,13 @@ export function CareersClient() {
 
       {/* Results header */}
       <div className="jl-meta" id="jl-results">
-        {!loading && (
-          <span className="jl-count">
-            {filtered.length === 0
-              ? "No roles found — try different keywords"
-              : <>{filtered.length} open {filtered.length === 1 ? "role" : "roles"}{keyword ? ` for "${keyword}"` : ""}</>
-            }
-            {loadingMore && <span className="jl-loading-badge">Loading more…</span>}
-          </span>
-        )}
-        {!loading && totalPages > 1 && (
+        <span className="jl-count">
+          {filtered.length === 0
+            ? "No roles found — try different keywords"
+            : <>{filtered.length} open {filtered.length === 1 ? "role" : "roles"}{keyword ? ` for "${keyword}"` : ""}</>
+          }
+        </span>
+        {totalPages > 1 && (
           <div className="jl-pagination">
             <button className="jl-pag-btn" onClick={() => goTo(page - 1)} disabled={page === 1}>←</button>
             {pages.map((n, i) => n === "…"
@@ -429,17 +342,7 @@ export function CareersClient() {
       </div>
 
       {/* Grid */}
-      {loading ? (
-        <div className="jl-state">
-          <div className="jl-spinner" />
-          <p>Loading openings…</p>
-        </div>
-      ) : error ? (
-        <div className="jl-state">
-          <p>Couldn&apos;t load jobs right now.</p>
-          <button className="btn btn-ghost" style={{ marginTop: 16 }} onClick={() => window.location.reload()}>Try again</button>
-        </div>
-      ) : filtered.length === 0 ? (
+      {filtered.length === 0 ? (
         <div className="jl-state">
           <p>No roles match your search. <button className="jl-link" onClick={reset}>Clear filters</button></p>
         </div>
@@ -448,7 +351,7 @@ export function CareersClient() {
           {pageJobs.map(job => {
             const title    = job.public_job_title || job.position_title;
             const location = [formatCity(job.city || job.primary_city), job.country].filter(Boolean).join(", ");
-            const desc     = stripHtml(job.public_job_desc || job.requisition_description || job.requistion_description || "");
+            const desc     = stripHtml(getDesc(job));
             return (
               <article
                 className="jl-card"
@@ -484,7 +387,7 @@ export function CareersClient() {
       )}
 
       {/* Bottom pagination */}
-      {!loading && totalPages > 1 && (
+      {totalPages > 1 && (
         <div className="jl-pag-bottom">
           <div className="jl-pagination">
             <button className="jl-pag-btn" onClick={() => goTo(page - 1)} disabled={page === 1}>←</button>
