@@ -7,6 +7,7 @@ import { NetworkSvg } from "@/components/NetworkSvg";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
 import { MatchConsole } from "@/components/MatchConsole";
+import { withSiteBasePath } from "@/lib/site-path";
 
 export const metadata: Metadata = {
   title: "Arminus | IT Staffing & Recruitment Company India",
@@ -152,7 +153,7 @@ export default function Home() {
               <article className="lt-card" key={l.name}>
                 <div className="lt-photo">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={l.img} alt={l.name} className="lt-img" />
+                  <img src={withSiteBasePath(l.img)} alt={l.name} className="lt-img" />
                   <div className="lt-ovl" />
                 </div>
                 <div className="lt-body">
