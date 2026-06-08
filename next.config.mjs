@@ -3,10 +3,10 @@ const isGithubPagesBuild = process.env.GITHUB_PAGES === "true";
 
 const nextConfig = {
   output: "export",
-  basePath: isGithubPagesBuild ? "/arminus" : "",
-  assetPrefix: isGithubPagesBuild ? "/arminus/" : "",
+  basePath: "",
+  assetPrefix: "",
   env: {
-    NEXT_PUBLIC_SITE_BASE_PATH: isGithubPagesBuild ? "/arminus" : ""
+    NEXT_PUBLIC_SITE_BASE_PATH: ""
   },
   images: {
     unoptimized: true
