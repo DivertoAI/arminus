@@ -64,8 +64,8 @@ export default function CareerLabsPage() {
       <section className="section" id="services">
         <div className="wrap">
           <SectionHead
-            eyebrow="What we offer"
-            title={<>Two products. <span className="ital">One mission.</span></>}
+            eyebrow="Our programmes"
+            title={<>Tools that give you <span className="ital">the edge.</span></>}
             sub="Built to make every candidate the best version of themselves — before the first interview."
           />
           <Reveal stagger className="cl-grid">
