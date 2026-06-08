@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
-import { ContactForm } from "@/components/ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact Arminus | IT Staffing Inquiry | Kolkata Gurugram Bangalore",
@@ -16,10 +16,34 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://arminus.co.in/contact" },
 };
 
+const channels = [
+  {
+    icon: "✉",
+    label: "Email us",
+    value: "contactus@arminus.in",
+    href: "mailto:contactus@arminus.in",
+    note: "We respond within one business day.",
+  },
+  {
+    icon: "☎",
+    label: "Call us",
+    value: "+91 33 40601004",
+    href: "tel:+913340601004",
+    note: "Mon – Sat, 9 am – 7 pm IST",
+  },
+  {
+    icon: "in",
+    label: "LinkedIn",
+    value: "Arminus Software",
+    href: "https://www.linkedin.com/company/665038",
+    note: "Follow us or send a message.",
+  },
+];
+
 const offices = [
-  { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", focus: "Strategy & leadership", email: "contactus@arminus.in", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=600&q=80&auto=format&fit=crop" },
-  { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", focus: "Operations & Gov-Tech", email: "contactus@arminus.in", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&q=80&auto=format&fit=crop" },
-  { tag: "Engineering Desk", name: "Bangalore", addr: "HSR Layout 5th Sector, Bengaluru, Karnataka", focus: "IT & engineering", email: "contactus@arminus.in", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
+  { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", focus: "Strategy & leadership", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=600&q=80&auto=format&fit=crop" },
+  { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", focus: "Operations & Gov-Tech", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&q=80&auto=format&fit=crop" },
+  { tag: "Engineering Desk", name: "Bangalore", addr: "HSR Layout 5th Sector, Bengaluru, Karnataka", focus: "IT & engineering", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
 ];
 
 export default function ContactPage() {
@@ -32,23 +56,25 @@ export default function ContactPage() {
         lede="Share a brief, ask a question, or just start a conversation. Our team gets back within one business day."
       />
 
+      {/* REACH US */}
       <section className="section">
         <div className="wrap">
-          <div className="contact-layout">
-            <div>
-              <SectionHead
-                eyebrow="Get in touch"
-                title={<>Tell us what <span className="ital">you need.</span></>}
-                sub="Whether you're hiring, job-seeking, or exploring Nubo — we're one message away."
-              />
-              <div className="contact-quick">
-                <div className="cfq"><div className="cfq-lbl">Email</div><a className="cfq-val" href="mailto:contactus@arminus.in">contactus@arminus.in</a></div>
-                <div className="cfq"><div className="cfq-lbl">Phone</div><a className="cfq-val" href="tel:+913340601004">+91 33 40601004</a></div>
-                <div className="cfq"><div className="cfq-lbl">Offices</div><div className="cfq-val">Kolkata · Gurugram · Bangalore</div></div>
-              </div>
-            </div>
-            <ContactForm />
-          </div>
+          <SectionHead
+            eyebrow="Get in touch"
+            title={<>Reach us <span className="ital">directly.</span></>}
+            sub="No ticketing systems. No bots. A real person from our team reads every message."
+            align="center"
+          />
+          <Reveal stagger className="contact-channels">
+            {channels.map(c => (
+              <a key={c.label} href={c.href} className="contact-channel" target={c.href.startsWith("http") ? "_blank" : undefined} rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}>
+                <div className="cc-icon">{c.icon}</div>
+                <div className="cc-lbl">{c.label}</div>
+                <div className="cc-val">{c.value}</div>
+                <div className="cc-note">{c.note}</div>
+              </a>
+            ))}
+          </Reveal>
         </div>
       </section>
 
@@ -71,10 +97,22 @@ export default function ContactPage() {
                   <h3>{o.name}</h3>
                   <div className="co-line"><div className="co-lbl">Address</div><div className="co-val">{o.addr}</div></div>
                   <div className="co-line"><div className="co-lbl">Focus</div><div className="co-val">{o.focus}</div></div>
-                  <div className="co-line"><div className="co-lbl">Email</div><a className="co-val" href={`mailto:${o.email}`}>{o.email}</a></div>
                 </div>
               </div>
             ))}
+          </Reveal>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="section">
+        <div className="wrap">
+          <Reveal>
+            <div className="nnp-cta-block">
+              <h2>Ready to find your next great hire?</h2>
+              <p>Tell us about the role. We&apos;ll come back within one business day with a research plan and market read.</p>
+              <Link href="mailto:contactus@arminus.in" className="btn btn-blue">Email us now <span className="arrow">→</span></Link>
+            </div>
           </Reveal>
         </div>
       </section>
