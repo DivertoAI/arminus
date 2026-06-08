@@ -807,10 +807,11 @@ a.co-val:hover { color: var(--blue); }
 
 /* ── Contact ── */
 .contact-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: start; }
-.contact-quick { display: flex; flex-direction: column; gap: 14px; margin-top: 32px; }
-.cfq { display: flex; gap: 14px; align-items: baseline; }
-.cfq-lbl { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); width: 56px; flex-shrink: 0; }
-.cfq-val { font-size: 0.95rem; color: var(--ink); }
+.contact-quick { display: flex; flex-direction: column; gap: 10px; margin-top: 32px; }
+.cfq { display: flex; gap: 16px; align-items: baseline; }
+.cfq-lbl { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); width: 52px; flex-shrink: 0; }
+.cfq-val { font-size: 1rem; color: var(--ink); font-weight: 400; }
+.cfq-val:is(a) { text-decoration: none; }
 .cfq-val:is(a):hover { color: var(--blue); }
 .contact-form { display: flex; flex-direction: column; gap: 18px; background: #fff; border: 1.5px solid var(--line); border-radius: var(--r-xl); padding: 36px 32px; box-shadow: var(--shadow-card); }
 .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }

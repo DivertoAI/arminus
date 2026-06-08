@@ -17,9 +17,9 @@ export const metadata: Metadata = {
 };
 
 const offices = [
-  { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", focus: "Strategy & leadership", email: "contactus@arminus.com", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=600&q=80&auto=format&fit=crop" },
-  { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", focus: "Operations & Gov-Tech", email: "contactus@arminus.com", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&q=80&auto=format&fit=crop" },
-  { tag: "Engineering Desk", name: "Bangalore", addr: "HSR Layout 5th Sector, Bengaluru, Karnataka", focus: "IT & engineering", email: "contactus@arminus.com", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
+  { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", focus: "Strategy & leadership", email: "contactus@arminus.in", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=600&q=80&auto=format&fit=crop" },
+  { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", focus: "Operations & Gov-Tech", email: "contactus@arminus.in", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&q=80&auto=format&fit=crop" },
+  { tag: "Engineering Desk", name: "Bangalore", addr: "HSR Layout 5th Sector, Bengaluru, Karnataka", focus: "IT & engineering", email: "contactus@arminus.in", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
 ];
 
 export default function ContactPage() {
@@ -42,9 +42,8 @@ export default function ContactPage() {
                 sub="Whether you're hiring, job-seeking, or exploring Nubo — we're one message away."
               />
               <div className="contact-quick">
-                <div className="cfq"><div className="cfq-lbl">Email</div><a className="cfq-val" href="mailto:contactus@arminus.com">contactus@arminus.com</a></div>
-                <div className="cfq"><div className="cfq-lbl">India</div><a className="cfq-val" href="tel:+913340601004">+91 33 40601004</a></div>
-                <div className="cfq"><div className="cfq-lbl">USA</div><a className="cfq-val" href="tel:+17324819410">+1 732 481 9410</a></div>
+                <div className="cfq"><div className="cfq-lbl">Email</div><a className="cfq-val" href="mailto:contactus@arminus.in">contactus@arminus.in</a></div>
+                <div className="cfq"><div className="cfq-lbl">Phone</div><a className="cfq-val" href="tel:+913340601004">+91 33 40601004</a></div>
                 <div className="cfq"><div className="cfq-lbl">Offices</div><div className="cfq-val">Kolkata · Gurugram · Bangalore</div></div>
               </div>
             </div>

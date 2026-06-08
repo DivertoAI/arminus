@@ -61,9 +61,8 @@ export function Footer({ stats = false }: FooterProps) {
           <div className="footer-col">
             <h5>Reach us</h5>
             <ul>
-              <li><a href="mailto:contactus@arminus.com">contactus@arminus.com</a></li>
+              <li><a href="mailto:contactus@arminus.in">contactus@arminus.in</a></li>
               <li><a href="tel:+913340601004">+91 33 40601004</a></li>
-              <li><a href="tel:+17324819410">+1 732 481 9410 (USA)</a></li>
               <li>
                 <a href="https://www.linkedin.com/company/665038" target="_blank" rel="noopener noreferrer">
                   LinkedIn ↗
