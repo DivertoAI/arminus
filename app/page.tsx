@@ -184,7 +184,6 @@ export default function Home() {
                 <div className="stars">★★★★★</div>
                 <p className="q">{t.q}</p>
                 <div className="test-foot">
-                  <div className="ava-img" style={{ backgroundImage: `url(${t.img})` }} />
                   <div>
                     <div className="name">{t.n}</div>
                     <div className="role">{t.r}</div>
