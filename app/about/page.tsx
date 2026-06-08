@@ -4,6 +4,7 @@ import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
+import { withSiteBasePath } from "@/lib/site-path";
 
 export const metadata: Metadata = {
   title: "About Arminus | 17 Years IT Staffing Excellence | India",
@@ -135,7 +136,7 @@ export default function AboutPage() {
                 <div className={`leader-grid ${l.rev ? "rev" : ""}`}>
                   <div className="leader-photo">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={l.img} alt={l.name} />
+                    <img src={withSiteBasePath(l.img)} alt={l.name} />
                     <span className="leader-photo-tag">{l.role}</span>
                   </div>
                   <div className="leader-text">
