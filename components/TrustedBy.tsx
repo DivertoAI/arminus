@@ -4,19 +4,19 @@ import Image from "next/image";
 import { withSiteBasePath } from "@/lib/site-path";
 
 const CLIENTS = [
-  { name: "Cognizant",       logo: "/logos/cognizant.svg"      },
-  { name: "Capgemini",       logo: "/logos/capgemini.svg"      },
-  { name: "Deloitte",        logo: "/logos/deloitte.svg"       },
-  { name: "PwC",             logo: "/logos/pwc.svg"            },
-  { name: "Indorama",        logo: "/logos/indorama.svg"       },
-  { name: "Hyland",          logo: "/logos/hyland.svg"         },
-  { name: "Xerox",           logo: "/logos/xerox.svg"          },
-  { name: "Lexmark",         logo: "/logos/lexmark.svg"        },
+  { name: "Cognizant",       logo: "/logos/cognizant.png"      },
+  { name: "Capgemini",       logo: "/logos/capgemini.png"      },
+  { name: "Deloitte",        logo: "/logos/deloitte.png"       },
+  { name: "PwC",             logo: "/logos/pwc.png"            },
+  { name: "Indorama",        logo: "/logos/indorama.png"       },
+  { name: "Hyland",          logo: "/logos/hyland.png"         },
+  { name: "Xerox",           logo: "/logos/xerox.png"          },
+  { name: "Lexmark",         logo: "/logos/lexmark.png"        },
   { name: "LabVantage",      logo: "/logos/labvantage.svg"     },
-  { name: "UST Global",      logo: "/logos/ust.svg"            },
+  { name: "UST Global",      logo: "/logos/ust.png"            },
   { name: "QCI",             logo: "/logos/qci.svg"            },
   { name: "Malomatia",       logo: "/logos/malomatia.svg"      },
-  { name: "First American",  logo: "/logos/firstamerican.svg"  },
+  { name: "First American",  logo: "/logos/firstamerican.png"  },
 ];
 
 // Clone 4× for seamless infinite loop
