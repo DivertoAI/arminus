@@ -102,7 +102,7 @@ export default function AboutPage() {
         <div className="wrap">
           <SectionHead
             eyebrow="Where we are"
-            title={<>Three cities. <span className="ital">One team.</span></>}
+            title={<>Rooted in India. <span className="ital">Built to reach further.</span></>}
             sub="A pan-India footprint that puts our recruiters close to both clients and talent."
           />
           <Reveal stagger className="office-grid">

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/Nav";
-import { Footer } from "@/components/Footer";
+import { FooterWrapper } from "@/components/FooterWrapper";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -112,7 +112,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <Nav />
         {children}
-        <Footer stats />
+        <FooterWrapper />
       </body>
     </html>
   );
