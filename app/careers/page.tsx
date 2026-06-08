@@ -30,16 +30,15 @@ async function fetchAllJobs(): Promise<Job[]> {
 
   try {
     let page = 1;
-    let totalPages = 1;
+    let hasMore = true;
 
-    do {
+    while (hasMore) {
       let res: Response;
       if (useV2) {
         res = await fetch(
-          `https://api.ceipal.com/v2/getJobPostingsList/?page=${page}`,
+          `https://api.ceipal.com/v2/getJobPostingsList/?page=${page}&page_size=100`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        // If token is bad fall through to public API
         if (res.status === 401 || res.status === 403) throw new Error("auth");
       } else {
         res = await fetch(
@@ -51,15 +50,25 @@ async function fetchAllJobs(): Promise<Job[]> {
       if (!res.ok) break;
       const data = await res.json();
       const results: Job[] = data.results ?? [];
+      if (results.length === 0) break;
+
       jobs.push(...(useV2 ? results.filter(j => j.job_status?.toLowerCase() === "active") : results));
-      totalPages = data.num_pages ?? 1;
+
+      if (useV2) {
+        // DRF pagination: use `next` field or calculate from count
+        const pageSize = 100;
+        const total = data.count ?? 0;
+        hasMore = !!data.next || (total > page * pageSize);
+      } else {
+        // Public API: uses num_pages
+        const totalPages = data.num_pages ?? 1;
+        hasMore = page < totalPages;
+      }
       page++;
-    } while (page <= totalPages);
+    }
 
   } catch (e: unknown) {
-    // v2 auth failed — retry with public API
     if ((e as Error).message === "auth") return fetchPublicJobs();
-    // Other error — return whatever we collected so far
   }
 
   return dedupe(jobs);
