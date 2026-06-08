@@ -6,6 +6,7 @@ import { TrustedBy } from "@/components/TrustedBy";
 import { NetworkSvg } from "@/components/NetworkSvg";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
+import { MatchConsole } from "@/components/MatchConsole";
 
 export const metadata: Metadata = {
   title: "Arminus | IT Staffing & Recruitment Company India",
@@ -26,16 +27,10 @@ const pillars = [
   { n: "04", t: "Offshore capable", d: "Specialists deployed globally to execute projects within agreed delivery windows.", k: "Global execution" },
 ];
 
-const teasers = [
-  { href: "/solutions", tag: "B2B", accent: "teaser-blue", eyebrow: "Strategic Talent Solutions", title: "Permanent · Flexible · Executive · Gov-Tech", desc: "Five service lines built around the entire talent lifecycle — from individual specialists to multi-state Gov-Tech deployments.", cta: "See solutions", img: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&q=80&auto=format&fit=crop" },
-  { href: "/career-labs", tag: "B2C", accent: "teaser-coral", eyebrow: "Arminus Career Labs", title: "Resumes, interviews, and the negotiation", desc: "The ATS-Dominator, the Interview Masterclass, and our free AI Resume Score — built to make every candidate the best version of themselves.", cta: "Visit Career Labs", img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=900&q=80&auto=format&fit=crop" },
-  { href: "/nubo", tag: "PLATFORM", accent: "teaser-dark", eyebrow: "Nubo Native Platform", title: "The sovereign private cloud alternative", desc: "A public-cloud experience on private infrastructure. Managed Kubernetes, AI-ready DevSecOps, and low-code accelerators — TCO down, velocity up.", cta: "Discover NNP", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=80&auto=format&fit=crop" },
-];
-
 const leaders = [
-  { name: "Pankaj Kathuria", role: "MD & CEO", bio: "44 years architecting global software. ODCs for HBO Singapore, Puerto Rico Telephone. Thapar · IIM Calcutta.", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80&auto=format&fit=crop&crop=faces" },
-  { name: "Ashok Jindal", role: "Director — Operations", bio: "40 years. Senior leadership at Tata, PCL. Multi-million-dollar deals for Tata Motors, Mahindra, HAL. B.Tech IIT Delhi · Masters Univ of Waterloo.", img: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=600&q=80&auto=format&fit=crop&crop=faces" },
-  { name: "Tania Kathuria", role: "Director — Strategy & Growth", bio: "Global GTM at Accenture and TCS. Scaling Arminus's international expansion. MBA NMIMS Mumbai.", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80&auto=format&fit=crop&crop=faces" },
+  { name: "Pankaj Kathuria", role: "MD & CEO", bio: "44 years architecting global software. ODCs for HBO Singapore, Puerto Rico Telephone. Thapar · IIM Calcutta.", img: "/pankaj.jpg" },
+  { name: "Ashok Jindal", role: "Director — Operations", bio: "40 years. Senior leadership at Tata, PCL. Multi-million-dollar deals for Tata Motors, Mahindra, HAL. Runs NCR.", img: "/ashok.jpg" },
+  { name: "Tania Kathuria", role: "Director — Strategy & Growth", bio: "Global GTM at Accenture and TCS. Scaling Arminus's international expansion. NMIMS Mumbai MBA.", img: "/tania.jpg" },
 ];
 
 const testimonials = [
@@ -138,59 +133,9 @@ export default function Home() {
               </div>
             </div>
             <div className="pow-art">
-              <div className="pow-circle pow-circle-h">
-                <div className="pow-icon-bg">
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                </div>
-                <div className="pow-circle-lbl">Humans</div>
-              </div>
-              <div className="pow-link">
-                <svg width="60" height="120" viewBox="0 0 60 120" fill="none">
-                  <path d="M 5 60 Q 30 30, 55 60 T 5 60" stroke="url(#powg)" strokeWidth="2" strokeDasharray="4 4">
-                    <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="2s" repeatCount="indefinite" />
-                  </path>
-                  <defs><linearGradient id="powg" x1="0" x2="60" y1="0" y2="0"><stop offset="0%" stopColor="#0080D0"/><stop offset="100%" stopColor="#E02020"/></linearGradient></defs>
-                </svg>
-              </div>
-              <div className="pow-circle pow-circle-a">
-                <div className="pow-icon-bg">
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                </div>
-                <div className="pow-circle-lbl">AI</div>
-              </div>
+              <MatchConsole />
             </div>
           </Reveal>
-        </div>
-      </section>
-
-      {/* ── SERVICE TEASERS ── */}
-      <section className="section tint" id="solutions-teaser">
-        <div className="wrap">
-          <SectionHead
-            eyebrow="What we do"
-            title={<>Three businesses. <span className="ital">One philosophy.</span></>}
-            sub="From enterprise staffing to candidate-side training to a sovereign cloud platform — every Arminus business begins with a human relationship."
-          />
-          <div className="teaser-grid">
-            {teasers.map(t => (
-              <Reveal key={t.href}>
-                <Link href={t.href} className={`teaser ${t.accent}`}>
-                  <div className="teaser-photo">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={t.img} alt={t.eyebrow} className="teaser-img" />
-                    <div className="ovl" />
-                    <span className="teaser-tag">{t.tag}</span>
-                  </div>
-                  <div className="teaser-body">
-                    <div className="teaser-eyebrow">{t.eyebrow}</div>
-                    <h3>{t.title}</h3>
-                    <p>{t.desc}</p>
-                    <span className="teaser-cta">{t.cta} <span className="arrow">→</span></span>
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
