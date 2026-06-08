@@ -170,16 +170,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .pow-title { max-width: 14ch; }
 .pow-lede { font-size: 17px; line-height: 1.6; color: var(--ink-2); margin: 24px 0 32px; max-width: 540px; }
 .pow-tagline {
-  display: inline-flex; flex-direction: column; gap: 4px;
-  padding: 18px 24px; border-radius: 18px;
-  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-deep) 50%, var(--coral) 100%);
-  color: white;
+  display: flex; flex-direction: column; gap: 2px;
   font-family: var(--font-serif); font-style: italic;
-  font-size: 24px; letter-spacing: -0.01em; line-height: 1.15;
-  box-shadow: 0 10px 30px rgba(0,128,208,0.25);
+  font-size: 26px; letter-spacing: -0.01em; line-height: 1.2;
 }
-.pow-tagline-pre { color: rgba(255,255,255,0.85); }
-.pow-tagline-post { color: var(--peach); }
+.pow-tagline-pre { color: var(--ink); }
+.pow-tagline-post { color: var(--blue); }
 .pow-art { width: 100%; }
 
 /* ── Arminus Match Engine Console ── */
@@ -794,7 +790,7 @@ a.co-val:hover { color: var(--blue); }
 .nubo-why-card { background: #fff; border: 1.5px solid var(--line); border-radius: var(--r-md); padding: 22px 24px; box-shadow: var(--shadow-card); }
 .nubo-why-card h4 { font-size: 1rem; font-weight: 700; color: var(--ink); margin: 0 0 6px; }
 .nubo-why-card p { font-size: 0.88rem; line-height: 1.6; color: var(--ink-2); margin: 0; }
-.nnp-cta-block { background: linear-gradient(135deg, var(--blue) 0%, var(--blue-deep) 100%); border-radius: var(--r-xl); padding: 64px 48px; text-align: center; color: #fff; }
+.nnp-cta-block { background: radial-gradient(ellipse 700px 400px at 20% 100%, rgba(0,128,208,0.7), transparent 60%), radial-gradient(ellipse 700px 400px at 80% 0%, rgba(224,32,32,0.5), transparent 60%), linear-gradient(135deg, #0F1A2A 0%, #1a2a4a 100%); border-radius: var(--r-xl); padding: 64px 48px; text-align: center; color: #fff; }
 .nnp-cta-block h2 { font-size: clamp(1.6rem, 2.5vw, 2.4rem); font-weight: 800; color: #fff; margin: 0 0 12px; }
 .nnp-cta-block p { font-size: 1.05rem; opacity: 0.85; max-width: 540px; margin: 0 auto 28px; }
 .btn-ghost-light { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 999px; font-size: 0.95rem; font-weight: 600; color: rgba(255,255,255,0.85); border: 1.5px solid rgba(255,255,255,0.35); transition: background .2s, border-color .2s; }

@@ -28,6 +28,4 @@ yarn-error.log*
 .env*.local
 .env
 
-# arminus specific
-arminus-*.png
 *.log

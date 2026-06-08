@@ -36,21 +36,21 @@ const leaders = [
     pull: "44 years architecting the global software landscape.",
     bio: "A veteran architect of the global software landscape, Pankaj's expertise encompasses the entire lifecycle of technology delivery — from hands-on engineering to orchestrating mission-critical projects and establishing large-scale Offshore Development Centers (ODCs) for world-class enterprises. His portfolio includes leading multi-million dollar initiatives for organizations such as HBO Singapore and the Puerto Rico Telephone Company (USA).",
     edu: [["Engineering", "Thapar Institute of Engineering & Technology"], ["Management", "IIM Calcutta"]],
-    img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80&auto=format&fit=crop&crop=faces",
+    img: "/pankaj.jpg",
   },
   {
     name: "Ashok Jindal", role: "Director — Operations", rev: true,
     pull: "40 years; the operational backbone of Arminus.",
     bio: "Before joining forces with Pankaj in 2012, Ashok held senior leadership roles at Tata and PCL. A specialist in high-value account management, he has orchestrated multi-million dollar deals for industry leaders including Tata Motors, Mahindra, and HAL. He oversees Gurugram and NCR operations with a technology-first approach.",
     edu: [["Engineering", "B.Tech, IIT Delhi"], ["Management", "Masters, University of Waterloo, Canada"]],
-    img: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=600&q=80&auto=format&fit=crop&crop=faces",
+    img: "/ashok.jpg",
   },
   {
     name: "Tania Kathuria", role: "Director — Strategy & Growth", rev: false,
     pull: "Building scalable revenue engines and global partnerships.",
     bio: "A growth-focused leader, Tania spearheads strategic direction and international expansion at Arminus. Her background includes key positions at Accenture and Tata Consultancy Services (TCS), where she led go-to-market initiatives across global markets.",
     edu: [["Education", "MBA, NMIMS Mumbai"], ["Leads", "Strategy & global growth"]],
-    img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80&auto=format&fit=crop&crop=faces",
+    img: "/tania.jpg",
   },
 ];
 

@@ -33,14 +33,14 @@ export default function NuboPage() {
   return (
     <main>
       <PageHero
-        accent="dark"
+        accent="blue"
         eyebrow="Nubo Native Platform (NNP)"
-        title={<>The Sovereign <span className="ital" style={{ color: "var(--blue-soft)" }}>Private Cloud</span> Alternative.</>}
+        title={<>The Sovereign <span className="ital blue">Private Cloud</span> Alternative.</>}
         lede="NNP provides a Public Cloud experience on private infrastructure — reducing TCO while enabling AI-ready development for modern Indian enterprises."
       >
         <div className="hero-cta" style={{ marginTop: "28px" }}>
           <Link href="/contact" className="btn btn-blue">Talk to our platform team <span className="arrow">→</span></Link>
-          <Link href="#features" className="btn btn-ghost-light">Explore features</Link>
+          <Link href="#features" className="btn btn-ghost">Explore features</Link>
         </div>
       </PageHero>
 
