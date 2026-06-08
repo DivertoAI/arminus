@@ -22,13 +22,52 @@ export const metadata: Metadata = {
 const API_KEY = "N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09";
 const CP_ID   = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
 
-/* ── Fetch all jobs at build time (server-side) ── */
-// Always use the public Career Portal API — it's the correct endpoint
-// for jobs published to the career portal and returns all of them.
+/* ── Fetch all jobs at build time (server-side) ──
+ *  Priority:
+ *  1. v1 authenticated API  — full requisition_description + apply links
+ *     (needs CEIPAL_ACCESS_TOKEN, available in the GH Actions workflow)
+ *  2. Public CareerPortalJobPostings fallback (descriptions truncated ~184 chars)
+ */
 async function fetchAllJobs(): Promise<Job[]> {
+  const token = process.env.CEIPAL_ACCESS_TOKEN;
+  if (token && token !== "null" && token !== "undefined" && token.length > 10) {
+    try {
+      const jobs = await fetchV1Jobs(token);
+      if (jobs.length > 0) {
+        console.log(`[careers] v1 API: ${jobs.length} jobs fetched`);
+        return jobs;
+      }
+    } catch (e) {
+      console.warn("[careers] v1 API failed, falling back to public API:", e);
+    }
+  }
+  console.log("[careers] using public CareerPortal API");
   return fetchPublicJobs();
 }
 
+/* v1 authenticated endpoint — returns full job data */
+async function fetchV1Jobs(token: string): Promise<Job[]> {
+  const jobs: Job[] = [];
+  let url = "https://api.ceipal.com/v1/getJobPostingsList?post_on_careerportal=1&limit=50";
+
+  for (;;) {
+    const res = await fetch(url, {
+      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+    });
+    if (!res.ok) break;
+    const data = await res.json();
+    const batch: Job[] = Array.isArray(data) ? data : (data.results ?? []);
+    if (!batch.length) break;
+    jobs.push(...batch);
+    const next: string | null = data.next ?? null;
+    if (!next) break;
+    url = next;
+  }
+
+  return dedupe(jobs);
+}
+
+/* Public career portal endpoint — fallback when no token */
 async function fetchPublicJobs(): Promise<Job[]> {
   const jobs: Job[] = [];
   let page = 1;
