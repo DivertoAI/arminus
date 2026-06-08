@@ -23,55 +23,10 @@ const API_KEY = "N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09";
 const CP_ID   = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
 
 /* ── Fetch all jobs at build time (server-side) ── */
+// Always use the public Career Portal API — it's the correct endpoint
+// for jobs published to the career portal and returns all of them.
 async function fetchAllJobs(): Promise<Job[]> {
-  const token  = process.env.CEIPAL_ACCESS_TOKEN;
-  const useV2  = !!token && token !== "undefined" && token !== "null";
-  const jobs: Job[] = [];
-
-  try {
-    let page = 1;
-    let hasMore = true;
-
-    while (hasMore) {
-      let res: Response;
-      if (useV2) {
-        res = await fetch(
-          `https://api.ceipal.com/v2/getJobPostingsList/?page=${page}&page_size=100`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (res.status === 401 || res.status === 403) throw new Error("auth");
-      } else {
-        res = await fetch(
-          `https://apiin.ceipal.com/${API_KEY}/CareerPortalJobPostings/`,
-          { method: "POST", body: new URLSearchParams({ cp_id: CP_ID, page: String(page) }) }
-        );
-      }
-
-      if (!res.ok) break;
-      const data = await res.json();
-      const results: Job[] = data.results ?? [];
-      if (results.length === 0) break;
-
-      jobs.push(...(useV2 ? results.filter(j => j.job_status?.toLowerCase() === "active") : results));
-
-      if (useV2) {
-        // DRF pagination: use `next` field or calculate from count
-        const pageSize = 100;
-        const total = data.count ?? 0;
-        hasMore = !!data.next || (total > page * pageSize);
-      } else {
-        // Public API: uses num_pages
-        const totalPages = data.num_pages ?? 1;
-        hasMore = page < totalPages;
-      }
-      page++;
-    }
-
-  } catch (e: unknown) {
-    if ((e as Error).message === "auth") return fetchPublicJobs();
-  }
-
-  return dedupe(jobs);
+  return fetchPublicJobs();
 }
 
 async function fetchPublicJobs(): Promise<Job[]> {
