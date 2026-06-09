@@ -180,7 +180,7 @@ export default function Home() {
       <section className="section">
         <div className="wrap">
           <SectionHead
-            eyebrow="Word of mouth"
+            eyebrow="Testimonials"
             title={<>The kind of <span className="ital">long relationships</span> we build.</>}
             sub="Most of our clients come from referrals — and most of our candidates come back to us for their next move."
           />
