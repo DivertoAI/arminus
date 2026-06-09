@@ -152,7 +152,7 @@ export default function SolutionsPage() {
           <Reveal stagger className="steps">
             {steps.map(s => (
               <div className="step-card" key={s.n}>
-                <div className="step-card-top"><div className="step-badge">{s.n}</div><div className="step-when">{s.s}</div></div>
+                <div className="step-card-top"><div className="step-when">{s.s}</div></div>
                 <h4>{s.t}</h4>
                 <p>{s.d}</p>
               </div>
