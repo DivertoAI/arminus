@@ -57,10 +57,9 @@ export default function Home() {
               </Reveal>
               <Reveal>
                 <p className="h-sub">
-                  Arminus delivers high-velocity, pan-India staffing solutions for the world&apos;s
-                  fastest-growing economy — combining AI-driven precision with deep human insight.
-                  With 200+ professionals deployed across 10+ states and delivery hubs in Kolkata,
-                  Gurugram and Bangalore, our reach extends wherever the talent and the opportunity are.
+                  Headquartered in Kolkata with a powerful presence in Gurugram and Bangalore,
+                  Arminus combines AI-driven precision with deep human insight. We deliver
+                  high-velocity, pan-India staffing solutions for the world&apos;s fastest-growing economy.
                 </p>
               </Reveal>
               <Reveal>

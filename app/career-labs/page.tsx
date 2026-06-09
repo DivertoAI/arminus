@@ -24,8 +24,8 @@ const services = [
     sub: "Resume & LinkedIn Optimization",
     bullets: [
       "AI-Optimization: Resumes built to trigger high-relevance scores in modern Applicant Tracking Systems.",
-      "Editorial Polish: Narrative refinement to highlight leadership impact and quantifiable achievements.",
-      "LinkedIn SEO: Complete profile overhaul to ensure maximum visibility in recruiter headhunting searches.",
+      "Editorial Polish: Narrative refinement to highlight leadership impact.",
+      "LinkedIn SEO: Complete profile overhaul to ensure visibility in recruiter headhunting searches.",
     ],
   },
   {
@@ -33,8 +33,8 @@ const services = [
     sub: "Mock Sessions & Negotiation",
     bullets: [
       "Simulated Environment: 60-minute mock sessions tailored to IT, Fintech, or Automotive interview standards.",
-      "Editorial Feedback Report: Detailed breakdown of performance, body language, and storytelling (STAR method).",
-      "Negotiation Strategy: Learn how to benchmark your market worth and negotiate your CTC with confidence.",
+      "The \"Editorial Feedback\" Report: Detailed breakdown of performance, body language, and storytelling (STAR method).",
+      "Negotiation Strategy: Learn how to benchmark your worth and negotiate your CTC with confidence.",
     ],
   },
 ];
@@ -112,7 +112,7 @@ export default function CareerLabsPage() {
           <Reveal>
             <p className="cl-disclaimer">
               <strong>Conflict of Interest Guardrail:</strong> Purchasing Career Labs services does not guarantee
-              a placement through Arminus recruitment. It does guarantee you become a better-prepared candidate
+              a placement through Arminus recruitment, but it does guarantee you are a better-prepared candidate
               for the global market.
             </p>
           </Reveal>

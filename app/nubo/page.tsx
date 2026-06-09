@@ -17,10 +17,10 @@ export const metadata: Metadata = {
 };
 
 const features = [
-  { icon: "🖧", t: "Managed Kubernetes", d: "AI-enabled deep observability and close-loop automation for container orchestration at enterprise scale." },
-  { icon: "⚡", t: "Accelerated Software Dev", d: "Low-Code utility, SDLC AI Agents, and pre-built frameworks to ship faster without sacrificing quality or security." },
-  { icon: "⑂", t: "DevSecOps & GitOps", d: "End-to-end lifecycle automation with security baked in — from code commit to production deployment." },
-  { icon: "🗄", t: "Data Management", d: "Specialized platform for AI/ML solution development with governed, scalable data infrastructure." },
+  { icon: "🖧", t: "Managed Kubernetes", d: "AI-enabled deep observability and close loop automation." },
+  { icon: "⚡", t: "Accelerated Software Dev", d: "Low-Code utility, SDLC AI Agents, and pre-built frameworks." },
+  { icon: "⑂", t: "DevSecOps & GitOps", d: "End-to-end lifecycle automation." },
+  { icon: "🗄", t: "Data Management", d: "Specialized platform for AI/ML solution development." },
 ];
 
 const why = [
@@ -36,7 +36,7 @@ export default function NuboPage() {
         accent="blue"
         eyebrow="Nubo Native Platform (NNP)"
         title={<>The Sovereign <span className="ital blue">Private Cloud</span> Alternative.</>}
-        lede="NNP provides a Public Cloud experience on private infrastructure — reducing TCO while enabling AI-ready development for modern Indian enterprises."
+        lede="NNP provides a Public Cloud experience on private infrastructure, reducing TCO while enabling AI-ready development."
       >
         <div className="hero-cta" style={{ marginTop: "28px" }}>
           <Link href="/contact" className="btn btn-blue">Talk to our platform team <span className="arrow">→</span></Link>
