@@ -4,7 +4,6 @@ import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
-import { ResumeScore } from "@/components/ResumeScore";
 
 export const metadata: Metadata = {
   title: "Career Labs | ATS Resume Writing & Mock Interview Prep",
@@ -56,7 +55,7 @@ export default function CareerLabsPage() {
       >
         <div className="hero-cta" style={{ marginTop: "28px" }}>
           <Link href="#pricing" className="btn btn-blue">View pricing <span className="arrow">→</span></Link>
-          <Link href="#resume-score" className="btn btn-ghost">Get a free resume score</Link>
+          <Link href="#pricing" className="btn btn-ghost">See pricing</Link>
         </div>
       </PageHero>
 
@@ -81,9 +80,6 @@ export default function CareerLabsPage() {
           </Reveal>
         </div>
       </section>
-
-      {/* AI RESUME SCORE */}
-      <ResumeScore />
 
       {/* PRICING */}
       <section className="section tint" id="pricing">
