@@ -9,7 +9,7 @@ const CLIENTS = [
   { name: "Deloitte",        logo: "/logos/deloitte.png",      scale: 1    },
   { name: "PwC",             logo: "/logos/pwc.png",           scale: 1    },
   { name: "Indorama",        logo: "/logos/indorama.png",      scale: 1    },
-  { name: "Hyland",          logo: "/logos/hyland.png",        scale: 1.7  },
+  { name: "Hyland",          logo: "/logos/hyland.png",        scale: 1    },
   { name: "Xerox Lexmark",   logo: "/logos/lexmark.png",       scale: 1    },
   { name: "LabVantage",      logo: "/logos/labvantage.svg",    scale: 1    },
   { name: "UST Global",      logo: "/logos/ust.png",           scale: 1    },
