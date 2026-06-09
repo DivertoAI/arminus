@@ -399,6 +399,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .step-card p { color: var(--ink-2); font-size: 14px; line-height: 1.55; margin: 0; }
 
 /* ---------- testimonials ---------- */
+.test-group-label { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); margin-bottom: 20px; }
 .test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .test { background: white; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px; display: flex; flex-direction: column; gap: 18px; transition: transform .25s, box-shadow .25s; }
 .test:hover { transform: translateY(-3px); box-shadow: var(--shadow-card); }

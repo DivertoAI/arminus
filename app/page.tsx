@@ -34,10 +34,18 @@ const leaders = [
   { name: "Tania Kathuria", role: "Director — Strategy & Growth", bio: "Global GTM at Accenture and TCS. Scaling Arminus's international expansion. NMIMS Mumbai MBA.", img: "/tania.jpg" },
 ];
 
-const testimonials = [
-  { q: "Arminus closed three director-level roles for us in a quarter we had given up on. They didn't just send résumés — they sent the right three people.", n: "Anand Menon", r: "Head of HR · Series C fintech", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80&auto=format&fit=crop&crop=faces" },
-  { q: "Most agencies disappear after a placement. Our Arminus partner still WhatsApps me on day 60 to check in on each engineer. That's the difference.", n: "Sarita Venkat", r: "VP Engineering · SaaS platform", img: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=200&q=80&auto=format&fit=crop&crop=faces" },
-  { q: "They moved me from a Tier-2 product co to a Series B founding role. Two months of honest conversations before a single CV was shared.", n: "Rohit Kapur", r: "Director of Product · placed candidate", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80&auto=format&fit=crop&crop=faces" },
+const clientTestimonials = [
+  { q: "Today, we look at Arminus as an extension of our office. I really appreciate the amount of effort Arminus has put in to understand it and get us the appropriate talent when it needed the most.", n: "Rajiv Das", r: "Capgemini" },
+  { q: "We have received excellent service from Arminus over some very difficult assignments. They have clearly understood our briefs, consistently delivered high quality candidates and provided great support and assistance in bringing people on board.", n: "Venkata Ramana", r: "HR · Majesco" },
+  { q: "It was a REAL JOY working with Arminus. They are incredibly responsive and operate at the highest level of professionalism. They are very knowledgeable in all aspects of software development and only have your best interest in mind when working on a project.", n: "Jeff Stealey", r: "ICI Information Centers International" },
+];
+
+const consultantTestimonials = [
+  { q: "I was hired through Arminus Software for a project with PwC and DFID and it was indeed an amazing work opportunity. They place individuals in good reputed companies. I was on their payroll and faced absolutely no difficulties during the one year tenure. Given a chance I would love to work with them again.", n: "Jyoti Kalbhor", r: "Placed at PwC & DFID" },
+  { q: "Arminus Software is a wonderful place to work, to learn and grow as a professional. The company stands out from the crowd in terms of environment, procedures and protocols. Every individual is heard and is given an apt chance to grow.", n: "Surangama Chakraborty", r: "Arminus Consultant" },
+  { q: "If you are a performer, you will be promoted. Work life balance is there. Transparent incentive policies, quarterly paid. The best part is I have earned incentives almost double of CTC. Are you a recruiter looking for change in Kolkata's market? Join Arminus.", n: "Mehurnnesa Khatun", r: "Recruiter · Kolkata" },
+  { q: "Happy employee is not a myth any more. Flexible timings, good co-workers, cooperative top management, good workplace.", n: "Mamta Kumar", r: "Arminus Employee" },
+  { q: "I was hired through Arminus to work for Cognizant. The best thing is that Arminus never let me feel that I was not part of Arminus. Every small thing was taken care of. All issues are addressed within 24 hours. I was confirmed with Cognizant in their permanent role after working for a year with Arminus.", n: "Laxman Belupukonda", r: "Placed at Cognizant" },
 ];
 
 export default function Home() {
@@ -176,8 +184,28 @@ export default function Home() {
             title={<>The kind of <span className="ital">long relationships</span> we build.</>}
             sub="Most of our clients come from referrals — and most of our candidates come back to us for their next move."
           />
+
+          {/* Client testimonials */}
+          <div className="test-group-label">What our clients say</div>
           <Reveal stagger className="test-grid">
-            {testimonials.map((t, i) => (
+            {clientTestimonials.map((t, i) => (
+              <div className="test" key={i}>
+                <div className="stars">★★★★★</div>
+                <p className="q">{t.q}</p>
+                <div className="test-foot">
+                  <div>
+                    <div className="name">{t.n}</div>
+                    <div className="role">{t.r}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </Reveal>
+
+          {/* Consultant / placed professional testimonials */}
+          <div className="test-group-label" style={{ marginTop: "48px" }}>What our placed professionals say</div>
+          <Reveal stagger className="test-grid">
+            {consultantTestimonials.map((t, i) => (
               <div className="test" key={i}>
                 <div className="stars">★★★★★</div>
                 <p className="q">{t.q}</p>
