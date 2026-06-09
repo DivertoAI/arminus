@@ -105,7 +105,6 @@ export default function Home() {
           <Reveal stagger className="pillar-grid">
             {pillars.map(p => (
               <article key={p.n} className="pillar">
-                <div className="pillar-num">{p.n}</div>
                 <h3>{p.t}</h3>
                 <p>{p.d}</p>
                 <div className="pillar-key">{p.k}</div>

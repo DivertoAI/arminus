@@ -67,7 +67,6 @@ export default function SolutionsPage() {
             {services.map(s => (
               <Reveal key={s.n}>
                 <article className={`svc-card ${s.accent}`}>
-                  <div className="num"><span>{s.n}</span><span className="arrow-up">↗</span></div>
                   <div className="cap-tag" style={{ color: s.accent === "coral" ? "var(--coral)" : "var(--blue)" }}>{s.tag}</div>
                   <h3>{s.t}</h3>
                   <p>{s.d}</p>
@@ -84,7 +83,6 @@ export default function SolutionsPage() {
         <div className="wrap">
           <div className="sd-grid">
             <div className="sd-text">
-              <div className="sd-num">04</div>
               <div className="sec-eyebrow"><span className="ln" /> Gov-Tech &amp; Large Scale Initiatives</div>
               <h2 className="sd-title">Powering <span className="ital" style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", color: "var(--blue)" }}>national transformation.</span></h2>
               <p className="sd-body">A trusted partner to the Big 4 (PWC, Deloitte, KPMG, EY), QCI (Quality Council of India) and ICC (Indian Chamber of Commerce), Arminus deploys specialized manpower for critical public sector projects. We have over 200 persons on our payroll working with various Govt projects like Skill Development, Sanitation, Agriculture, Niti Ayog, Social Services, and Education across 10+ Indian states.</p>
