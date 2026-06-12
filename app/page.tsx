@@ -78,12 +78,7 @@ export default function Home() {
                   <Link href="/careers" className="btn btn-ghost">Browse open roles</Link>
                 </div>
               </Reveal>
-              <Reveal stagger className="hero-stats">
-                <div className="stat"><span className="num">17+</span><div className="lbl">Years of recruiting</div></div>
-                <div className="stat"><span className="num">175+</span><div className="lbl">Clients served</div></div>
-                <div className="stat"><span className="num">15K+</span><div className="lbl">Professionals placed</div></div>
-                <div className="stat"><span className="num">600K+</span><div className="lbl">Active talent pool</div></div>
-              </Reveal>
+
             </div>
             <div className="hero-art">
               <div className="hero-orb"><NetworkSvg /></div>
@@ -152,7 +147,7 @@ export default function Home() {
           <SectionHead
             eyebrow="Leadership"
             title={<>Built by people who&apos;ve <span className="ital">done it before.</span></>}
-            sub="Three leaders. 84+ combined years of building global delivery, large account operations, and revenue engines that scale across markets."
+            sub="Three leaders with deep experience building global delivery, large account operations, and revenue engines that scale across markets."
           />
           <Reveal stagger className="lt-grid">
             {leaders.map(l => (

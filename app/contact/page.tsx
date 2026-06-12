@@ -27,8 +27,8 @@ const channels = [
   {
     icon: "☎",
     label: "Call us",
-    value: "+91 33 40601004",
-    href: "tel:+913340601004",
+    value: "+91 9874014979 / +91 3340601004",
+    href: "tel:+919874014979",
     note: "Mon – Sat, 9 am – 7 pm IST",
   },
   {
@@ -95,10 +95,9 @@ export default function ContactPage() {
                 <div className="co-photo">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={o.img} alt={o.name} />
-                  <span className="co-tag">{o.tag}</span>
                 </div>
                 <div className="co-body">
-                  <h3>{o.name}</h3>
+                  <h3>{o.name} ({o.tag})</h3>
                   <div className="co-line"><div className="co-lbl">Address</div><div className="co-val">{o.addr}</div></div>
                   <div className="co-line"><div className="co-lbl">Focus</div><div className="co-val">{o.focus}</div></div>
                 </div>

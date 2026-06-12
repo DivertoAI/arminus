@@ -26,9 +26,9 @@ const stats = [
 ];
 
 const offices = [
-  { tag: "Headquarters", name: "Kolkata", d: "Strategy, leadership and our central recruitment engine. Bengal Eco Intelligent Park, Sector V.", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=900&q=80&auto=format&fit=crop" },
-  { tag: "NCR Operations", name: "Gurugram", d: "Account operations and large-scale Gov-Tech deployments. JMD Megapolis, Sohna Road.", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80&auto=format&fit=crop" },
-  { tag: "Engineering Desk", name: "Bangalore", d: "IT and engineering specialist recruitment. HSR Layout 5th Sector.", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80&auto=format&fit=crop" },
+  { tag: "Headquarters", name: "Kolkata (Headquarters)", d: "Strategy, leadership and our central recruitment engine. Bengal Eco Intelligent Park, Sector V.", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=900&q=80&auto=format&fit=crop" },
+  { tag: "NCR Operations", name: "Gurugram (NCR Operations)", d: "Account operations and large-scale Gov-Tech deployments. JMD Megapolis, Sohna Road.", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80&auto=format&fit=crop" },
+  { tag: "Engineering Desk", name: "Bangalore (Engineering Desk)", d: "IT and engineering specialist recruitment. HSR Layout 5th Sector.", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80&auto=format&fit=crop" },
 ];
 
 const leaders = [
@@ -50,7 +50,7 @@ const leaders = [
     name: "Tania Kathuria", role: "Director — Strategy & Growth", rev: false,
     pull: "Building scalable revenue engines and global partnerships.",
     bio: "Tania is a growth-focused leader dedicated to building scalable revenue engines and global partnerships. At Arminus, she spearheads strategic direction and international expansion. Her background includes key positions at Accenture and Tata Consultancy Services (TCS), where she led go-to-market initiatives across global markets.",
-    edu: [["Education", "MBA, NMIMS Mumbai"], ["Leads", "Strategy & global growth"]],
+    edu: [["Engineering", "B.Tech, ITER, Bhubaneswar"], ["Management", "MBA, NMIMS Mumbai"]],
     img: "/tania.jpg",
   },
 ];
@@ -113,7 +113,6 @@ export default function AboutPage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={o.img} alt={o.name} />
                   <div className="ovl" />
-                  <span className="office-tag">{o.tag}</span>
                 </div>
                 <div className="office-body"><h3>{o.name}</h3><p>{o.d}</p></div>
               </article>
@@ -128,7 +127,7 @@ export default function AboutPage() {
           <SectionHead
             eyebrow="Leadership"
             title={<>Built by people who&apos;ve <span className="ital">done it before.</span></>}
-            sub="Three leaders. 84+ combined years of building global delivery, large-account operations, and revenue engines that scale across markets."
+            sub="Three leaders with deep experience building global delivery, large-account operations, and revenue engines that scale across markets."
           />
           <div className="leaders-stack">
             {leaders.map(l => (

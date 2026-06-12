@@ -17,10 +17,10 @@ export const metadata: Metadata = {
 };
 
 const features = [
-  { icon: "🖧", t: "Managed Kubernetes", d: "AI-enabled deep observability and close loop automation." },
-  { icon: "⚡", t: "Accelerated Software Dev", d: "Low-Code utility, SDLC AI Agents, and pre-built frameworks." },
-  { icon: "⑂", t: "DevSecOps & GitOps", d: "End-to-end lifecycle automation." },
-  { icon: "🗄", t: "Data Management", d: "Specialized platform for AI/ML solution development." },
+  { t: "Managed Kubernetes", d: "AI-enabled deep observability and close loop automation." },
+  { t: "Accelerated Software Dev", d: "Low-Code utility, SDLC AI Agents, and pre-built frameworks." },
+  { t: "DevSecOps & GitOps", d: "End-to-end lifecycle automation." },
+  { t: "Data Management", d: "Specialized platform for AI/ML solution development." },
 ];
 
 const why = [
@@ -55,7 +55,6 @@ export default function NuboPage() {
           <Reveal stagger className="nubo-grid">
             {features.map(f => (
               <article className="nubo-card" key={f.t}>
-                <div className="nubo-icon">{f.icon}</div>
                 <h3>{f.t}</h3>
                 <p>{f.d}</p>
               </article>

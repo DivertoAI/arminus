@@ -95,14 +95,15 @@ function dedupe(jobs: Job[]) {
 
 /* ── Page ── */
 const culture = [
-  { m: "✦", t: "Honest conversations", d: "We'd rather tell you the hard truth than place you in the wrong role." },
-  { m: "◆", t: "AI as a teammate", d: "Generative AI does the paperwork so you can do the work that matters." },
-  { m: "▲", t: "Relationships over transactions", d: "Most of our candidates come back to us for their next move." },
-  { m: "●", t: "Pan-India impact", d: "From private fintech to national Gov-Tech programs across 10+ states." },
+  { n: "01", t: "Honest conversations", d: "We'd rather tell you the hard truth than place you in the wrong role." },
+  { n: "02", t: "AI as a teammate", d: "Generative AI does the paperwork so you can do the work that matters." },
+  { n: "03", t: "Relationships over transactions", d: "Most of our candidates come back to us for their next move." },
+  { n: "04", t: "Pan-India impact", d: "From private fintech to national Gov-Tech programs across 10+ states." },
 ];
 
 export default async function CareersPage() {
   const jobs = await fetchAllJobs();
+  jobs.sort((a, b) => new Date(b.created || 0).getTime() - new Date(a.created || 0).getTime());
 
   return (
     <main>
@@ -142,7 +143,6 @@ export default async function CareersPage() {
           <Reveal stagger className="culture-grid">
             {culture.map(c => (
               <div className="culture-card" key={c.t}>
-                <div className="culture-mark">{c.m}</div>
                 <h4>{c.t}</h4>
                 <p>{c.d}</p>
               </div>

@@ -51,13 +51,10 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="container header-inner">
         <Link className="brand" href="/" aria-label="Arminus home">
-          <Image
+          <img
             className="brand-logo"
             src={withSiteBasePath("/arminus-logo.png")}
             alt="Arminus team work"
-            width={170}
-            height={108}
-            priority
           />
         </Link>
 

@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 };
 
 const services = [
-  { n: "01", t: "Permanent Placement", tag: "Strategic Talent Acquisition", accent: "", d: "We identify leaders and specialists who align with your technical roadmap and corporate culture. Access to our proprietary, 17-year curated database ensures precision matching for IT, Telecom, and Automotive sectors. Our services also meet the offshore requirements of our clients who need highly skilled professionals to be deployed across the world to execute projects within desired deadlines.", tags: ["IT", "Telecom", "Automotive", "Offshore"] },
+  { n: "01", t: "Permanent Placement", tag: "Strategic Talent Acquisition", accent: "blue", d: "We identify leaders and specialists who align with your technical roadmap and corporate culture. Access to our proprietary, 17-year curated database ensures precision matching for IT, Telecom, and Automotive sectors. Our services also meet the offshore requirements of our clients who need highly skilled professionals to be deployed across the world to execute projects within desired deadlines.", tags: ["IT", "Telecom", "Automotive", "Offshore"] },
   { n: "02", t: "Flexible Staffing & Compliance", tag: "Operational Agility", accent: "coral", d: "Scale your workforce seamlessly while we manage the complexities of the employment lifecycle. Arminus acts as the legal employer — taking over all HR management tasks including total management of payroll, statutory benefits, and HR administration.", tags: ["Legal employer", "Payroll", "Statutory benefits"] },
-  { n: "03", t: "Contract-to-Hire (C2H)", tag: "The Performance-First Framework", accent: "", d: "Evaluate a candidate's technical proficiency and cultural fit in a real-world environment before making a long-term commitment. This service provides effective recruitment for companies who like to select candidates on the basis of first-hand experience.", tags: ["Try-before-hire", "Cultural fit", "Real-world"] },
-  { n: "05", t: "Executive Search & Board Advisory", tag: "Discretion-Led Identification", accent: "", d: "Discretion-led identification of CXO and Board-level talent. Our network extends not just to core senior software professionals but to various other functions like Finance and HR. We have a proven track record of placing board-level executives in the most reputed multinational companies, especially within the Global IT ecosystem.", tags: ["CXO", "Board-level", "Finance & HR"] },
+  { n: "03", t: "Contract-to-Hire (C2H)", tag: "The Performance-First Framework", accent: "teal", d: "Evaluate a candidate's technical proficiency and cultural fit in a real-world environment before making a long-term commitment. This service provides effective recruitment for companies who like to select candidates on the basis of first-hand experience.", tags: ["Try-before-hire", "Cultural fit", "Real-world"] },
+  { n: "05", t: "Executive Search & Board Advisory", tag: "Discretion-Led Identification", accent: "purple", d: "Discretion-led identification of CXO and Board-level talent. Our network extends not just to core senior software professionals but to various other functions like Finance and HR. We have a proven track record of placing board-level executives in the most reputed multinational companies, especially within the Global IT ecosystem.", tags: ["CXO", "Board-level", "Finance & HR"] },
 ];
 
 const industries = [
@@ -32,10 +32,10 @@ const industries = [
 ];
 
 const steps = [
-  { n: "1", t: "Calibrate", d: "We map the role to your technical roadmap and culture before a single CV is shared.", s: "Day 0–2" },
-  { n: "2", t: "Source", d: "AI-assisted search across our 17-year curated database and active network.", s: "Day 2–7" },
-  { n: "3", t: "Assess", d: "Human-led screening for proficiency, fit and intent — honest conversations, both ways.", s: "Day 7–12" },
-  { n: "4", t: "Place & support", d: "We stay close through onboarding and beyond — including day-60 check-ins.", s: "Ongoing" },
+  { n: "1", t: "Calibrate", d: "We map the role to your technical roadmap and culture before a single CV is shared.", s: "First 48 Hours" },
+  { n: "2", t: "Source", d: "AI-assisted search across our 17-year curated database and active network.", s: "Week One" },
+  { n: "3", t: "Assess", d: "Human-led screening for proficiency, fit and intent — honest conversations, both ways.", s: "Week Two" },
+  { n: "4", t: "Place & support", d: "We stay close through onboarding and beyond — including day-60 check-ins.", s: "Post-Hire" },
 ];
 
 const govProjects = ["Skill Development", "Sanitation", "Agriculture", "Niti Ayog", "Social Services & Education"];
@@ -67,7 +67,7 @@ export default function SolutionsPage() {
             {services.map(s => (
               <Reveal key={s.n}>
                 <article className={`svc-card ${s.accent}`}>
-                  <div className="cap-tag" style={{ color: s.accent === "coral" ? "var(--coral)" : "var(--blue)" }}>{s.tag}</div>
+                  <div className="cap-tag">{s.tag}</div>
                   <h3>{s.t}</h3>
                   <p>{s.d}</p>
                   <div className="svc-tags">{s.tags.map(tg => <span key={tg}>{tg}</span>)}</div>
@@ -121,7 +121,7 @@ export default function SolutionsPage() {
           <SectionHead
             eyebrow="Sectors we serve"
             title={<>Deep benches in the industries that <span className="ital">move India.</span></>}
-            sub="Seventeen years of specialist recruitment across IT, Telecom, Automotive — and a fast-growing finance and GCC practice."
+            sub="17+ years of specialist recruitment across IT, Telecom, Automotive — and a fast-growing finance and GCC practice."
           />
           <Reveal stagger className="ind-grid">
             {industries.map(i => (

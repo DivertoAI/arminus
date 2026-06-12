@@ -68,7 +68,7 @@ const organizationSchema = {
   foundingDate: "2009",
   numberOfEmployees: { "@type": "QuantitativeValue", value: 200 },
   email: "contactus@arminus.com",
-  telephone: ["+91-33-40601004", "+1-732-481-9410"],
+  telephone: ["+91-9874014979", "+91-33-40601004", "+1-732-481-9410"],
   address: {
     "@type": "PostalAddress",
     streetAddress:
