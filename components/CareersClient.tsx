@@ -117,7 +117,6 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
     formData.append("standard_fields.pan_card_number", (form.elements.namedItem("pan_card_number") as HTMLInputElement).value);
     formData.append("standard_fields.ssn", (form.elements.namedItem("ssn") as HTMLInputElement).value);
     formData.append("standard_fields.aadhar_number", (form.elements.namedItem("aadhar_number") as HTMLInputElement).value);
-    formData.append("custom_fields.sample", (form.elements.namedItem("sample") as HTMLInputElement).value);
     
     const fileInput = form.elements.namedItem("resume") as HTMLInputElement;
     if (fileInput.files && fileInput.files[0]) {
@@ -190,27 +189,57 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
               ) : (
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                    <input name="firstname" placeholder="First Name *" required style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    <input name="lastname" placeholder="Last Name *" required style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>First Name *</label>
+                      <input name="firstname" required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Last Name *</label>
+                      <input name="lastname" required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    </div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                    <input name="email" type="email" placeholder="Email *" required style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    <input name="mobile_number" type="tel" placeholder="Mobile Number *" required style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Email *</label>
+                      <input name="email" type="email" required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Mobile Number *</label>
+                      <input name="mobile_number" type="tel" required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    </div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-                    <input name="country" placeholder="Country" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    <input name="state" placeholder="State" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    <input name="city" placeholder="City" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Country</label>
+                      <input name="country" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>State</label>
+                      <input name="state" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>City</label>
+                      <input name="city" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    </div>
                   </div>
-                  <input name="address" placeholder="Full Address" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                  
+                  <div>
+                    <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Full Address</label>
+                    <input name="address" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                  </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-                    <input name="pan_card_number" placeholder="PAN Card Number" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    <input name="aadhar_number" placeholder="Aadhar Number" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    <input name="ssn" placeholder="SSN (if applicable)" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>PAN Card Number</label>
+                      <input name="pan_card_number" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Aadhar Number</label>
+                      <input name="aadhar_number" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>SSN (if applicable)</label>
+                      <input name="ssn" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    </div>
                   </div>
-                  
-                  <input name="sample" placeholder="Custom Field (Sample)" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
                   
                   <div style={{ marginTop: "8px" }}>
                     <label style={{ display: "block", marginBottom: "6px", fontSize: "0.9rem", fontWeight: 600 }}>Resume / CV Document *</label>
