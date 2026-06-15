@@ -75,6 +75,10 @@ function getDesc(j: Job) {
 
 /* ── Job Detail Modal — uses pre-built data, no client-side fetch ── */
 function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
+  const [isApplying, setIsApplying] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
@@ -90,11 +94,66 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   const taxTerms = job.tax_terms ? job.tax_terms.split(",").map(t => t.trim()).filter(Boolean) : [];
   const validPay = (job.pay_rates ?? []).map(payLabel).filter(Boolean) as string[];
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    const form = e.currentTarget;
+    const formData = new FormData();
+    
+    // Auto-fill the job ID
+    formData.append("job_id", job.id);
+    
+    // Extract standard fields
+    formData.append("standard_fields.firstname", (form.elements.namedItem("firstname") as HTMLInputElement).value);
+    formData.append("standard_fields.lastname", (form.elements.namedItem("lastname") as HTMLInputElement).value);
+    formData.append("standard_fields.email", (form.elements.namedItem("email") as HTMLInputElement).value);
+    formData.append("standard_fields.mobile_number", (form.elements.namedItem("mobile_number") as HTMLInputElement).value);
+    formData.append("standard_fields.country", (form.elements.namedItem("country") as HTMLInputElement).value);
+    formData.append("standard_fields.state", (form.elements.namedItem("state") as HTMLInputElement).value);
+    formData.append("standard_fields.city", (form.elements.namedItem("city") as HTMLInputElement).value);
+    formData.append("standard_fields.address", (form.elements.namedItem("address") as HTMLInputElement).value);
+    formData.append("standard_fields.pan_card_number", (form.elements.namedItem("pan_card_number") as HTMLInputElement).value);
+    formData.append("standard_fields.ssn", (form.elements.namedItem("ssn") as HTMLInputElement).value);
+    formData.append("standard_fields.aadhar_number", (form.elements.namedItem("aadhar_number") as HTMLInputElement).value);
+    formData.append("custom_fields.sample", (form.elements.namedItem("sample") as HTMLInputElement).value);
+    
+    const fileInput = form.elements.namedItem("resume") as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+      formData.append("document_fields.1", fileInput.files[0]);
+    }
+
+    try {
+      // Temporary token handling as per mentor instructions (to be secured later)
+      const token = process.env.NEXT_PUBLIC_CEIPAL_TOKEN || "PLACEHOLDER_TOKEN";
+      
+      const res = await fetch("https://api.ceipal.com/v1/applyJobWithOutRegistration", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (res.ok) {
+        setSubmitStatus("success");
+      } else {
+        const errText = await res.text();
+        console.error("Ceipal API 400 Error details:", errText);
+        setSubmitStatus("error");
+        alert("Ceipal Error: " + errText);
+      }
+    } catch (err) {
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="jm-overlay" onClick={onClose} role="dialog" aria-modal aria-label={title}>
       <div className="jm-panel" onClick={e => e.stopPropagation()}>
-
-        {/* Header */}
         <div className="jm-head">
           <div className="jm-head-left">
             <div className="jm-chips" style={{ marginBottom: 12 }}>
@@ -120,70 +179,120 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
           </button>
         </div>
 
-        {/* Body */}
         <div className="jm-body">
-          <div className="jm-meta-strip">
-            {job.job_code && (
-              <div className="jm-meta-item">
-                <span className="jm-meta-label">Job code</span>
-                <span className="jm-meta-val">{job.job_code}</span>
-              </div>
-            )}
-            {job.closing_date && job.closing_date.trim() && job.closing_date !== "null" && (
-              <div className="jm-meta-item">
-                <span className="jm-meta-label">Closes</span>
-                <span className="jm-meta-val">{job.closing_date.split(" ")[0]}</span>
-              </div>
-            )}
-            <div className="jm-meta-item">
-              <span className="jm-meta-label">Posted</span>
-              <span className="jm-meta-val">{timeAgo(job.created)}</span>
+          {isApplying ? (
+            <div className="jm-form-container" style={{ padding: "16px 0" }}>
+              <h3 style={{ fontSize: "1.1rem", marginBottom: "16px" }}>Submit Application</h3>
+              {submitStatus === "success" ? (
+                <div style={{ padding: "20px", background: "#EAF9F5", color: "#1F8A5B", borderRadius: "8px", fontWeight: 600 }}>
+                  Application submitted successfully!
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                    <input name="firstname" placeholder="First Name *" required style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    <input name="lastname" placeholder="Last Name *" required style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                    <input name="email" type="email" placeholder="Email *" required style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    <input name="mobile_number" type="tel" placeholder="Mobile Number *" required style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+                    <input name="country" placeholder="Country" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    <input name="state" placeholder="State" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    <input name="city" placeholder="City" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                  </div>
+                  <input name="address" placeholder="Full Address" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                  
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+                    <input name="pan_card_number" placeholder="PAN Card Number" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    <input name="aadhar_number" placeholder="Aadhar Number" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                    <input name="ssn" placeholder="SSN (if applicable)" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                  </div>
+                  
+                  <input name="sample" placeholder="Custom Field (Sample)" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                  
+                  <div style={{ marginTop: "8px" }}>
+                    <label style={{ display: "block", marginBottom: "6px", fontSize: "0.9rem", fontWeight: 600 }}>Resume / CV Document *</label>
+                    <input name="resume" type="file" accept=".pdf,.doc,.docx" required style={{ width: "100%" }} />
+                  </div>
+
+                  {submitStatus === "error" && (
+                    <div style={{ color: "red", fontSize: "0.9rem", marginTop: "8px" }}>Failed to submit application. Please try again or check token.</div>
+                  )}
+
+                  <div style={{ display: "flex", gap: "12px", marginTop: "16px", justifyContent: "flex-end" }}>
+                    <button type="button" onClick={() => setIsApplying(false)} className="btn btn-ghost" style={{ padding: "10px 24px" }}>
+                      Cancel
+                    </button>
+                    <button type="submit" disabled={isSubmitting} className="btn btn-blue" style={{ padding: "10px 24px" }}>
+                      {isSubmitting ? "Submitting..." : "Submit Application"}
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
+          ) : (
+            <>
+              <div className="jm-meta-strip">
+                {job.job_code && (
+                  <div className="jm-meta-item">
+                    <span className="jm-meta-label">Job code</span>
+                    <span className="jm-meta-val">{job.job_code}</span>
+                  </div>
+                )}
+                {job.closing_date && job.closing_date.trim() && job.closing_date !== "null" && (
+                  <div className="jm-meta-item">
+                    <span className="jm-meta-label">Closes</span>
+                    <span className="jm-meta-val">{job.closing_date.split(" ")[0]}</span>
+                  </div>
+                )}
+                <div className="jm-meta-item">
+                  <span className="jm-meta-label">Posted</span>
+                  <span className="jm-meta-val">{timeAgo(job.created)}</span>
+                </div>
+              </div>
+
+              {validPay.length > 0 && (
+                <div className="jm-section">
+                  <p className="jm-section-label">Compensation</p>
+                  <div className="jm-pay-list">
+                    {validPay.map((p, i) => <span key={i} className="jm-pay-badge">{p}</span>)}
+                  </div>
+                </div>
+              )}
+
+              {skills.length > 0 && (
+                <div className="jm-section">
+                  <p className="jm-section-label">Skills</p>
+                  <div className="jm-skills-list">
+                    {skills.map(s => <span key={s} className="jm-skill">{s}</span>)}
+                  </div>
+                </div>
+              )}
+
+              {desc ? (
+                <div className="jm-section">
+                  <p className="jm-section-label">About the role</p>
+                  <div className="jm-desc" dangerouslySetInnerHTML={{ __html: desc }} />
+                </div>
+              ) : (
+                <div className="jm-section">
+                  <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>Full description available after clicking Apply.</p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {!isApplying && (
+          <div className="jm-foot">
+            <button className="btn btn-blue" onClick={() => setIsApplying(true)}>
+              Apply Now →
+            </button>
+            <button className="btn btn-ghost" onClick={onClose}>Close</button>
           </div>
-
-          {validPay.length > 0 && (
-            <div className="jm-section">
-              <p className="jm-section-label">Compensation</p>
-              <div className="jm-pay-list">
-                {validPay.map((p, i) => <span key={i} className="jm-pay-badge">{p}</span>)}
-              </div>
-            </div>
-          )}
-
-          {skills.length > 0 && (
-            <div className="jm-section">
-              <p className="jm-section-label">Skills</p>
-              <div className="jm-skills-list">
-                {skills.map(s => <span key={s} className="jm-skill">{s}</span>)}
-              </div>
-            </div>
-          )}
-
-          {desc ? (
-            <div className="jm-section">
-              <p className="jm-section-label">About the role</p>
-              <div className="jm-desc" dangerouslySetInnerHTML={{ __html: desc }} />
-            </div>
-          ) : (
-            <div className="jm-section">
-              <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>Full description available after clicking Apply.</p>
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="jm-foot">
-          {applyUrl ? (
-            <a className="btn btn-blue" href={applyUrl} target="_blank" rel="noopener noreferrer">
-              Apply Now →
-            </a>
-          ) : (
-            <a className="btn btn-blue" href="mailto:contactus@arminus.in?subject=Job%20Application" target="_blank" rel="noopener noreferrer">
-              Apply Now →
-            </a>
-          )}
-          <button className="btn btn-ghost" onClick={onClose}>Close</button>
-        </div>
+        )}
       </div>
     </div>
   );

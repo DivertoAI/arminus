@@ -49,5 +49,6 @@ jobs:
       - name: Build and Push to GitHub Pages
         env:
           CEIPAL_ACCESS_TOKEN: ${{ steps.ceipal-token.outputs.token }}
+          NEXT_PUBLIC_CEIPAL_TOKEN: ${{ steps.ceipal-token.outputs.token }}
           GITHUB_PAGES: "true"
         run: npm run deploy
