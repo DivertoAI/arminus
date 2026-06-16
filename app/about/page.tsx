@@ -51,13 +51,14 @@ export default function AboutPage() {
   return (
     <main>
       {/* MISSION */}
-      <section className="about-mission about-mission-top">
+      <section className="about-mission about-mission-top page-hero accent-blue">
+        <div className="page-hero-mesh" />
         <div className="wrap">
           <div className="about-mission-grid">
             <Reveal>
               <div>
                 <div className="sec-eyebrow"><span className="ln" /> Our philosophy</div>
-                <h2 className="sec-title">The Power of <span className="ital">Us.</span></h2>
+                <h2 className="page-hero-title">The Power of <span className="ital blue">Us.</span></h2>
                 <p className="sec-sub" style={{ maxWidth: "56ch", marginTop: "18px" }}>
                   The &lsquo;Power of Us&rsquo; is a fusion of technology and empathy. By empowering our teams with
                   generative AI tools, we spend less time on paperwork and more time on what matters —
