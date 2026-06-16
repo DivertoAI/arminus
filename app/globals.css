@@ -606,6 +606,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .leader-grid.rev .leader-photo { order: 2; }
 .leader-photo { position: relative; aspect-ratio: 0.95; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-card); }
 .leader-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+.leader-photo img.leader-photo-zoom { transform: scale(1.25); }
 .leader-photo-tag { position: absolute; bottom: 16px; left: 16px; background: rgba(255,255,255,0.95); backdrop-filter: blur(6px); padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
 .leader-name { font-size: clamp(32px, 3.8vw, 48px); font-weight: 700; letter-spacing: -0.03em; margin: 14px 0 8px; line-height: 1.05; }
 .leader-pull { font-family: var(--font-serif); font-style: italic; font-size: 22px; color: var(--blue); margin: 0 0 18px; }

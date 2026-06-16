@@ -124,7 +124,7 @@ export default function AboutPage() {
                 <div className={`leader-grid ${l.rev ? "rev" : ""}`}>
                   <div className="leader-photo">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={withSiteBasePath(l.img)} alt={l.name} />
+                    <img src={withSiteBasePath(l.img)} alt={l.name} className={l.name === "Ashok Jindal" ? "leader-photo-zoom" : undefined} />
                     <span className="leader-photo-tag">{l.role}</span>
                   </div>
                   <div className="leader-text">
