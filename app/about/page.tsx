@@ -18,13 +18,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://arminus.co.in/about" },
 };
 
-const stats = [
-  { num: "17+", lbl: "Years of recruiting" },
-  { num: "175+", lbl: "Clients served" },
-  { num: "15K+", lbl: "Professionals placed" },
-  { num: "600K+", lbl: "Active talent pool" },
-];
-
 const offices = [
   { tag: "Headquarters", name: "Kolkata (Headquarters)", d: "Strategy, leadership and our central recruitment engine. Bengal Eco Intelligent Park, Sector V.", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=900&q=80&auto=format&fit=crop" },
   { tag: "NCR Operations", name: "Gurugram (NCR Operations)", d: "Account operations and large-scale Gov-Tech deployments. JMD Megapolis, Sohna Road.", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80&auto=format&fit=crop" },
@@ -85,13 +78,9 @@ export default function AboutPage() {
               </div>
             </Reveal>
             <Reveal>
-              <div className="about-stats">
-                {stats.map(s => (
-                  <div className="ast" key={s.lbl}>
-                    <div className="ast-num">{s.num}</div>
-                    <div className="ast-lbl">{s.lbl}</div>
-                  </div>
-                ))}
+              <div className="about-photo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={withSiteBasePath("/team-banner.jpg")} alt="The Arminus team" />
               </div>
             </Reveal>
           </div>
