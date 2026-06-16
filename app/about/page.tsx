@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
-import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
 import { withSiteBasePath } from "@/lib/site-path";
@@ -51,15 +50,8 @@ const leaders = [
 export default function AboutPage() {
   return (
     <main>
-      <PageHero
-        accent="blue"
-        eyebrow="About Arminus"
-        title={<>17 years of staffing built on <span className="ital blue">people, not just placements.</span></>}
-        lede="Nearly two decades of specialist recruitment, a proprietary talent database, and a leadership team with deep pedigree across global delivery and large-account operations."
-      />
-
       {/* MISSION */}
-      <section className="about-mission">
+      <section className="about-mission about-mission-top">
         <div className="wrap">
           <div className="about-mission-grid">
             <Reveal>
@@ -81,6 +73,7 @@ export default function AboutPage() {
               <div className="about-photo">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={withSiteBasePath("/team-banner.jpg")} alt="The Arminus team" />
+                <span className="about-photo-cap">The Arminus team</span>
               </div>
             </Reveal>
           </div>

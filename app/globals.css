@@ -581,13 +581,15 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ============================================================ ABOUT PAGE ============================================================ */
 .about-mission { padding: 96px 0; }
+.about-mission-top { padding-top: 64px; }
 .about-mission-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
 .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .ast { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
 .ast-num { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; background: linear-gradient(135deg, var(--blue), var(--coral)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .ast-lbl { font-size: 12.5px; color: var(--ink-3); margin-top: 8px; }
-.about-photo { border-radius: var(--r-xl); overflow: hidden; box-shadow: var(--shadow-card); aspect-ratio: 1.15; }
+.about-photo { position: relative; border-radius: var(--r-xl); overflow: hidden; box-shadow: var(--shadow-card); aspect-ratio: 1.15; }
 .about-photo img { width: 100%; height: 100%; object-fit: cover; }
+.about-photo-cap { position: absolute; bottom: 16px; left: 16px; background: rgba(255,255,255,0.95); backdrop-filter: blur(6px); padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); }
 .office-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .office-card { background: white; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; transition: transform .25s, box-shadow .25s; }
 .office-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card); }
