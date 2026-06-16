@@ -54,7 +54,7 @@ export default function AboutPage() {
       <PageHero
         accent="blue"
         eyebrow="About Arminus"
-        title={<>Empowering innovation through <span className="ital blue">top talent.</span></>}
+        title={<>17 years of staffing built on <span className="ital blue">people, not just placements.</span></>}
         lede="Nearly two decades of specialist recruitment, a proprietary talent database, and a leadership team with deep pedigree across global delivery and large-account operations."
       />
 
