@@ -30,6 +30,7 @@ export function TrustedBy() {
   const startX    = useRef(0);
   const startScroll = useRef(0);
   const paused    = useRef(false);
+  const touching  = useRef(false);
 
   /* ── Auto-scroll via rAF ── */
   useEffect(() => {
@@ -41,7 +42,7 @@ export function TrustedBy() {
 
     function tick() {
       if (!el) return;
-      if (!dragging.current && !paused.current) {
+      if (!dragging.current && !paused.current && !touching.current) {
         el.scrollLeft += SPEED;
         // Seamless loop: when we reach 3/4 through, jump back to 1/4
         const quarter = el.scrollWidth / 4;
@@ -74,17 +75,9 @@ export function TrustedBy() {
     if (wrapRef.current) wrapRef.current.style.cursor = "grab";
   };
 
-  /* ── Touch drag ── */
-  const onTouchStart = (e: React.TouchEvent) => {
-    const el = wrapRef.current;
-    if (!el) return;
-    startX.current      = e.touches[0].pageX;
-    startScroll.current = el.scrollLeft;
-  };
-  const onTouchMove = (e: React.TouchEvent) => {
-    if (!wrapRef.current) return;
-    wrapRef.current.scrollLeft = startScroll.current - (e.touches[0].pageX - startX.current);
-  };
+  /* ── Touch: pause auto-scroll, let iOS native scroll take over ── */
+  const onTouchStart = () => { touching.current = true; };
+  const onTouchEnd   = () => { touching.current = false; };
 
   /* ── Hover: pause auto-scroll ── */
   const onMouseEnter = () => { paused.current = true; };
@@ -104,7 +97,7 @@ export function TrustedBy() {
         onMouseLeave={onMouseLeave}
         onMouseEnter={onMouseEnter}
         onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
         <div className="clients-track">
           {ITEMS.map((c, i) => (
