@@ -471,6 +471,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .lt-photo { position: relative; aspect-ratio: 1; overflow: hidden; }
 .lt-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; transition: transform .8s; }
 .lt-card:hover .lt-photo img { transform: scale(1.04); }
+.lt-card:nth-child(2) .lt-photo img { transform: scale(1.25); }
+.lt-card:nth-child(2):hover .lt-photo img { transform: scale(1.3); }
 .lt-ovl { position: absolute; inset: 0; background: linear-gradient(170deg, transparent 60%, rgba(15,26,42,0.55) 100%); }
 .lt-body { padding: 24px 26px 26px; }
 .lt-role { font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--blue); }
