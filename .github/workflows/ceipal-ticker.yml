@@ -50,5 +50,6 @@ jobs:
         env:
           CEIPAL_ACCESS_TOKEN: ${{ steps.ceipal-token.outputs.token }}
           NEXT_PUBLIC_CEIPAL_TOKEN: ${{ steps.ceipal-token.outputs.token }}
+          NEXT_PUBLIC_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_PAGES: "true"
         run: npm run deploy
