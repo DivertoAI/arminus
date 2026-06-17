@@ -4,6 +4,7 @@ import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
+import { ResumeScorer } from "@/components/ResumeScorer";
 
 export const metadata: Metadata = {
   title: "Career Labs | ATS Resume Writing & Mock Interview Prep",
@@ -80,6 +81,9 @@ export default function CareerLabsPage() {
           </Reveal>
         </div>
       </section>
+
+      {/* FREE TOOL */}
+      <ResumeScorer />
 
       {/* PRICING */}
       <section className="section tint" id="pricing">
