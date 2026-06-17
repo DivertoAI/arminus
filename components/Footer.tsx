@@ -28,9 +28,9 @@ export function Footer({ stats = false }: FooterProps) {
               className="logo-img"
             />
             <p>
-              <em style={{ fontFamily: "var(--font-serif)" }}>Powered by Humans. Accelerated by AI.</em>
+              <em style={{ fontFamily: "var(--font-serif)", color: "var(--blue)" }}>Powered by Humans. Accelerated by AI.</em>
               <br /><br />
-              Headquartered in Kolkata, with offices in Gurugram &amp; Bangalore.
+              Headquartered in Kolkata, with offices in Gurugram &amp; Bengaluru.
               Strategic talent solutions, Career Labs, and Nubo Native Platform — since 2009.
             </p>
           </div>

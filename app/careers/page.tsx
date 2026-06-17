@@ -10,10 +10,10 @@ import type { Job } from "@/components/CareersClient";
 export const metadata: Metadata = {
   title: "IT Jobs in India | Current Openings | Arminus Careers",
   description:
-    "Browse live IT job openings across permanent, contract, and Gov-Tech roles in Bangalore, Gurugram, Kolkata and remote. Engineering, product, telecom, and finance positions updated daily.",
+    "Browse live IT job openings across permanent, contract, and Gov-Tech roles in Bengaluru, Gurugram, Kolkata and remote. Engineering, product, telecom, and finance positions updated daily.",
   keywords: [
     "IT jobs India", "software jobs India", "engineering jobs India", "IT career opportunities",
-    "contract IT jobs India", "permanent IT jobs India", "technology jobs Bangalore",
+    "contract IT jobs India", "permanent IT jobs India", "technology jobs Bengaluru",
     "technology jobs Gurugram", "Gov-Tech jobs India", "IT jobs Kolkata",
   ],
   alternates: { canonical: "https://arminus.co.in/careers" },

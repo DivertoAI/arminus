@@ -12,15 +12,15 @@ export const metadata: Metadata = {
   keywords: [
     "Arminus Software about", "IT staffing company history India", "manpower consulting firm India",
     "technology recruitment firm", "Pankaj Kathuria Arminus", "IIT IIM staffing company",
-    "IT staffing Kolkata", "recruitment agency Gurugram", "staffing company Bangalore",
+    "IT staffing Kolkata", "recruitment agency Gurugram", "staffing company Bengaluru",
   ],
   alternates: { canonical: "https://arminus.co.in/about" },
 };
 
 const offices = [
   { tag: "Headquarters", name: "Kolkata (Headquarters)", d: "Strategy, leadership and our central recruitment engine. Bengal Eco Intelligent Park, Sector V.", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=900&q=80&auto=format&fit=crop" },
-  { tag: "NCR Operations", name: "Gurugram (NCR Operations)", d: "Account operations and large-scale Gov-Tech deployments. JMD Megapolis, Sohna Road.", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80&auto=format&fit=crop" },
-  { tag: "Engineering Desk", name: "Bangalore (Engineering Desk)", d: "IT and engineering specialist recruitment. HSR Layout 5th Sector.", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80&auto=format&fit=crop" },
+  { tag: "NCR Operations", name: "Gurugram", d: "Account operations and large-scale Gov-Tech deployments. JMD Megapolis, Sohna Road.", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80&auto=format&fit=crop" },
+  { tag: "Engineering Desk", name: "Bengaluru", d: "IT and engineering specialist recruitment. HSR Layout 5th Sector.", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80&auto=format&fit=crop" },
 ];
 
 const leaders = [
@@ -60,13 +60,12 @@ export default function AboutPage() {
                 <div className="sec-eyebrow"><span className="ln" /> Our philosophy</div>
                 <h2 className="page-hero-title">The Power of <span className="ital blue">Us.</span></h2>
                 <p className="sec-sub" style={{ maxWidth: "56ch", marginTop: "18px" }}>
-                  The &lsquo;Power of Us&rsquo; is a fusion of technology and empathy. By empowering our teams with
+                  The Power of Us is a fusion of technology and empathy. By empowering our teams with
                   generative AI tools, we spend less time on paperwork and more time on what matters —
                   building relationships with India&apos;s top professionals.
                 </p>
-                <div className="pow-tagline" style={{ marginTop: "24px" }}>
-                  <span className="pow-tagline-pre">Powered by Humans.</span>
-                  <span className="pow-tagline-post">Accelerated by AI.</span>
+                <div className="pow-tagline" style={{ marginTop: "24px", color: "var(--blue)" }}>
+                  Powered by Humans. Accelerated by AI.
                 </div>
               </div>
             </Reveal>

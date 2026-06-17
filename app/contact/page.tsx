@@ -5,9 +5,9 @@ import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
 
 export const metadata: Metadata = {
-  title: "Contact Arminus | IT Staffing Inquiry | Kolkata Gurugram Bangalore",
+  title: "Contact Arminus | IT Staffing Inquiry | Kolkata Gurugram Bengaluru",
   description:
-    "Contact Arminus for IT staffing, executive search, Career Labs, or Nubo platform inquiries. Offices in Kolkata (HQ), Gurugram & Bangalore. We respond within 1 business day.",
+    "Contact Arminus for IT staffing, executive search, Career Labs, or Nubo platform inquiries. Offices in Kolkata (HQ), Gurugram & Bengaluru. We respond within 1 business day.",
   keywords: [
     "contact Arminus", "IT staffing inquiry India", "hire IT talent India",
     "recruitment agency contact", "staffing company Kolkata", "staffing company Gurugram",
@@ -47,7 +47,7 @@ const channels = [
 const offices = [
   { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", focus: "Strategy & leadership", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=600&q=80&auto=format&fit=crop" },
   { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", focus: "Operations & Gov-Tech", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&q=80&auto=format&fit=crop" },
-  { tag: "Engineering Desk", name: "Bangalore", addr: "HSR Layout 5th Sector, Bengaluru, Karnataka", focus: "IT & engineering", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
+  { tag: "Engineering Desk", name: "Bengaluru", addr: "HSR Layout 5th Sector, Bengaluru, Karnataka", focus: "IT & engineering", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
 ];
 
 export default function ContactPage() {
@@ -97,7 +97,7 @@ export default function ContactPage() {
                   <img src={o.img} alt={o.name} />
                 </div>
                 <div className="co-body">
-                  <h3>{o.name} ({o.tag})</h3>
+                  <h3>{o.name}{o.tag === "Headquarters" ? ` (${o.tag})` : ""}</h3>
                   <div className="co-line"><div className="co-lbl">Address</div><div className="co-val">{o.addr}</div></div>
                   <div className="co-line"><div className="co-lbl">Focus</div><div className="co-val">{o.focus}</div></div>
                 </div>

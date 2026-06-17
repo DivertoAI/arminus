@@ -1144,7 +1144,8 @@ a.co-val:hover { color: var(--blue); }
   margin-bottom: 32px;
 }
 .clients-track-wrap {
-  overflow-x: scroll;
+  overflow-x: hidden;
+  touch-action: pan-y;
   cursor: grab;
   scrollbar-width: none;
   -ms-overflow-style: none;

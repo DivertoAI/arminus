@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     template: "%s | Arminus",
   },
   description:
-    "Arminus is a pan-India IT staffing company with 17+ years experience. We deliver permanent placement, contract staffing, executive search & Gov-Tech deployments across Kolkata, Gurugram & Bangalore.",
+    "Arminus is a pan-India IT staffing company with 17+ years experience. We deliver permanent placement, contract staffing, executive search & Gov-Tech deployments across Kolkata, Gurugram & Bengaluru.",
   keywords: [
     "IT staffing company India",
     "IT recruitment agency India",

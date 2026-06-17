@@ -12,7 +12,7 @@ import { withSiteBasePath } from "@/lib/site-path";
 export const metadata: Metadata = {
   title: "Arminus | IT Staffing & Recruitment Company India",
   description:
-    "Arminus is a pan-India IT staffing company with 17+ years experience. We deliver permanent placement, contract staffing, executive search & Gov-Tech deployments across Kolkata, Gurugram & Bangalore.",
+    "Arminus is a pan-India IT staffing company with 17+ years experience. We deliver permanent placement, contract staffing, executive search & Gov-Tech deployments across Kolkata, Gurugram & Bengaluru.",
   keywords: [
     "IT staffing company India", "IT recruitment agency India", "permanent placement India",
     "contract staffing services India", "executive search India", "manpower consulting India",
@@ -65,7 +65,7 @@ export default function Home() {
               </Reveal>
               <Reveal>
                 <p className="h-sub">
-                  Headquartered in Kolkata with a powerful presence in Gurugram and Bangalore,
+                  Headquartered in Kolkata with a powerful presence in Gurugram and Bengaluru,
                   Arminus combines AI-driven precision with deep human insight. We deliver
                   high-velocity, pan-India staffing solutions for the world&apos;s fastest-growing economy.
                 </p>
@@ -87,7 +87,7 @@ export default function Home() {
                 <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=900&q=80&auto=format&fit=crop" alt="Strategic talent professional" className="hero-photo" />
                 <div className="hub-badge">
                   <span className="hub-lbl">Delivery hubs</span>
-                  <span className="hub-cities">Kolkata · Gurugram · Bangalore</span>
+                  <span className="hub-cities">Kolkata · Gurugram · Bengaluru</span>
                 </div>
               </div>
             </div>
@@ -125,13 +125,12 @@ export default function Home() {
               <div className="sec-eyebrow"><span className="ln" /> Our philosophy</div>
               <h2 className="sec-title pow-title">The Power of <span className="ital">Us.</span></h2>
               <p className="pow-lede">
-                The &lsquo;Power of Us&rsquo; is a fusion of technology and empathy. By empowering our teams with
+                The Power of Us is a fusion of technology and empathy. By empowering our teams with
                 generative AI tools, we spend less time on paperwork and more time on what matters —
                 building relationships with India&apos;s top professionals.
               </p>
-              <div className="pow-tagline">
-                <span className="pow-tagline-pre">Powered by Humans.</span>
-                <span className="pow-tagline-post">Accelerated by AI.</span>
+              <div className="pow-tagline" style={{ color: "var(--blue)" }}>
+                Powered by Humans. Accelerated by AI.
               </div>
             </div>
             <div className="pow-art">
