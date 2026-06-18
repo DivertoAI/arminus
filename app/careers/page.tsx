@@ -25,22 +25,38 @@ const CP_ID   = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
 /* ── Fetch all jobs at build time (server-side) ──
  *  Priority:
  *  1. v1 authenticated API  — full requisition_description + apply links
- *     (needs CEIPAL_ACCESS_TOKEN, available in the GH Actions workflow)
+ *     (generates fresh token securely on the server)
  *  2. Public CareerPortalJobPostings fallback (descriptions truncated ~184 chars)
  */
 async function fetchAllJobs(): Promise<Job[]> {
-  const token = process.env.CEIPAL_ACCESS_TOKEN;
-  if (token && token !== "null" && token !== "undefined" && token.length > 10) {
-    try {
-      const jobs = await fetchV1Jobs(token);
-      if (jobs.length > 0) {
-        console.log(`[careers] v1 API: ${jobs.length} jobs fetched`);
-        return jobs;
+  try {
+    const email    = process.env.CEIPAL_EMAIL;
+    const password = process.env.CEIPAL_PASSWORD;
+    const apiKey   = process.env.CEIPAL_API_KEY;
+
+    if (email && password && apiKey) {
+      const authRes = await fetch("https://api.ceipal.com/v2/createAuthtoken/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, apiKey })
+      });
+      
+      if (authRes.ok) {
+        const authData = await authRes.json();
+        const token = authData.access_token;
+        if (token) {
+          const jobs = await fetchV1Jobs(token);
+          if (jobs.length > 0) {
+            console.log(`[careers] v1 API: ${jobs.length} jobs fetched`);
+            return jobs;
+          }
+        }
       }
-    } catch (e) {
-      console.warn("[careers] v1 API failed, falling back to public API:", e);
     }
+  } catch (e) {
+    console.warn("[careers] v1 API failed, falling back to public API:", e);
   }
+
   console.log("[careers] using public CareerPortal API");
   return fetchPublicJobs();
 }
