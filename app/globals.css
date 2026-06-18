@@ -1,5 +1,7 @@
 /* ---------- tokens ---------- */
 :root {
+  color-scheme: light only;
+  supported-color-schemes: light;
   --blue: #0080D0;
   --blue-deep: #00598F;
   --blue-soft: #E1F2FB;
@@ -29,7 +31,7 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+html, body { margin: 0; padding: 0; color-scheme: light only; }
 html { scroll-behavior: smooth; scroll-padding-top: 80px; }
 body {
   font-family: var(--font-sans);
