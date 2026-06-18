@@ -1,55 +1,11 @@
-name: Ceipal Ticker
+name: Ceipal Ticker (Disabled - Migrated to Vercel)
+
+# This workflow has been disabled.
+# The project is now deployed on Vercel which handles:
+# - Auto-deployment on every push to main
+# - Secure server-side environment variables
+# - Fresh Ceipal token generation via /api/apply route
+# - Gemini API key via /api/analyze route
 
 on:
-  push:
-    branches: [main] # Deploy on every push to main
-  schedule:
-    - cron: '*/50 * * * *' # Refresh token every 50 minutes
-  workflow_dispatch: # Allow manual trigger
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write # Required to allow gh-pages to push to the gh-pages branch
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Generate Fresh Ceipal Token
-        id: ceipal-token
-        run: |
-          RESPONSE=$(curl -s -X POST https://api.ceipal.com/v2/createAuthtoken/ \
-            -H 'Content-Type: application/json' \
-            -d '{
-              "email": "${{ secrets.CEIPAL_EMAIL }}",
-              "password": "${{ secrets.CEIPAL_PASSWORD }}",
-              "apiKey": "${{ secrets.CEIPAL_API_KEY }}"
-            }')
-          
-          # Extract access_token using jq and safely store it as an output variable
-          ACCESS_TOKEN=$(echo $RESPONSE | jq -r .access_token)
-          echo "token=$ACCESS_TOKEN" >> $GITHUB_OUTPUT
-
-      - name: Install Dependencies
-        run: npm ci || npm install
-
-      - name: Configure Git
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-
-      - name: Build and Push to GitHub Pages
-        env:
-          CEIPAL_ACCESS_TOKEN: ${{ steps.ceipal-token.outputs.token }}
-          NEXT_PUBLIC_CEIPAL_TOKEN: ${{ steps.ceipal-token.outputs.token }}
-          NEXT_PUBLIC_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GITHUB_PAGES: "true"
-        run: npm run deploy
+  workflow_dispatch: # Only runs if manually triggered
