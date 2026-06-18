@@ -100,6 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${manrope.variable} ${instrumentSerif.variable}`}>
       <head>
+        <meta name="color-scheme" content="light only" />
         <link rel="preconnect" href="https://jobsapi.ceipal.com" />
         <link rel="preconnect" href="https://careerapi.ceipal.com" />
         <link rel="dns-prefetch" href="https://jobsapi.ceipal.com" />
