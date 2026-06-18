@@ -21,84 +21,35 @@ export function ResumeScorer() {
     setStatus("analyzing");
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
-        const base64Str = (reader.result as string).split(",")[1];
-        const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+        reader.onerror = () => reject(new Error("There was an issue reading the file."));
+      });
 
-        const promptText = `You are an expert Applicant Tracking System (ATS) and Senior Technical Recruiter. Your task is to critically analyze the provided text extracted from a candidate's resume and evaluate it for a modern B2B tech/enterprise market.
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ base64, mimeType: file.type || "application/pdf" })
+      });
 
-You must analyze the resume based on four key metrics:
-1. ATS Readability & Formatting (Are sections clear? Is it parseable?)
-2. Action Verbs & Tone (Does it use strong, active language?)
-3. Quantifiable Metrics (Are achievements backed by numbers and data?)
-4. Leadership & Impact (Does the candidate demonstrate ownership?)
+      const data = await response.json();
 
-You must respond ONLY with a valid JSON object matching this exact structure:
-{
-  "overall_score": 68,
-  "summary": "A brief 2-sentence summary of the resume's strengths and core weaknesses.",
-  "metrics": [
-    {
-      "name": "Quantifiable Metrics",
-      "status": "Needs Improvement",
-      "feedback": "You have listed responsibilities but lack hard data. Add numbers to demonstrate scale."
-    }
-  ]
-}
-Note: the overall_score should be an integer between 0 and 100. Status should be either "Good" or "Needs Improvement".`;
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to analyze");
+      }
 
-        const requestBody = {
-          contents: [
-            {
-              parts: [
-                { text: promptText },
-                {
-                  inlineData: {
-                    mimeType: file.type || "application/pdf",
-                    data: base64Str
-                  }
-                }
-              ]
-            }
-          ],
-          generationConfig: {
-            responseMimeType: "application/json",
-            temperature: 0
-          }
-        };
-
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody)
-        });
-
-        const data = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(data.error?.message || "Failed to analyze");
-        }
-
-        const rawText = data.candidates[0].content.parts[0].text;
-        const result = JSON.parse(rawText);
-        setScoreData(result);
-        setStatus("results");
-      };
-      
-      reader.onerror = () => {
-        setErrorMessage("There was an issue reading the file.");
-        setStatus("error");
-      };
+      setScoreData(data);
+      setStatus("results");
 
     } catch (err: any) {
       console.error(err);
       const msg = err.message?.toLowerCase() || "";
-      if (msg.includes("high demand") || msg.includes("503")) {
+      if (msg.includes("high demand") || msg.includes("503") || msg.includes("busy")) {
         setErrorMessage("Our servers are currently busy. Please try again in a few moments.");
       } else {
-        setErrorMessage("There was an issue parsing your resume. Ensure it is a valid text-based PDF.");
+        setErrorMessage("There was an issue analyzing your resume. Please ensure it is a valid text-based PDF.");
       }
       setStatus("error");
     }

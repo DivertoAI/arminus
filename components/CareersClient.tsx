@@ -124,14 +124,9 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
     }
 
     try {
-      // Temporary token handling as per mentor instructions (to be secured later)
-      const token = process.env.NEXT_PUBLIC_CEIPAL_TOKEN || "PLACEHOLDER_TOKEN";
-      
-      const res = await fetch("https://api.ceipal.com/v1/applyJobWithOutRegistration", {
+      // Route through our secure server-side proxy — token never touches the browser
+      const res = await fetch("/api/apply", {
         method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        },
         body: formData
       });
 
@@ -139,9 +134,9 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
         setSubmitStatus("success");
       } else {
         const errText = await res.text();
-        console.error("Ceipal API 400 Error details:", errText);
+        console.error("Apply error:", errText);
         setSubmitStatus("error");
-        alert("Ceipal Error: " + errText);
+        alert("Application Error: " + errText);
       }
     } catch (err) {
       setSubmitStatus("error");
