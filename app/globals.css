@@ -710,6 +710,7 @@ a.co-val:hover { color: var(--blue); }
   .footer-stats { grid-template-columns: 1fr 1fr; gap: 28px 20px; padding: 28px 24px; }
   .svc-strip { display: none; }
   .sd-bullets { grid-template-columns: 1fr; }
+  .contact-channel-call .cc-val { font-size: 0.9rem; }
 }
 
 /* ---------- animated svg connection ---------- */
@@ -837,6 +838,7 @@ a.co-val:hover { color: var(--blue); }
 .cc-lbl { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
 .cc-val { font-size: 1.05rem; font-weight: 600; color: var(--ink); margin-top: 2px; }
 .cc-note { font-size: 0.85rem; color: var(--ink-2); margin-top: 4px; }
+.contact-channel-call .cc-val { white-space: nowrap; word-break: keep-all; overflow-wrap: normal; }
 .cfq { display: flex; gap: 16px; align-items: baseline; }
 .cfq-lbl { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); width: 52px; flex-shrink: 0; }
 .cfq-val { font-size: 1rem; color: var(--ink); font-weight: 400; }

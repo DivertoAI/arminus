@@ -29,6 +29,7 @@ const channels = [
     label: "Call us",
     value: "+91 9874014979 / +91 3340601004",
     href: "tel:+919874014979",
+    className: "contact-channel-call",
     note: "Mon – Sat, 9 am – 7 pm IST",
   },
   {
@@ -71,7 +72,13 @@ export default function ContactPage() {
           />
           <Reveal stagger className="contact-channels">
             {channels.map(c => (
-              <a key={c.label} href={c.href} className="contact-channel" target={c.href.startsWith("http") ? "_blank" : undefined} rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}>
+              <a
+                key={c.label}
+                href={c.href}
+                className={`contact-channel${c.className ? ` ${c.className}` : ""}`}
+                target={c.href.startsWith("http") ? "_blank" : undefined}
+                rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              >
                 <div className="cc-icon">{c.icon}</div>
                 <div className="cc-lbl">{c.label}</div>
                 <div className="cc-val">{c.value}</div>
