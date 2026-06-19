@@ -57,6 +57,12 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "StaffingAgency",
