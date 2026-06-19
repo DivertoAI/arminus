@@ -32,6 +32,7 @@ const leaders = [
   { name: "Pankaj Kathuria", role: "MD & CEO", bio: "44 years architecting global software. ODCs for HBO Singapore, Puerto Rico Telephone. Thapar · IIM Calcutta.", img: "/pankaj.jpg" },
   { name: "Ashok Jindal", role: "Director — Operations", bio: "40 years. Senior leadership at Tata, PCL. Multi-million-dollar deals for Tata Motors, Mahindra, HAL. Runs NCR.", img: "/ashok.jpg" },
   { name: "Tania Kathuria", role: "Director — Strategy & Growth", bio: "Global GTM at Accenture and TCS. Scaling Arminus's international expansion. NMIMS Mumbai MBA.", img: "/tania.jpg" },
+  { name: "Bhaskar Mukherjee", role: "Technical Advisor", bio: "30 years across IT delivery, enterprise architecture and cloud. Founder & CEO, Nubo Native Solutions — democratizing Cloud for enterprises.", img: "/bhaskar.jpg" },
 ];
 
 const clientTestimonials = [
@@ -146,7 +147,7 @@ export default function Home() {
           <SectionHead
             eyebrow="Leadership"
             title={<>Built by people who&apos;ve <span className="ital">done it before.</span></>}
-            sub="Three leaders with deep experience building global delivery, large account operations, and revenue engines that scale across markets."
+            sub="Four leaders with deep experience building global delivery, large account operations, and revenue engines that scale across markets."
           />
           <Reveal stagger className="lt-grid">
             {leaders.map(l => (

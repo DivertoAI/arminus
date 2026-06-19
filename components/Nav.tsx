@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { label: "Career Labs", href: "/career-labs" },
   { label: "Nubo",        href: "/nubo" },
   { label: "Careers",     href: "/careers" },
-  { label: "Contact Us",  href: "/contact" },
+  { label: "Contact Us",  href: "/contact#contact-form" },
 ];
 
 export function Nav() {
@@ -42,7 +42,8 @@ export function Nav() {
 
         <div className={`nav-links${open ? " open" : ""}`}>
           {NAV_ITEMS.map(item => {
-            const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            const baseHref = item.href.split("#")[0];
+            const isActive = baseHref === "/" ? pathname === "/" : pathname.startsWith(baseHref);
             return (
               <Link
                 key={item.href}

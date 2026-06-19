@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
+import { ContactForm } from "@/components/ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact Arminus | IT Staffing Inquiry | Kolkata Gurugram Bengaluru",
@@ -27,7 +28,7 @@ const channels = [
   {
     icon: "☎",
     label: "Call us",
-    value: "+91 9874014979 / +91 3340601004",
+    value: <span style={{ display: "block", whiteSpace: "nowrap" }}>+91 9874014979<br />+91 3340601004</span>,
     href: "tel:+919874014979",
     className: "contact-channel-call",
     note: "Mon – Sat, 9 am – 7 pm IST",
@@ -46,9 +47,9 @@ const channels = [
 ];
 
 const offices = [
-  { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", focus: "Strategy & leadership", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=600&q=80&auto=format&fit=crop" },
-  { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", focus: "Operations & Gov-Tech", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&q=80&auto=format&fit=crop" },
-  { tag: "Engineering Desk", name: "Bengaluru", addr: "HSR Layout 5th Sector, Bengaluru, Karnataka", focus: "IT & engineering", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
+  { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", focus: "Strategy & leadership", img: "/kolkata-office.jpg" },
+  { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", focus: "Operations & Gov-Tech", img: "/gurugram-office.jpg" },
+  { tag: "Engineering Desk", name: "Bengaluru", addr: "Site No 5, House No 272, Yelahanka RTO Bypass Road, Inganayakanahalli, Rajankunte, Vinayaka Layout, Bengaluru 560064", focus: "IT & engineering", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
 ];
 
 export default function ContactPage() {
@@ -102,6 +103,7 @@ export default function ContactPage() {
                 <div className="co-photo">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={o.img} alt={o.name} />
+                  <div className="ovl" />
                 </div>
                 <div className="co-body">
                   <h3>{o.name}{o.tag === "Headquarters" ? ` (${o.tag})` : ""}</h3>
@@ -114,15 +116,17 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="section">
+      {/* FORM */}
+      <section className="section" id="contact-form">
         <div className="wrap">
+          <SectionHead
+            eyebrow="Send a message"
+            title={<>Tell us about <span className="ital">the role.</span></>}
+            sub="We'll come back within one business day with a research plan and market read."
+            align="center"
+          />
           <Reveal>
-            <div className="nnp-cta-block">
-              <h2>Ready to find your next great hire?</h2>
-              <p>Tell us about the role. We&apos;ll come back within one business day with a research plan and market read.</p>
-              <Link href="mailto:contactus@arminus.in" className="btn btn-blue">Email us now <span className="arrow">→</span></Link>
-            </div>
+            <ContactForm />
           </Reveal>
         </div>
       </section>

@@ -31,6 +31,7 @@ export function TrustedBy() {
   const startScroll = useRef(0);
   const paused    = useRef(false);
   const touching  = useRef(false);
+  const exactScroll = useRef<number | null>(null);
 
   /* ── Auto-scroll via rAF ── */
   useEffect(() => {
@@ -39,15 +40,29 @@ export function TrustedBy() {
 
     // Start in the middle clone so we can scroll both ways
     el.scrollLeft = el.scrollWidth / 4;
+    exactScroll.current = el.scrollLeft;
 
     function tick() {
       if (!el) return;
       if (!dragging.current && !paused.current && !touching.current) {
-        el.scrollLeft += SPEED;
+        if (exactScroll.current === null) exactScroll.current = el.scrollLeft;
+        
+        exactScroll.current += SPEED;
+        el.scrollLeft = exactScroll.current;
+
         // Seamless loop: when we reach 3/4 through, jump back to 1/4
         const quarter = el.scrollWidth / 4;
-        if (el.scrollLeft >= quarter * 3) el.scrollLeft = quarter;
-        if (el.scrollLeft <= 0)           el.scrollLeft = quarter * 2;
+        if (el.scrollLeft >= quarter * 3) {
+          el.scrollLeft = quarter;
+          exactScroll.current = quarter;
+        }
+        if (el.scrollLeft <= 0) {
+          el.scrollLeft = quarter * 2;
+          exactScroll.current = quarter * 2;
+        }
+      } else {
+        // Sync accumulator with manual user scroll
+        exactScroll.current = el.scrollLeft;
       }
       rafRef.current = requestAnimationFrame(tick);
     }
@@ -69,6 +84,7 @@ export function TrustedBy() {
     if (!dragging.current || !wrapRef.current) return;
     e.preventDefault();
     wrapRef.current.scrollLeft = startScroll.current - (e.pageX - startX.current);
+    exactScroll.current = wrapRef.current.scrollLeft;
   };
   const onMouseUp = () => {
     dragging.current = false;
@@ -76,8 +92,18 @@ export function TrustedBy() {
   };
 
   /* ── Touch: pause auto-scroll, let iOS native scroll take over ── */
-  const onTouchStart = () => { touching.current = true; };
-  const onTouchEnd   = () => { touching.current = false; };
+  const touchResumeTimer = useRef<NodeJS.Timeout | null>(null);
+  const onTouchStart = () => { 
+    touching.current = true; 
+    if (touchResumeTimer.current) clearTimeout(touchResumeTimer.current);
+  };
+  const onTouchEnd   = () => { 
+    // Wait for momentum scroll to finish before resuming auto-scroll
+    touchResumeTimer.current = setTimeout(() => {
+      touching.current = false;
+      paused.current = false; // Fix iOS "sticky hover" bug
+    }, 800);
+  };
 
   /* ── Hover: pause auto-scroll ── */
   const onMouseEnter = () => { paused.current = true; };

@@ -18,9 +18,9 @@ export const metadata: Metadata = {
 };
 
 const offices = [
-  { tag: "Headquarters", name: "Kolkata (Headquarters)", d: "Strategy, leadership and our central recruitment engine. Bengal Eco Intelligent Park, Sector V.", img: "https://images.unsplash.com/photo-1524293568345-75d62c3664f7?w=900&q=80&auto=format&fit=crop" },
-  { tag: "NCR Operations", name: "Gurugram", d: "Account operations and large-scale Gov-Tech deployments. JMD Megapolis, Sohna Road.", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80&auto=format&fit=crop" },
-  { tag: "Engineering Desk", name: "Bengaluru", d: "IT and engineering specialist recruitment. HSR Layout 5th Sector.", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80&auto=format&fit=crop" },
+  { tag: "Headquarters", name: "Kolkata (Headquarters)", d: "Strategy, leadership and our central recruitment engine. Bengal Eco Intelligent Park, Sector V.", img: "/kolkata-office.jpg" },
+  { tag: "NCR Operations", name: "Gurugram", d: "Account operations and large-scale Gov-Tech deployments. JMD Megapolis, Sohna Road.", img: "/gurugram-office.jpg" },
+  { tag: "Engineering Desk", name: "Bengaluru", d: "IT and engineering specialist recruitment. Site No 5, House No 272, Yelahanka RTO Bypass Road, Inganayakanahalli, Rajankunte, Vinayaka Layout.", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80&auto=format&fit=crop" },
 ];
 
 const leaders = [
@@ -44,6 +44,13 @@ const leaders = [
     bio: "Tania is a growth-focused leader dedicated to building scalable revenue engines and global partnerships. At Arminus, she spearheads strategic direction and international expansion. Her background includes key positions at Accenture and Tata Consultancy Services (TCS), where she led go-to-market initiatives across global markets.",
     edu: [["Engineering", "B.Tech, ITER, Bhubaneswar"], ["Management", "MBA, NMIMS Mumbai"]],
     img: "/tania.jpg",
+  },
+  {
+    name: "Bhaskar Mukherjee", role: "Technical Advisor", rev: true,
+    pull: "30 years transforming enterprises through technology.",
+    bio: "Bhaskar is a deeply creative person with a strong passion for technology. He has almost 30 years of experience in the IT industry across multiple technology areas, business domains and functional roles. He has been involved in large and complex delivery management, forward looking product and portfolio development, enterprise architecture consulting and leading multiple high impact technology competencies across premium IT Service Providers. As founder & CEO of Nubo Native Solutions, he is working on a mission to democratize Cloud and enable Cloud Repatriation for Enterprises — ensuring higher ROI, reduced TCO and improved TTM.",
+    edu: [["Role", "Founder & CEO, Nubo Native Solutions"], ["Expertise", "Enterprise Architecture & Cloud"]],
+    img: "/bhaskar.jpg",
   },
 ];
 
@@ -103,14 +110,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* LEADERS */}
       <section className="leaders-section" id="leadership">
         <div className="wrap">
           <SectionHead
             eyebrow="Leadership"
             title={<>Built by people who&apos;ve <span className="ital">done it before.</span></>}
-            sub="Three leaders with deep experience building global delivery, large-account operations, and revenue engines that scale across markets."
+            sub="Four leaders with deep experience building global delivery, large-account operations, and revenue engines that scale across markets."
           />
+          {/* LEADERS */}
           <div className="leaders-stack">
             {leaders.map(l => (
               <Reveal key={l.name}>
