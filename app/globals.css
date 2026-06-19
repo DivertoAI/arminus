@@ -451,8 +451,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ============================================================ TRUSTED BY ============================================================ */
 .trusted-section { padding: 56px 0 40px; }
 .trusted-lbl-center { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); font-weight: 700; text-align: center; margin-bottom: 28px; }
+.clients-marquee {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+}
 .marquee { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent); mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent); }
-.marquee-draggable { overflow-x: scroll; cursor: grab; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; user-select: none; }
+.marquee-draggable { overflow-x: auto; overflow-y: hidden; cursor: grab; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; user-select: none; touch-action: pan-x; overscroll-behavior-x: contain; }
 .marquee-draggable::-webkit-scrollbar { display: none; }
 .marquee-draggable:active { cursor: grabbing; }
 .marquee-track { display: flex; width: max-content; gap: 14px; animation: marquee-scroll 34s linear infinite; }
@@ -1146,16 +1152,15 @@ a.co-val:hover { color: var(--blue); }
   margin-bottom: 32px;
 }
 .clients-track-wrap {
-  overflow-x: hidden;
-  touch-action: pan-y;
+  overflow-x: auto;
+  overflow-y: hidden;
   cursor: grab;
   scrollbar-width: none;
   -ms-overflow-style: none;
   user-select: none;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
-          mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+  overscroll-behavior-x: contain;
 }
 .clients-track-wrap::-webkit-scrollbar { display: none; }
 .clients-track {

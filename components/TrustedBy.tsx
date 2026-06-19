@@ -88,32 +88,35 @@ export function TrustedBy() {
       <div className="wrap">
         <p className="clients-label">Trusted by India&apos;s leading organisations</p>
       </div>
-      <div
-        ref={wrapRef}
-        className="clients-track-wrap"
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseLeave}
-        onMouseEnter={onMouseEnter}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-      >
-        <div className="clients-track">
-          {ITEMS.map((c, i) => (
-            <div className="client-logo-card" key={i}>
-              <Image
-                src={withSiteBasePath(c.logo)}
-                alt={c.name}
-                width={140}
-                height={48}
-                className="client-logo-img"
-                style={c.scale !== 1 ? { transform: `scale(${c.scale})` } : undefined}
-                unoptimized
-                draggable={false}
-              />
-            </div>
-          ))}
+      <div className="clients-marquee">
+        <div
+          ref={wrapRef}
+          className="clients-track-wrap"
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseLeave}
+          onMouseEnter={onMouseEnter}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+          onTouchCancel={onTouchEnd}
+        >
+          <div className="clients-track">
+            {ITEMS.map((c, i) => (
+              <div className="client-logo-card" key={i}>
+                <Image
+                  src={withSiteBasePath(c.logo)}
+                  alt={c.name}
+                  width={140}
+                  height={48}
+                  className="client-logo-img"
+                  style={c.scale !== 1 ? { transform: `scale(${c.scale})` } : undefined}
+                  unoptimized
+                  draggable={false}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
