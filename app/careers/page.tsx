@@ -5,6 +5,7 @@ import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
 import { CareersClient } from "@/components/CareersClient";
+import { DirectResumeDrop } from "@/components/DirectResumeDrop";
 import type { Job } from "@/components/CareersClient";
 
 export const metadata: Metadata = {
@@ -18,6 +19,8 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: "https://arminus.co.in/careers" },
 };
+
+export const revalidate = 300; // Refetch jobs from Ceipal every 5 minutes
 
 const API_KEY = "N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09";
 const CP_ID   = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
@@ -129,8 +132,9 @@ export default async function CareersPage() {
         title={<>Find a role worth <span className="ital blue">moving for.</span></>}
         lede="Live openings across our client network — from private fintech to national Gov-Tech programs. Every application is read by a human."
       >
-        <div className="hero-cta" style={{ marginTop: "28px" }}>
+        <div className="hero-cta" style={{ marginTop: "28px", display: "flex", flexWrap: "wrap", gap: "12px" }}>
           <Link href="#openings" className="btn btn-blue">Browse open roles <span className="arrow">→</span></Link>
+          <DirectResumeDrop />
           <Link href="/career-labs" className="btn btn-ghost">Prep with Career Labs</Link>
         </div>
       </PageHero>

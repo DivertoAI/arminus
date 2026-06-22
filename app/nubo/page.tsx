@@ -45,7 +45,7 @@ export default function NuboPage() {
       </PageHero>
 
       {/* FEATURES */}
-      <section className="section" id="features">
+      <section className="section" id="features" style={{ paddingTop: "56px" }}>
         <div className="wrap">
           <SectionHead
             eyebrow="Platform capabilities"
@@ -91,7 +91,7 @@ export default function NuboPage() {
       </section>
 
       {/* CTA BLOCK */}
-      <section className="section">
+      <section className="section pt-0">
         <div className="wrap">
           <Reveal>
             <div className="nnp-cta-block">

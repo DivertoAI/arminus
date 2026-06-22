@@ -29,7 +29,6 @@ export function ResumeScorer() {
       });
 
       const response = await fetch("/api/analyze", {
-        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ base64, mimeType: file.type || "application/pdf" })
       });

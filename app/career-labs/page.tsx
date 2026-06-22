@@ -86,7 +86,7 @@ export default function CareerLabsPage() {
       <ResumeScorer />
 
       {/* PRICING */}
-      <section className="section tint" id="pricing">
+      <section className="section tint pb-0" id="pricing">
         <div className="wrap">
           <SectionHead
             eyebrow="Pricing"

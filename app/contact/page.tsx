@@ -47,9 +47,9 @@ const channels = [
 ];
 
 const offices = [
-  { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", focus: "Strategy & leadership", img: "/kolkata-office.jpg" },
-  { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", focus: "Operations & Gov-Tech", img: "/gurugram-office.jpg" },
-  { tag: "Engineering Desk", name: "Bengaluru", addr: "Site No 5, House No 272, Yelahanka RTO Bypass Road, Inganayakanahalli, Rajankunte, Vinayaka Layout, Bengaluru 560064", focus: "IT & engineering", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
+  { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", img: "/kolkata-office.jpg" },
+  { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", img: "/gurugram-office.jpg" },
+  { tag: "Engineering Desk", name: "Bengaluru", addr: "Site No 5, House No 272, Yelahanka RTO Bypass Road, Inganayakanahalli, Rajankunte, Vinayaka Layout, Bengaluru 560064", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
 ];
 
 export default function ContactPage() {
@@ -107,8 +107,7 @@ export default function ContactPage() {
                 </div>
                 <div className="co-body">
                   <h3>{o.name}{o.tag === "Headquarters" ? ` (${o.tag})` : ""}</h3>
-                  <div className="co-line"><div className="co-lbl">Address</div><div className="co-val">{o.addr}</div></div>
-                  <div className="co-line"><div className="co-lbl">Focus</div><div className="co-val">{o.focus}</div></div>
+                  <p style={{ marginTop: "12px", lineHeight: "1.5", color: "var(--ink-2)", fontSize: "0.95rem" }}>{o.addr}</p>
                 </div>
               </div>
             ))}

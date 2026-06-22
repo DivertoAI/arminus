@@ -56,7 +56,7 @@ export default function SolutionsPage() {
       </PageHero>
 
       {/* SERVICE LINES */}
-      <section className="section" id="services">
+      <section className="section" id="services" style={{ paddingTop: "56px" }}>
         <div className="wrap">
           <SectionHead
             eyebrow="Five service lines"
@@ -142,7 +142,7 @@ export default function SolutionsPage() {
       </section>
 
       {/* PROCESS */}
-      <section className="section process">
+      <section className="section process pb-0">
         <div className="wrap">
           <SectionHead
             eyebrow="How we work"

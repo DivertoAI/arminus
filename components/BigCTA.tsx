@@ -10,7 +10,7 @@ interface BigCTAProps {
 
 export function BigCTA({ heading, lede, primary, secondary }: BigCTAProps) {
   return (
-    <section className="section" id="cta">
+    <section className="section pt-0" id="cta">
       <div className="bigcta">
         <h2>{heading}</h2>
         {lede && <p>{lede}</p>}

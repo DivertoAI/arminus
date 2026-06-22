@@ -31,7 +31,7 @@ export function Nav() {
 
   return (
     <nav className={`nav${scrolled ? " scrolled" : ""}`}>
-      <div className="wrap nav-inner">
+      <div className="nav-inner">
         <Link href="/" className="logo-wrap" aria-label="Arminus home">
           <img
             src={withSiteBasePath("/arminus-logo.png")}

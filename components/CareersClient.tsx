@@ -48,7 +48,15 @@ function formatCity(raw?: string) {
 }
 function stripHtml(html?: string) {
   if (!html) return "";
-  return String(html).replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+  let text = String(html).replace(/<[^>]*>/g, " ");
+  const entities: Record<string, string> = {
+    "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', 
+    "&apos;": "'", "&#39;": "'", "&ndash;": "–", "&mdash;": "—", 
+    "&middot;": "·", "&nbsp;": " ", "&rsquo;": "'", "&lsquo;": "'",
+    "&bull;": "•", "&copy;": "©", "&reg;": "®"
+  };
+  text = text.replace(/&[a-zA-Z0-9#]+;/g, (match) => entities[match] || " ");
+  return text.replace(/\s+/g, " ").trim();
 }
 function timeAgo(d: string) {
   if (!d || d === "Today") return "Today";
@@ -78,6 +86,7 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   const [isApplying, setIsApplying] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [mobileError, setMobileError] = useState("");
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -110,13 +119,6 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
     formData.append("standard_fields.lastname", (form.elements.namedItem("lastname") as HTMLInputElement).value);
     formData.append("standard_fields.email", (form.elements.namedItem("email") as HTMLInputElement).value);
     formData.append("standard_fields.mobile_number", (form.elements.namedItem("mobile_number") as HTMLInputElement).value);
-    formData.append("standard_fields.country", (form.elements.namedItem("country") as HTMLInputElement).value);
-    formData.append("standard_fields.state", (form.elements.namedItem("state") as HTMLInputElement).value);
-    formData.append("standard_fields.city", (form.elements.namedItem("city") as HTMLInputElement).value);
-    formData.append("standard_fields.address", (form.elements.namedItem("address") as HTMLInputElement).value);
-    formData.append("standard_fields.pan_card_number", (form.elements.namedItem("pan_card_number") as HTMLInputElement).value);
-    formData.append("standard_fields.ssn", (form.elements.namedItem("ssn") as HTMLInputElement).value);
-    formData.append("standard_fields.aadhar_number", (form.elements.namedItem("aadhar_number") as HTMLInputElement).value);
     
     const fileInput = form.elements.namedItem("resume") as HTMLInputElement;
     if (fileInput.files && fileInput.files[0]) {
@@ -176,63 +178,48 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
         <div className="jm-body">
           {isApplying ? (
             <div className="jm-form-container" style={{ padding: "16px 0" }}>
-              <h3 style={{ fontSize: "1.1rem", marginBottom: "16px" }}>Submit Application</h3>
               {submitStatus === "success" ? (
                 <div style={{ padding: "20px", background: "#EAF9F5", color: "#1F8A5B", borderRadius: "8px", fontWeight: 600 }}>
                   Application submitted successfully!
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <h3 style={{ fontSize: "1.1rem", marginBottom: "16px", marginTop: 0 }}>Submit Application</h3>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                     <div>
                       <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>First Name *</label>
                       <input name="firstname" required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
                     </div>
                     <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Last Name *</label>
-                      <input name="lastname" required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Last Name (Optional)</label>
+                      <input name="lastname" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
                     </div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                     <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Email *</label>
-                      <input name="email" type="email" required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Email (Optional)</label>
+                      <input name="email" type="email" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
                     </div>
                     <div>
                       <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Mobile Number *</label>
-                      <input name="mobile_number" type="tel" required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    </div>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-                    <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Country</label>
-                      <input name="country" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>State</label>
-                      <input name="state" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>City</label>
-                      <input name="city" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    </div>
-                  </div>
-                  <div>
-                    <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Full Address</label>
-                    <input name="address" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-                    <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>PAN Card Number</label>
-                      <input name="pan_card_number" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Aadhar Number</label>
-                      <input name="aadhar_number" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>SSN (if applicable)</label>
-                      <input name="ssn" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
+                      <input 
+                        name="mobile_number" 
+                        type="tel" 
+                        required 
+                        style={{ width: "100%", padding: "10px", borderRadius: "6px", border: `1px solid ${mobileError ? 'red' : 'var(--line)'}` }} 
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const hasInvalidChars = new RegExp("[^0-9+\\\\-\\\\s()]").test(val);
+                          if (hasInvalidChars) {
+                            setMobileError("Please enter digits only.");
+                            e.target.setCustomValidity("Please enter digits only.");
+                          } else {
+                            setMobileError("");
+                            e.target.setCustomValidity("");
+                          }
+                        }}
+                      />
+                      {mobileError && <span style={{ color: "red", fontSize: "0.8rem", marginTop: "4px", display: "block" }}>{mobileError}</span>}
                     </div>
                   </div>
                   
