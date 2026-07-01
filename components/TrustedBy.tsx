@@ -11,9 +11,9 @@ const CLIENTS = [
   { name: "Indorama",        logo: "/logos/indorama.png",      scale: 1    },
   { name: "Hyland",          logo: "/logos/hyland.png",        scale: 1    },
   { name: "Xerox Lexmark",   logo: "/logos/lexmark.png",       scale: 1    },
-  { name: "LabVantage",      logo: "/logos/labvantage.svg",    scale: 1    },
+  { name: "LabVantage",      logo: "/logos/labvantage.png",    scale: 1    },
   { name: "UST Global",      logo: "/logos/ust.png",           scale: 1    },
-  { name: "QCI",             logo: "/logos/qci.svg",           scale: 1    },
+  { name: "QCI",             logo: "/logos/qci.webp",          scale: 1    },
   { name: "Malomatia",       logo: "/logos/malomatia.svg",     scale: 1    },
   { name: "First American",  logo: "/logos/firstamerican.png", scale: 1    },
 ];
