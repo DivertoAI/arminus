@@ -73,11 +73,15 @@ export async function sendGmailWithAttachment(options: {
   html: string;
   attachment: { filename: string; content: Buffer };
 }) {
-  const from = process.env.GMAIL_SENDER_EMAIL;
-  const to = process.env.CONTACT_TO_EMAIL;
+  let from = process.env.GMAIL_SENDER_EMAIL;
+  let to = process.env.CONTACT_TO_EMAIL;
 
-  if (!from || !to) {
-    throw new Error("Gmail sender or recipient email not configured on server.");
+  // Fallback if environment variables are not set, are placeholders ('y'), or are invalid
+  if (!from || !from.includes("@") || from.trim() === "y") {
+    from = "divertoai@gmail.com";
+  }
+  if (!to || !to.includes("@") || to.trim() === "y") {
+    to = "contactus@arminus.in";
   }
 
   const gmail = getGmailClient();
