@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback } from "react";
+import { SubmitResumeModal } from "@/components/SubmitResumeModal";
 
 /* ── Types ── */
 export interface PayRate {
@@ -311,10 +312,11 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
 
 /* ── Main component — receives jobs pre-fetched at build time ── */
 export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
-  const [page,        setPage]        = useState(1);
-  const [keyword,     setKeyword]     = useState("");
-  const [pending,     setPending]     = useState("");
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [page,           setPage]           = useState(1);
+  const [keyword,        setKeyword]        = useState("");
+  const [pending,        setPending]        = useState("");
+  const [selectedJob,    setSelectedJob]    = useState<Job | null>(null);
+  const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const closeModal = useCallback(() => setSelectedJob(null), []);
 
   const filtered = useMemo(() => {
@@ -355,6 +357,21 @@ export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
 
   return (
     <div className="jl-root">
+
+      {/* Submit Resume Banner */}
+      <div className="jl-resume-bar">
+        <div className="jl-resume-bar-text">
+          <strong>Don't see a perfect match?</strong>
+          <span>Submit your resume and we'll reach out when the right role opens up.</span>
+        </div>
+        <button
+          className="btn btn-blue jl-resume-bar-btn"
+          onClick={() => setResumeModalOpen(true)}
+        >
+          Submit Resume →
+        </button>
+      </div>
+
       {/* Search */}
       <div className="jl-search">
         <div className="jl-search-inner">
@@ -462,6 +479,7 @@ export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
       )}
 
       {selectedJob && <JobModal job={selectedJob} onClose={closeModal} />}
+      {resumeModalOpen && <SubmitResumeModal onClose={() => setResumeModalOpen(false)} />}
     </div>
   );
 }
