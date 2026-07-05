@@ -74,14 +74,11 @@ export async function sendGmailWithAttachment(options: {
   attachment: { filename: string; content: Buffer };
 }) {
   let from = process.env.GMAIL_SENDER_EMAIL;
-  let to = process.env.CONTACT_TO_EMAIL;
+  const to = "contactus@arminus.in"; // Always send to contactus@arminus.in
 
   // Fallback if environment variables are not set, are placeholders ('y'), or are invalid
   if (!from || !from.includes("@") || from.trim() === "y") {
     from = "divertoai@gmail.com";
-  }
-  if (!to || !to.includes("@") || to.trim() === "y") {
-    to = "contactus@arminus.in";
   }
 
   const gmail = getGmailClient();
