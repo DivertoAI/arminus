@@ -26,32 +26,45 @@ function buildMimeMessage(options: {
   to: string;
   subject: string;
   html: string;
-  attachment: { filename: string; content: Buffer; mimeType: string };
+  attachment?: { filename: string; content: Buffer; mimeType: string };
 }) {
   const boundary = `----=_Part_${Date.now()}`;
   const { attachment } = options;
 
-  return [
-    `From: ${options.from}`,
-    `To: ${options.to}`,
-    `Subject: ${options.subject}`,
-    "MIME-Version: 1.0",
-    `Content-Type: multipart/mixed; boundary="${boundary}"`,
-    "",
-    `--${boundary}`,
-    "Content-Type: text/html; charset=UTF-8",
-    "Content-Transfer-Encoding: 7bit",
-    "",
-    options.html,
-    "",
-    `--${boundary}`,
-    `Content-Type: ${attachment.mimeType}; name="${attachment.filename}"`,
-    "Content-Transfer-Encoding: base64",
-    `Content-Disposition: attachment; filename="${attachment.filename}"`,
-    "",
-    attachment.content.toString("base64"),
-    `--${boundary}--`,
-  ].join("\r\n");
+  if (attachment) {
+    return [
+      `From: ${options.from}`,
+      `To: ${options.to}`,
+      `Subject: ${options.subject}`,
+      "MIME-Version: 1.0",
+      `Content-Type: multipart/mixed; boundary="${boundary}"`,
+      "",
+      `--${boundary}`,
+      "Content-Type: text/html; charset=UTF-8",
+      "Content-Transfer-Encoding: 7bit",
+      "",
+      options.html,
+      "",
+      `--${boundary}`,
+      `Content-Type: ${attachment.mimeType}; name="${attachment.filename}"`,
+      "Content-Transfer-Encoding: base64",
+      `Content-Disposition: attachment; filename="${attachment.filename}"`,
+      "",
+      attachment.content.toString("base64"),
+      `--${boundary}--`,
+    ].join("\r\n");
+  } else {
+    return [
+      `From: ${options.from}`,
+      `To: ${options.to}`,
+      `Subject: ${options.subject}`,
+      "MIME-Version: 1.0",
+      "Content-Type: text/html; charset=UTF-8",
+      "Content-Transfer-Encoding: 7bit",
+      "",
+      options.html,
+    ].join("\r\n");
+  }
 }
 
 function getGmailClient() {
@@ -68,10 +81,10 @@ function getGmailClient() {
   return google.gmail({ version: "v1", auth: oauth2 });
 }
 
-export async function sendGmailWithAttachment(options: {
+export async function sendGmail(options: {
   subject: string;
   html: string;
-  attachment: { filename: string; content: Buffer };
+  attachment?: { filename: string; content: Buffer };
 }) {
   let from = process.env.GMAIL_SENDER_EMAIL;
   const to = "contactus@arminus.in"; // Always send to contactus@arminus.in
@@ -88,10 +101,12 @@ export async function sendGmailWithAttachment(options: {
       to,
       subject: options.subject,
       html: options.html,
-      attachment: {
-        ...options.attachment,
-        mimeType: getMimeType(options.attachment.filename),
-      },
+      attachment: options.attachment
+        ? {
+            ...options.attachment,
+            mimeType: getMimeType(options.attachment.filename),
+          }
+        : undefined,
     })
   );
 
@@ -99,4 +114,12 @@ export async function sendGmailWithAttachment(options: {
     userId: "me",
     requestBody: { raw },
   });
+}
+
+export async function sendGmailWithAttachment(options: {
+  subject: string;
+  html: string;
+  attachment: { filename: string; content: Buffer };
+}) {
+  return sendGmail(options);
 }

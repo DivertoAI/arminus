@@ -9,7 +9,6 @@ export function ContactForm() {
     setStatus("submitting");
 
     const data = {
-      access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "YOUR_ACCESS_KEY_HERE",
       "First Name": (e.currentTarget.elements.namedItem("First Name") as HTMLInputElement).value,
       "Last Name": (e.currentTarget.elements.namedItem("Last Name") as HTMLInputElement).value,
       "Email": (e.currentTarget.elements.namedItem("Email") as HTMLInputElement).value,
@@ -18,7 +17,7 @@ export function ContactForm() {
     };
 
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,12 +27,12 @@ export function ContactForm() {
       });
       const json = await res.json();
       
-      if (json.success) {
+      if (res.ok && json.success) {
         setStatus("success");
         (e.target as HTMLFormElement).reset();
       } else {
         setStatus("error");
-        console.error("Web3Forms error:", json);
+        console.error("Contact API error:", json);
       }
     } catch (err) {
       console.error("Fetch error:", err);
