@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { withSiteBasePath } from "@/lib/site-path";
+import { SubmitResumeModal } from "@/components/SubmitResumeModal";
 
 const NAV_ITEMS = [
   { label: "Home",        href: "/" },
@@ -18,6 +19,7 @@ const NAV_ITEMS = [
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -30,46 +32,69 @@ export function Nav() {
   useEffect(() => { setOpen(false); }, [pathname]);
 
   return (
-    <nav className={`nav${scrolled ? " scrolled" : ""}`}>
-      <div className="nav-inner">
-        <Link href="/" className="logo-wrap" aria-label="Arminus home">
-          <img
-            src={withSiteBasePath("/arminus-logo.png")}
-            alt="Arminus"
-            className="logo-img"
-          />
-        </Link>
-
-        <div className={`nav-links${open ? " open" : ""}`}>
-          {NAV_ITEMS.map(item => {
-            const baseHref = item.href.split("#")[0];
-            const isActive = baseHref === "/" ? pathname === "/" : pathname.startsWith(baseHref);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`nav-link${isActive ? " active" : ""}`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </div>
-
-        <div className="nav-right">
-          <Link href="/contact" className="nav-cta">
-            Hire Talent <span className="cta-arrow">→</span>
+    <>
+      <nav className={`nav${scrolled ? " scrolled" : ""}`}>
+        <div className="nav-inner">
+          <Link href="/" className="logo-wrap" aria-label="Arminus home">
+            <img
+              src={withSiteBasePath("/arminus-logo.png")}
+              alt="Arminus"
+              className="logo-img"
+            />
           </Link>
-          <button
-            className="nav-burger"
-            onClick={() => setOpen(o => !o)}
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-          >
-            <span /><span /><span />
-          </button>
+
+          <div className={`nav-links${open ? " open" : ""}`}>
+            {NAV_ITEMS.map(item => {
+              const baseHref = item.href.split("#")[0];
+              const isActive = baseHref === "/" ? pathname === "/" : pathname.startsWith(baseHref);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`nav-link${isActive ? " active" : ""}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+            <button
+              onClick={() => {
+                setOpen(false);
+                setResumeModalOpen(true);
+              }}
+              className="nav-link nav-mobile-resume-btn"
+              type="button"
+            >
+              Submit Resume
+            </button>
+          </div>
+
+          <div className="nav-right">
+            <button
+              onClick={() => setResumeModalOpen(true)}
+              className="nav-desktop-resume-btn"
+              type="button"
+            >
+              Submit Resume
+            </button>
+            <Link href="/contact" className="nav-cta">
+              Hire Talent <span className="cta-arrow">→</span>
+            </Link>
+            <button
+              className="nav-burger"
+              onClick={() => setOpen(o => !o)}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+            >
+              <span /><span /><span />
+            </button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {resumeModalOpen && (
+        <SubmitResumeModal onClose={() => setResumeModalOpen(false)} />
+      )}
+    </>
   );
 }

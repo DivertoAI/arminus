@@ -17,7 +17,8 @@ export async function POST(req: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer      = Buffer.from(arrayBuffer);
 
-    const subject = `Resume Submission: ${name} — ${file.name}`;
+    const subjectName = name && name !== "Not provided" ? `${name} - ` : "";
+    const subject = `New Resume Submission: ${subjectName}${file.name}`;
     const html = `
       <h2 style="font-family:sans-serif;color:#0080D0;margin-bottom:8px">New Resume Submitted</h2>
       <table style="font-family:sans-serif;font-size:15px;border-collapse:collapse">
