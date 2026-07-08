@@ -93,10 +93,7 @@ export default function ContactPage() {
       {/* OFFICES */}
       <section className="section tint">
         <div className="wrap">
-          <SectionHead
-            eyebrow="Our offices"
-            title={<>Our offices</>}
-          />
+          <SectionHead eyebrow="Our offices" />
           <Reveal stagger className="co-grid">
             {offices.map(o => (
               <div className="co-card" key={o.name}>
