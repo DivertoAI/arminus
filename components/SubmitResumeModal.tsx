@@ -167,7 +167,7 @@ export function SubmitResumeModal({ onClose }: Props) {
                 {status === "submitting" ? (
                   <><span className="srm-spinner"/> Sending…</>
                 ) : (
-                  <>Send Resume →</>
+                  <>Send Resume</>
                 )}
               </button>
             </div>

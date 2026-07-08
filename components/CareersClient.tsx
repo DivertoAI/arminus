@@ -300,7 +300,7 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
         {!isApplying && (
           <div className="jm-foot">
             <button className="btn btn-blue" onClick={() => setIsApplying(true)}>
-              Apply Now →
+              Apply Now
             </button>
             <button className="btn btn-ghost" onClick={onClose}>Close</button>
           </div>

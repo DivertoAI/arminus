@@ -17,7 +17,7 @@ export function BigCTA({ heading, lede, primary, secondary }: BigCTAProps) {
         <div className="bigcta-row">
           {primary && (
             <Link href={primary.href} className="btn btn-blue">
-              {primary.label} <span className="arrow">→</span>
+              {primary.label}
             </Link>
           )}
           {secondary && (

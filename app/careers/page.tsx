@@ -152,7 +152,7 @@ export default async function CareersPage() {
         lede="Live openings across our client network — from private fintech to national Gov-Tech programs. Every application is read by a human."
       >
         <div className="hero-cta" style={{ marginTop: "28px", display: "flex", flexWrap: "wrap", gap: "12px" }}>
-          <Link href="#openings" className="btn btn-blue">Browse open roles <span className="arrow">→</span></Link>
+          <Link href="#openings" className="btn btn-blue">Browse open roles</Link>
           <DirectResumeDrop />
           <Link href="/career-labs" className="btn btn-ghost">Prep with Career Labs</Link>
         </div>

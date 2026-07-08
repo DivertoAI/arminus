@@ -39,7 +39,7 @@ export default function NuboPage() {
         lede="NNP provides a Public Cloud experience on private infrastructure, reducing TCO while enabling AI-ready development."
       >
         <div className="hero-cta" style={{ marginTop: "28px" }}>
-          <Link href="/contact" className="btn btn-blue">Talk to our platform team <span className="arrow">→</span></Link>
+          <Link href="/contact" className="btn btn-blue">Talk to our platform team</Link>
         </div>
       </PageHero>
 
@@ -96,7 +96,7 @@ export default function NuboPage() {
             <div className="nnp-cta-block">
               <h2>Ready to explore NNP?</h2>
               <p>Talk to our platform team about deployment models, pricing, and integration with your existing stack.</p>
-              <Link href="/contact" className="btn btn-blue">Schedule a call <span className="arrow">→</span></Link>
+              <Link href="/contact" className="btn btn-blue">Schedule a call</Link>
             </div>
           </Reveal>
         </div>

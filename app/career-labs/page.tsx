@@ -55,7 +55,7 @@ export default function CareerLabsPage() {
         lede="From ATS-optimized resumes to executive mock interviews — get the unfair advantage in India's most competitive job market."
       >
         <div className="hero-cta" style={{ marginTop: "28px" }}>
-          <Link href="#pricing" className="btn btn-blue">View pricing <span className="arrow">→</span></Link>
+          <Link href="#pricing" className="btn btn-blue">View pricing</Link>
         </div>
       </PageHero>
 
@@ -103,7 +103,7 @@ export default function CareerLabsPage() {
                   {t.items.map(item => <li key={item}>{item}</li>)}
                 </ul>
                 <Link href="/contact" className={`btn ${t.badge ? "btn-white" : "btn-blue"}`}>
-                  {t.cta} <span className="arrow">→</span>
+                  {t.cta}
                 </Link>
               </div>
             ))}

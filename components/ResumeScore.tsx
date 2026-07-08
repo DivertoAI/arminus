@@ -83,7 +83,7 @@ export function ResumeScore() {
                   <div className="ats-issue green"><span>✓</span> Good contact section</div>
                 </div>
                 <Link href="/contact" className="btn btn-blue" style={{ marginTop: "20px" }}>
-                  Fix my résumé with Career Labs <span className="arrow">→</span>
+                  Fix my résumé with Career Labs
                 </Link>
               </div>
             </div>

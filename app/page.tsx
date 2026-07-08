@@ -74,7 +74,7 @@ export default function Home() {
               <Reveal>
                 <div className="hero-cta">
                   <Link href="/solutions" className="btn btn-blue">
-                    Explore Solutions <span className="arrow">→</span>
+                    Explore Solutions
                   </Link>
                   <Link href="/careers" className="btn btn-ghost">Browse open roles</Link>
                 </div>

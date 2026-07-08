@@ -50,7 +50,7 @@ export default function SolutionsPage() {
         lede="From individual specialists to multi-state Gov-Tech deployments — five service lines built around the entire talent lifecycle, powered by AI-driven precision and deep human insight."
       >
         <div className="hero-cta" style={{ marginTop: "28px" }}>
-          <Link href="/contact" className="btn btn-blue">Submit a hiring brief <span className="arrow">→</span></Link>
+          <Link href="/contact" className="btn btn-blue">Submit a hiring brief</Link>
         </div>
       </PageHero>
 
@@ -91,7 +91,7 @@ export default function SolutionsPage() {
                 <li><span className="bcheck">✓</span>Big 4 trusted partner</li>
                 <li><span className="bcheck">✓</span>QCI &amp; ICC empanelled</li>
               </ul>
-              <Link href="/contact" className="btn btn-blue">Discuss a public-sector mandate <span className="arrow">→</span></Link>
+              <Link href="/contact" className="btn btn-blue">Discuss a public-sector mandate</Link>
             </div>
             <div className="sd-art">
               <div className="sd-ico">

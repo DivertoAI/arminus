@@ -68,7 +68,7 @@ export function Nav() {
               Submit Resume
             </button>
             <Link href="/contact" className="nav-cta">
-              Hire Talent <span className="cta-arrow">→</span>
+              Hire Talent
             </Link>
             <button
               className="nav-burger"
