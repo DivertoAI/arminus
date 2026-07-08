@@ -190,8 +190,8 @@ export default async function CareersPage() {
 
       <BigCTA
         heading={<>Don&apos;t see the <span className="ital">right role?</span></>}
-        lede="Send us your résumé anyway. Most of our placements start with a conversation long before the perfect opening appears."
-        primary={{ href: "mailto:contactus@arminus.com?subject=Resume%20Submission", label: "Send your résumé" }}
+        lede="Send us your resume anyway. Most of our placements start with a conversation long before the perfect opening appears."
+        primary={{ href: "mailto:contactus@arminus.com?subject=Resume%20Submission", label: "Send your resume" }}
         secondary={{ href: "/career-labs", label: "Get interview-ready" }}
       />
     </main>

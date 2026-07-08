@@ -29,7 +29,7 @@ export function ResumeScore() {
       <div className="wrap">
         <div className="ats-head">
           <div className="sec-eyebrow"><span className="ln" /> Free AI Resume Score</div>
-          <h2 className="sec-title">How well does your résumé <span className="ital">beat the bots?</span></h2>
+          <h2 className="sec-title">How well does your resume <span className="ital">beat the bots?</span></h2>
           <p className="sec-sub">Upload your CV and our tool scores it against modern Applicant Tracking Systems — instantly, and free.</p>
         </div>
 
@@ -41,7 +41,7 @@ export function ResumeScore() {
                   <path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>
                 </svg>
               </div>
-              <div className="ats-drop-title">Drop your résumé to get scored</div>
+              <div className="ats-drop-title">Drop your resume to get scored</div>
               <div className="ats-drop-sub">PDF or DOCX · Free · No account needed</div>
               <div className="ats-drop-btn">Get my score</div>
             </div>
@@ -58,7 +58,7 @@ export function ResumeScore() {
                 </svg>
                 <div className="ats-ring-pct">{pct}%</div>
               </div>
-              <div className="ats-scanning-lbl">Analysing your résumé…</div>
+              <div className="ats-scanning-lbl">Analysing your resume…</div>
             </div>
           )}
 
@@ -74,7 +74,7 @@ export function ResumeScore() {
                 <div className="ats-score-num">{score}<span>/100</span></div>
               </div>
               <div className="ats-result-body">
-                <div className="ats-result-title">Your résumé scored {score}/100</div>
+                <div className="ats-result-title">Your resume scored {score}/100</div>
                 <p className="ats-result-sub">There&apos;s room to improve. Our Career Labs team can help you close the gap and push your score above 85 — the threshold most ATS systems use to surface candidates for human review.</p>
                 <div className="ats-result-issues">
                   <div className="ats-issue red"><span>✗</span> Missing quantified achievements</div>
@@ -83,7 +83,7 @@ export function ResumeScore() {
                   <div className="ats-issue green"><span>✓</span> Good contact section</div>
                 </div>
                 <Link href="/contact" className="btn btn-blue" style={{ marginTop: "20px" }}>
-                  Fix my résumé with Career Labs
+                  Fix my resume with Career Labs
                 </Link>
               </div>
             </div>

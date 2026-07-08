@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 };
 
 const services = [
-  { n: "01", t: "Permanent Placement", tag: "Strategic Talent Acquisition", accent: "blue", d: "We identify leaders and specialists who align with your technical roadmap and corporate culture. Access to our proprietary, 17-year curated database ensures precision matching for IT, Telecom, and Automotive sectors. Our services also meet the offshore requirements of our clients who need highly skilled professionals to be deployed across the world to execute projects within desired deadlines.", tags: ["IT", "Telecom", "Automotive", "Offshore"] },
-  { n: "02", t: "Flexible Staffing & Compliance", tag: "Operational Agility", accent: "coral", d: "Scale your workforce seamlessly while we manage the complexities of the employment lifecycle. Arminus acts as the legal employer — taking over all HR management tasks including total management of payroll, statutory benefits, and HR administration.", tags: ["Legal employer", "Payroll", "Statutory benefits"] },
-  { n: "03", t: "Contract-to-Hire (C2H)", tag: "The Performance-First Framework", accent: "teal", d: "Evaluate a candidate's technical proficiency and cultural fit in a real-world environment before making a long-term commitment. This service provides effective recruitment for companies who like to select candidates on the basis of first-hand experience.", tags: ["Try-before-hire", "Cultural fit", "Real-world"] },
-  { n: "05", t: "Executive Search & Board Advisory", tag: "Discretion-Led Identification", accent: "purple", d: "Discretion-led identification of CXO and Board-level talent. Our network extends not just to core senior software professionals but to various other functions like Finance and HR. We have a proven track record of placing board-level executives in the most reputed multinational companies, especially within the Global IT ecosystem.", tags: ["CXO", "Board-level", "Finance & HR"] },
+  { n: "01", t: "Permanent Placement", tag: "Strategic Talent Acquisition", accent: "blue", d: "We identify leaders and specialists who align with your technical roadmap and corporate culture. Access to our proprietary 17-year curated database ensures precision matching for IT, Telecom, and Automotive sectors. Our services also meet the offshore requirements of our clients who need highly skilled professionals to be deployed across the world to execute projects within desired deadlines." },
+  { n: "02", t: "Flexible Staffing & Compliance", tag: "Operational Agility", accent: "coral", d: "Scale your workforce seamlessly while we manage the complexities of the employment lifecycle. Arminus acts as the legal employer — taking over all HR management tasks including total management of payroll, statutory benefits, and HR administration." },
+  { n: "03", t: "Contract-to-Hire (C2H)", tag: "The Performance-First Framework", accent: "teal", d: "Evaluate a candidate's technical proficiency and cultural fit in a real-world environment before making a long-term commitment. This service provides effective recruitment for companies who like to select candidates on the basis of first-hand experience." },
+  { n: "05", t: "Executive Search & Board Advisory", tag: "Discretion-Led Identification", accent: "purple", d: "Discretion-led identification of CXO and Board-level talent. Our network extends not just to core senior software professionals but to various other functions like Finance and HR. We have a proven track record of placing board-level executives in the most reputed multinational companies, especially within the Global IT ecosystem." },
 ];
 
 const industries = [
@@ -69,7 +69,6 @@ export default function SolutionsPage() {
                   <div className="cap-tag">{s.tag}</div>
                   <h3>{s.t}</h3>
                   <p>{s.d}</p>
-                  <div className="svc-tags">{s.tags.map(tg => <span key={tg}>{tg}</span>)}</div>
                 </article>
               </Reveal>
             ))}
