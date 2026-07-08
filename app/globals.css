@@ -5670,21 +5670,22 @@ a.co-val:hover {
   justify-content: center;
   height: 44px;
   padding: 0 22px;
+  border: 1.5px solid transparent;
   border-radius: 999px;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--blue);
-  background: transparent;
-  border: 1.5px solid var(--blue);
-  transition: all .2s ease;
+  color: #fff;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-deep) 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset, 0 8px 22px rgba(0, 128, 208, 0.32);
+  transition: transform .18s ease, box-shadow .25s ease;
   white-space: nowrap;
   cursor: pointer;
 }
 
 .nav-desktop-resume-btn:hover {
-  background: var(--blue-soft);
-  transform: translateY(-1.5px);
+  transform: translateY(-2px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset, 0 14px 32px rgba(0, 128, 208, 0.42);
 }
 
 @media (max-width: 1024px) {
