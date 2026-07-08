@@ -95,7 +95,7 @@ export default function ContactPage() {
         <div className="wrap">
           <SectionHead
             eyebrow="Our offices"
-            title={<>Three cities. <span className="ital">Always nearby.</span></>}
+            title={<>Our offices</>}
           />
           <Reveal stagger className="co-grid">
             {offices.map(o => (

@@ -58,7 +58,7 @@ export default function SolutionsPage() {
       <section className="section" id="services" style={{ paddingTop: "56px" }}>
         <div className="wrap">
           <SectionHead
-            eyebrow="Five service lines"
+            eyebrow="Our services"
             title={<>Everything from a single specialist to a <span className="ital">multi-state deployment.</span></>}
             sub="Built around the entire talent lifecycle — permanent, flexible, contract-to-hire, Gov-Tech, and executive search."
           />
