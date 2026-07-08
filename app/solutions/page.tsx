@@ -51,7 +51,6 @@ export default function SolutionsPage() {
       >
         <div className="hero-cta" style={{ marginTop: "28px" }}>
           <Link href="/contact" className="btn btn-blue">Submit a hiring brief <span className="arrow">→</span></Link>
-          <Link href="#services" className="btn btn-ghost">Explore service lines</Link>
         </div>
       </PageHero>
 

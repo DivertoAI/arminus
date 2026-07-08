@@ -40,7 +40,6 @@ export default function NuboPage() {
       >
         <div className="hero-cta" style={{ marginTop: "28px" }}>
           <Link href="/contact" className="btn btn-blue">Talk to our platform team <span className="arrow">→</span></Link>
-          <Link href="#features" className="btn btn-ghost">Explore features</Link>
         </div>
       </PageHero>
 
