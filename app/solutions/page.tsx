@@ -45,7 +45,7 @@ export default function SolutionsPage() {
     <main>
       <PageHero
         accent="blue"
-        eyebrow="B2B · Strategic Talent Solutions"
+        eyebrow="Strategic Talent Solutions"
         title={<>Enterprise staffing, engineered for <span className="ital blue">velocity.</span></>}
         lede="From individual specialists to multi-state Gov-Tech deployments — five service lines built around the entire talent lifecycle, powered by AI-driven precision and deep human insight."
       >

@@ -50,7 +50,7 @@ export default function CareerLabsPage() {
     <main>
       <PageHero
         accent="coral"
-        eyebrow="B2C · Arminus Career Labs"
+        eyebrow="Arminus Career Labs"
         title={<>Level up your career with <span className="ital coral">Career Labs.</span></>}
         lede="From ATS-optimized resumes to executive mock interviews — get the unfair advantage in India's most competitive job market."
       >
