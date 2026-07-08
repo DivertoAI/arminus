@@ -368,7 +368,7 @@ export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
           className="btn btn-blue jl-resume-bar-btn"
           onClick={() => setResumeModalOpen(true)}
         >
-          Submit Resume →
+          Submit Resume
         </button>
       </div>
 
@@ -395,7 +395,7 @@ export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
           )}
         </div>
         <button className="btn btn-blue jl-search-btn" onClick={search}>
-          Search <span className="arrow">→</span>
+          Search
         </button>
       </div>
 
