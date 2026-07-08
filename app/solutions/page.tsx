@@ -140,7 +140,7 @@ export default function SolutionsPage() {
       </section>
 
       {/* PROCESS */}
-      <section className="section process pb-0">
+      <section className="section process">
         <div className="wrap">
           <SectionHead
             eyebrow="How we work"
