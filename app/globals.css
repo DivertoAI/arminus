@@ -5725,3 +5725,26 @@ a.co-val:hover {
     padding: 0 12px;
   }
 }
+
+/* AI Resume Score panel */
+.rs-panel {
+  padding: 48px 40px;
+}
+
+.rs-results-row {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 36px;
+  align-items: start;
+}
+
+@media (max-width: 600px) {
+  .rs-panel {
+    padding: 28px 20px;
+  }
+
+  .rs-results-row {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

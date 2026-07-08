@@ -64,7 +64,7 @@ export function ResumeScorer() {
           <p className="sec-sub">Upload your resume to see how modern Applicant Tracking Systems parse your profile.</p>
         </div>
         
-        <div style={{maxWidth: "680px", margin: "0 auto", background: "white", border: "1px solid var(--line)", borderRadius: "var(--r-xl)", padding: "48px 40px", boxShadow: "var(--shadow-card)"}}>
+        <div className="rs-panel" style={{maxWidth: "680px", margin: "0 auto", background: "white", border: "1px solid var(--line)", borderRadius: "var(--r-xl)", boxShadow: "var(--shadow-card)"}}>
           {status === "idle" && (
             <div 
               onClick={() => fileInputRef.current?.click()}
@@ -120,7 +120,7 @@ export function ResumeScorer() {
 
           {status === "results" && scoreData && (
             <div style={{display: "grid", gridTemplateColumns: "1fr", gap: "36px", alignItems: "start"}}>
-              <div style={{display: "grid", gridTemplateColumns: "0.8fr 1.2fr", gap: "36px", alignItems: "start"}}>
+              <div className="rs-results-row">
                 <div style={{position: "relative", display: "flex", flexDirection: "column", alignItems: "center"}}>
                   <div style={{position: "relative", width: "160px", height: "160px"}}>
                     <svg style={{width: "100%", height: "100%"}} viewBox="0 0 100 100">

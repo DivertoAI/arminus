@@ -63,7 +63,7 @@ export default function CareerLabsPage() {
       <section className="section" id="services">
         <div className="wrap">
           <SectionHead
-            eyebrow="Our programmes"
+            eyebrow="Our offerings"
             title={<>Tools that give you <span className="ital">the edge.</span></>}
             sub="Built to make every candidate the best version of themselves — before the first interview."
           />
