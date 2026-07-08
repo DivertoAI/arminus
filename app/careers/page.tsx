@@ -41,7 +41,8 @@ async function fetchAllJobs(): Promise<Job[]> {
       const authRes = await fetch("https://api.ceipal.com/v2/createAuthtoken/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, apiKey })
+        body: JSON.stringify({ email, password, apiKey }),
+        signal: AbortSignal.timeout(10_000)
       });
       
       if (authRes.ok) {
@@ -72,6 +73,7 @@ async function fetchV1Jobs(token: string): Promise<Job[]> {
   for (;;) {
     const res = await fetch(url, {
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      signal: AbortSignal.timeout(15_000),
     });
     if (!res.ok) break;
     const data = await res.json();
@@ -88,23 +90,40 @@ async function fetchV1Jobs(token: string): Promise<Job[]> {
 
 /* Public career portal endpoint — fallback when no token */
 async function fetchPublicJobs(): Promise<Job[]> {
-  const jobs: Job[] = [];
-  let page = 1;
-  let totalPages = 1;
-
-  do {
+  const fetchPage = async (page: number) => {
     const res = await fetch(
       `https://apiin.ceipal.com/${API_KEY}/CareerPortalJobPostings/`,
-      { method: "POST", body: new URLSearchParams({ cp_id: CP_ID, page: String(page) }) }
+      {
+        method: "POST",
+        body: new URLSearchParams({ cp_id: CP_ID, page: String(page) }),
+        signal: AbortSignal.timeout(15_000),
+      }
     );
-    if (!res.ok) break;
-    const data = await res.json();
-    jobs.push(...(data.results ?? []));
-    totalPages = data.num_pages ?? 1;
-    page++;
-  } while (page <= totalPages);
+    if (!res.ok) return null;
+    return res.json();
+  };
 
-  return dedupe(jobs);
+  try {
+    const first = await fetchPage(1);
+    if (!first) return [];
+
+    const jobs: Job[] = [...(first.results ?? [])];
+    const totalPages: number = first.num_pages ?? 1;
+
+    // Fetch remaining pages in parallel — the API takes ~7s per request,
+    // so a sequential loop over 13 pages exceeds Vercel's 60s prerender budget.
+    const rest = await Promise.allSettled(
+      Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => fetchPage(i + 2))
+    );
+    for (const r of rest) {
+      if (r.status === "fulfilled" && r.value) jobs.push(...(r.value.results ?? []));
+    }
+
+    return dedupe(jobs);
+  } catch (e) {
+    console.warn("[careers] public API failed:", e);
+    return [];
+  }
 }
 
 function dedupe(jobs: Job[]) {
