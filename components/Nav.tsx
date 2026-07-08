@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -21,6 +21,7 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const pathname = usePathname();
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -31,9 +32,21 @@ export function Nav() {
   // close mobile menu on route change
   useEffect(() => { setOpen(false); }, [pathname]);
 
+  // close mobile menu on outside click/tap
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
+
   return (
     <>
-      <nav className={`nav${scrolled ? " scrolled" : ""}`}>
+      <nav ref={navRef} className={`nav${scrolled ? " scrolled" : ""}`}>
         <div className="nav-inner">
           <Link href="/" className="logo-wrap" aria-label="Arminus home">
             <img
@@ -71,7 +84,7 @@ export function Nav() {
               Hire Talent
             </Link>
             <button
-              className="nav-burger"
+              className={`nav-burger${open ? " open" : ""}`}
               onClick={() => setOpen(o => !o)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
