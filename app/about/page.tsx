@@ -33,7 +33,7 @@ const leaders = [
   },
   {
     name: "Ashok Jindal", role: "Director — Operations", rev: true,
-    pull: "40 years; the operational backbone of Arminus.",
+    pull: "40 years handling operations.",
     bio: "With 40 years of experience, Ashok is the operational backbone of Arminus. Before joining forces with Pankaj in 2012, he held senior leadership roles at Tata and PCL. A specialist in high-value account management, Ashok has orchestrated multi-million dollar deals for industry leaders including Tata Motors, Mahindra, and HAL. He oversees Gurugram and NCR operations with a technology-first approach.",
     edu: [["Engineering", "B.Tech, IIT Delhi"], ["Management", "Masters, University of Waterloo, Canada"]],
     img: "/ashok.jpg",
