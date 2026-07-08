@@ -56,7 +56,6 @@ export default function CareerLabsPage() {
       >
         <div className="hero-cta" style={{ marginTop: "28px" }}>
           <Link href="#pricing" className="btn btn-blue">View pricing <span className="arrow">→</span></Link>
-          <Link href="#pricing" className="btn btn-ghost">See pricing</Link>
         </div>
       </PageHero>
 
