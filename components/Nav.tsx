@@ -57,16 +57,6 @@ export function Nav() {
                 </Link>
               );
             })}
-            <button
-              onClick={() => {
-                setOpen(false);
-                setResumeModalOpen(true);
-              }}
-              className="nav-link nav-mobile-resume-btn"
-              type="button"
-            >
-              Submit Resume
-            </button>
           </div>
 
           <div className="nav-right">
