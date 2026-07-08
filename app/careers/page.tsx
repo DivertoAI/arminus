@@ -5,7 +5,6 @@ import { PageHero } from "@/components/PageHero";
 import { SectionHead } from "@/components/SectionHead";
 import { BigCTA } from "@/components/BigCTA";
 import { CareersClient } from "@/components/CareersClient";
-import { DirectResumeDrop } from "@/components/DirectResumeDrop";
 import type { Job } from "@/components/CareersClient";
 
 export const metadata: Metadata = {
@@ -153,7 +152,6 @@ export default async function CareersPage() {
       >
         <div className="hero-cta" style={{ marginTop: "28px", display: "flex", flexWrap: "wrap", gap: "12px" }}>
           <Link href="#openings" className="btn btn-blue">Browse open roles</Link>
-          <DirectResumeDrop />
           <Link href="/career-labs" className="btn btn-ghost">Prep with Career Labs</Link>
         </div>
       </PageHero>

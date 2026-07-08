@@ -381,7 +381,7 @@ export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
           <input
             className="jl-input"
             type="text"
-            placeholder="Search by title, skill, location, or industry…"
+            placeholder="Search by title, skill, location, or industry"
             value={pending}
             onChange={e => setPending(e.target.value)}
             onKeyDown={e => e.key === "Enter" && search()}
