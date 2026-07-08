@@ -65,6 +65,7 @@ export function Nav() {
                   key={item.href}
                   href={item.href}
                   className={`nav-link${isActive ? " active" : ""}`}
+                  onClick={() => setOpen(false)}
                 >
                   {item.label}
                 </Link>
