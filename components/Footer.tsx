@@ -36,24 +36,15 @@ export function Footer({ stats = false }: FooterProps) {
           </div>
 
           <div className="footer-col">
-            <h5>Solutions</h5>
+            <h5>Menu</h5>
             <ul>
-              <li><Link href="/solutions">Permanent Placement</Link></li>
-              <li><Link href="/solutions">Flexible Staffing</Link></li>
-              <li><Link href="/solutions">Contract-to-Hire</Link></li>
-              <li><Link href="/solutions">Gov-Tech</Link></li>
-              <li><Link href="/solutions">Executive Search</Link></li>
-            </ul>
-          </div>
-
-          <div className="footer-col">
-            <h5>Company</h5>
-            <ul>
+              <li><Link href="/">Home</Link></li>
               <li><Link href="/about">About Us</Link></li>
+              <li><Link href="/solutions">Solutions</Link></li>
               <li><Link href="/career-labs">Career Labs</Link></li>
-              <li><Link href="/nubo">Nubo (NNP)</Link></li>
-              <li><Link href="/careers">Careers · Jobs portal</Link></li>
-              <li><Link href="/contact">Contact</Link></li>
+              <li><Link href="/nubo">Nubo</Link></li>
+              <li><Link href="/careers">Careers</Link></li>
+              <li><Link href="/contact#contact-form">Contact Us</Link></li>
             </ul>
           </div>
 
