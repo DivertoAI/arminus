@@ -9,10 +9,10 @@ async function getCeipalToken(): Promise<string> {
     throw new Error("Ceipal credentials not configured on server.");
   }
 
-  const res = await fetch("https://api.ceipal.com/v2/createAuthtoken/", {
+  const res = await fetch("https://api.ceipal.com/v1/createAuthtoken", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password, apiKey })
+    body: JSON.stringify({ email, password, api_key: apiKey })
   });
 
   if (!res.ok) throw new Error("Failed to fetch Ceipal auth token.");
