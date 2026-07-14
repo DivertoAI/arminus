@@ -49,7 +49,9 @@ export async function POST(req: NextRequest) {
     }
 
     const errText = await res.text();
-    console.error("[/api/apply] Ceipal error:", errText);
+    console.error("[/api/apply] Ceipal error status:", res.status);
+    console.error("[/api/apply] Ceipal error body:", errText);
+    console.error("[/api/apply] Ceipal error headers:", JSON.stringify(Object.fromEntries(res.headers.entries())));
     return NextResponse.json({ error: errText }, { status: res.status });
 
   } catch (err: any) {
