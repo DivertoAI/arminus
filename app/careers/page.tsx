@@ -79,7 +79,7 @@ async function fetchV1Jobs(token: string): Promise<Job[]> {
 
   for (;;) {
     const res = await fetch(url, {
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json", "Accept": "application/json" },
       signal: AbortSignal.timeout(15_000),
     });
     if (!res.ok) break;
