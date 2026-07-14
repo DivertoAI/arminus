@@ -23,19 +23,26 @@ async function getCeipalToken(): Promise<string> {
   return data.access_token;
 }
 
+async function submitToCeipal(token: string, formData: FormData): Promise<Response> {
+  return fetch("https://api.ceipal.com/v1/applyJobWithOutRegistration", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
-    // Get a fresh token on every application submission
-    const token = await getCeipalToken();
-
-    // Forward the raw form data from the browser to Ceipal
+    const token    = await getCeipalToken();
     const formData = await req.formData();
 
-    const res = await fetch("https://api.ceipal.com/v1/applyJobWithOutRegistration", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData
-    });
+    let res = await submitToCeipal(token, formData);
+
+    // Retry once on Ceipal 5xx (upstream connect errors are intermittent)
+    if (res.status >= 500) {
+      await new Promise(r => setTimeout(r, 1500));
+      res = await submitToCeipal(token, formData);
+    }
 
     if (res.ok) {
       return NextResponse.json({ success: true });

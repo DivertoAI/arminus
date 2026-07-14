@@ -139,9 +139,9 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
         const errText = await res.text();
         console.error("Apply error:", errText);
         setSubmitStatus("error");
-        alert("Application Error: " + errText);
       }
     } catch (err) {
+      console.error("Apply network error:", err);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -230,7 +230,7 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
                   </div>
 
                   {submitStatus === "error" && (
-                    <div style={{ color: "red", fontSize: "0.9rem", marginTop: "8px" }}>Failed to submit application. Please try again or check token.</div>
+                    <div style={{ color: "red", fontSize: "0.9rem", marginTop: "8px" }}>Submission failed — please try again. If the problem persists, email your CV directly to <a href="mailto:staffing@arminus.co.in" style={{ color: "inherit" }}>staffing@arminus.co.in</a>.</div>
                   )}
 
                   <div style={{ display: "flex", gap: "12px", marginTop: "16px", justifyContent: "flex-end" }}>
