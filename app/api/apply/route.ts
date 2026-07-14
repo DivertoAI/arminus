@@ -24,7 +24,7 @@ async function getCeipalToken(): Promise<string> {
 }
 
 async function submitToCeipal(token: string, formData: FormData): Promise<Response> {
-  return fetch("https://api.ceipal.com/v1/applyJobWithOutRegistration", {
+  return fetch("https://api.ceipal.com/v2/applyJobWithOutRegistration/", {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
