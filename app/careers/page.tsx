@@ -19,7 +19,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://arminus.co.in/careers" },
 };
 
-export const revalidate = 300; // Refetch jobs from Ceipal every 5 minutes
+export const dynamic = "force-dynamic"; // Always server-render — no ISR cache
+export const revalidate = 0;
 
 const API_KEY = "N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09";
 const CP_ID   = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
