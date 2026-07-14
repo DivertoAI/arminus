@@ -37,10 +37,10 @@ async function fetchAllJobs(): Promise<Job[]> {
     const apiKey   = process.env.CEIPAL_API_KEY;
 
     if (email && password && apiKey) {
-      const authRes = await fetch("https://api.ceipal.com/v2/createAuthtoken/", {
+      const authRes = await fetch("https://api.ceipal.com/v1/createAuthtoken", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, apiKey }),
+        body: JSON.stringify({ email, password, api_key: apiKey }),
         signal: AbortSignal.timeout(10_000)
       });
       
