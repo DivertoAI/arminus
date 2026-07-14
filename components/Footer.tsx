@@ -53,7 +53,7 @@ export function Footer({ stats = false }: FooterProps) {
             <ul>
               <li><a href="mailto:contactus@arminus.in">contactus@arminus.in</a></li>
               <li><a href="tel:+919874014979">+91 9874014979</a></li>
-              <li><a href="tel:+913340601004">+91 3340601004</a></li>
+              <li><a href="tel:+913340601004">+91 33 4060 1004</a></li>
               <li style={{ marginTop: '12px' }}>
                 <a 
                   href="https://www.linkedin.com/company/665038" 

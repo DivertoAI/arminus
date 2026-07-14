@@ -28,7 +28,7 @@ const channels = [
   {
     icon: "☎",
     label: "Call us",
-    value: <span style={{ display: "block", whiteSpace: "nowrap" }}>+91 9874014979<br />+91 3340601004</span>,
+    value: <span style={{ display: "block", whiteSpace: "nowrap" }}>+91 9874014979<br />+91 33 4060 1004</span>,
     href: "tel:+919874014979",
     className: "contact-channel-call",
     note: "Mon – Sat, 9 am – 7 pm IST",

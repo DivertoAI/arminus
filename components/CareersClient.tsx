@@ -230,7 +230,7 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
                   </div>
 
                   {submitStatus === "error" && (
-                    <div style={{ color: "red", fontSize: "0.9rem", marginTop: "8px" }}>Submission failed — please try again. If the problem persists, email your CV directly to <a href="mailto:staffing@arminus.co.in" style={{ color: "inherit" }}>staffing@arminus.co.in</a>.</div>
+                    <div style={{ color: "red", fontSize: "0.9rem", marginTop: "8px" }}>Submission failed — please try again. If the problem persists, email your CV directly to <a href="mailto:contactus@arminus.in" style={{ color: "inherit" }}>contactus@arminus.in</a>.</div>
                   )}
 
                   <div style={{ display: "flex", gap: "12px", marginTop: "16px", justifyContent: "flex-end" }}>
