@@ -74,7 +74,7 @@ async function fetchAllJobs(): Promise<Job[]> {
 /* v1 authenticated endpoint — returns full job data */
 async function fetchV1Jobs(token: string): Promise<Job[]> {
   const jobs: Job[] = [];
-  let url = "https://api.ceipal.com/v1/getJobPostingsList?post_on_careerportal=1&limit=50";
+  let url = "https://api.ceipal.com/v1/getJobPostingsList/?post_on_careerportal=1&limit=50";
 
   for (;;) {
     const res = await fetch(url, {
