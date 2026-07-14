@@ -11,7 +11,7 @@ async function getCeipalToken(): Promise<string> {
 
   const res = await fetch("https://api.ceipal.com/v1/createAuthtoken", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
     body: JSON.stringify({ email, password, api_key: apiKey })
   });
 
