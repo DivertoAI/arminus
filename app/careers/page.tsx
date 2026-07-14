@@ -36,6 +36,7 @@ async function fetchAllJobs(): Promise<Job[]> {
     const password = process.env.CEIPAL_PASSWORD;
     const apiKey   = process.env.CEIPAL_API_KEY;
 
+    console.log(`[careers] creds present: email=${!!email} pass=${!!password} key=${!!apiKey}`);
     if (email && password && apiKey) {
       const authRes = await fetch("https://api.ceipal.com/v1/createAuthtoken", {
         method: "POST",
@@ -44,20 +45,26 @@ async function fetchAllJobs(): Promise<Job[]> {
         signal: AbortSignal.timeout(10_000)
       });
 
+      console.log(`[careers] auth status: ${authRes.status}`);
       if (authRes.ok) {
         const authData = await authRes.json();
         const token = authData.access_token;
+        console.log(`[careers] token present: ${!!token}`);
         if (token) {
           const jobs = await fetchV1Jobs(token);
+          console.log(`[careers] v1 jobs fetched: ${jobs.length}`);
           if (jobs.length > 0) {
             console.log(`[careers] v1 API: ${jobs.length} jobs fetched`);
             return jobs;
           }
         }
+      } else {
+        const errBody = await authRes.text();
+        console.error(`[careers] auth failed body: ${errBody.slice(0, 200)}`);
       }
     }
   } catch (e) {
-    console.warn("[careers] v1 API failed, falling back to public API:", e);
+    console.error("[careers] v1 API exception:", String(e));
   }
 
   console.log("[careers] using public CareerPortal API");
