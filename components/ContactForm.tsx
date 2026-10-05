@@ -3,9 +3,26 @@ import { useState } from "react";
 
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const email = (e.currentTarget.elements.namedItem("Email") as HTMLInputElement).value.trim();
+    const phone = (e.currentTarget.elements.namedItem("Phone") as HTMLInputElement).value.trim();
+
+    if (!email.includes("@") || !email.includes(".")) {
+      setStatus("error");
+      setErrorMsg("Please enter a valid email address.");
+      return;
+    }
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length < 10) {
+      setStatus("error");
+      setErrorMsg("Phone number must be at least 10 digits.");
+      return;
+    }
+
     setStatus("submitting");
 
     const data = {
@@ -29,9 +46,11 @@ export function ContactForm() {
       
       if (res.ok && json.success) {
         setStatus("success");
+        setErrorMsg("");
         (e.target as HTMLFormElement).reset();
       } else {
         setStatus("error");
+        setErrorMsg("");
         console.error("Contact API error:", json);
       }
     } catch (err) {
@@ -81,7 +100,7 @@ export function ContactForm() {
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "12px" }}>
         <span style={{ color: "var(--coral)", fontSize: "14px", opacity: status === "error" ? 1 : 0, transition: "opacity 0.2s" }}>
-          Something went wrong. Please try again.
+          {errorMsg || "Something went wrong. Please try again."}
         </span>
         <button type="submit" className="btn btn-blue" disabled={status === "submitting"} style={{ marginLeft: "auto" }}>
           {status === "submitting" ? "Sending..." : "Send Message"}

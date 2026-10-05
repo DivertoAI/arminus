@@ -29,6 +29,17 @@ export function SubmitResumeModal({ onClose }: Props) {
     e.preventDefault();
     const form = e.currentTarget;
 
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value.trim();
+    const phone = (form.elements.namedItem("phone") as HTMLInputElement).value.trim();
+
+    if (!email.includes("@") || !email.includes(".")) {
+      setErrorMsg("Please enter a valid email address."); return;
+    }
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length < 10) {
+      setErrorMsg("Phone number must be at least 10 digits."); return;
+    }
+
     const file = fileInputRef.current?.files?.[0];
     if (!file) { setErrorMsg("Please attach a resume file."); return; }
 
