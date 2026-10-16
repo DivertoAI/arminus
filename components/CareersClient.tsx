@@ -318,10 +318,10 @@ function dedupe(jobs: Job[]) {
 /* ── Main component — fetches jobs client-side ── */
 export function CareersClient() {
   const [jobs,           setJobs]           = useState<Job[]>([]);
-  const [loading,        setLoading]        = useState(true);
-  const [totalCount,     setTotalCount]     = useState(0);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [fetchingMore,   setFetchingMore]   = useState(false);
   const [loadedPages,    setLoadedPages]    = useState(0);
-  const [totalPages,     setTotalPagesState] = useState(1);
+  const [totalApiPages,  setTotalApiPages]  = useState(1);
   const [page,           setPage]           = useState(1);
   const [keyword,        setKeyword]        = useState("");
   const [pending,        setPending]        = useState("");
@@ -333,7 +333,8 @@ export function CareersClient() {
     let cancelled = false;
 
     async function loadAll() {
-      setLoading(true);
+      setInitialLoading(true);
+      setFetchingMore(false);
       setJobs([]);
       setLoadedPages(0);
 
@@ -344,14 +345,13 @@ export function CareersClient() {
         const data = await res.json();
         const first: Job[] = data.results ?? [];
         const numPages: number = data.num_pages ?? 1;
-        const count: number = data.count ?? first.length;
 
         if (!cancelled) {
           setJobs(first);
-          setTotalCount(count);
-          setTotalPagesState(numPages);
+          setTotalApiPages(numPages);
           setLoadedPages(1);
-          setLoading(false);
+          setInitialLoading(false);
+          if (numPages > 1) setFetchingMore(true);
         }
 
         // Fetch remaining pages in parallel batches of 5
@@ -369,14 +369,15 @@ export function CareersClient() {
               newJobs.push(...r.value.results);
             }
           }
-          if (newJobs.length && !cancelled) {
-            setJobs(prev => dedupe([...prev, ...newJobs]));
+          if (!cancelled) {
+            if (newJobs.length) setJobs(prev => dedupe([...prev, ...newJobs]));
             setLoadedPages(prev => prev + results.length);
           }
         }
+        if (!cancelled) setFetchingMore(false);
       } catch (e) {
         console.error("[careers] load error:", e);
-        if (!cancelled) setLoading(false);
+        if (!cancelled) { setInitialLoading(false); setFetchingMore(false); }
       }
     }
 
@@ -421,7 +422,7 @@ export function CareersClient() {
     pages.push(totalPagesFiltered);
   }
 
-  if (loading && jobs.length === 0) {
+  if (initialLoading) {
     return (
       <div className="jl-root">
         <div className="jl-loading">
@@ -480,10 +481,12 @@ export function CareersClient() {
       <div className="jl-meta" id="jl-results">
         <span className="jl-count">
           {filtered.length === 0
-            ? (loading ? "Loading roles…" : "No roles found — try different keywords")
+            ? "No roles found — try different keywords"
             : <>
                 {filtered.length} open {filtered.length === 1 ? "role" : "roles"}{keyword ? ` for "${keyword}"` : ""}
-                {loading && <span className="jl-loading-inline"> · loading more…</span>}
+                {fetchingMore && (
+                  <span className="jl-loading-inline"> · loading {loadedPages}/{totalApiPages} pages…</span>
+                )}
               </>
           }
         </span>
