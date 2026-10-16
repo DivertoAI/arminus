@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     // Cache at the CDN edge for 5 min, serve stale for up to 10 min while revalidating
     return NextResponse.json(data, {
       headers: {
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+        "Cache-Control": "public, max-age=300, s-maxage=0",
       },
     });
   } catch (e) {
