@@ -325,57 +325,57 @@ export function CareersClient() {
   const cache = useRef<Map<number, Job[]>>(new Map());
   const inFlight = useRef<Set<number>>(new Set());
 
-  const fetchPage = useCallback(async (pg: number): Promise<Job[]> => {
-    if (cache.current.has(pg)) return cache.current.get(pg)!;
-    if (inFlight.current.has(pg)) {
-      // Wait for the in-flight request to finish
-      await new Promise(resolve => {
-        const interval = setInterval(() => {
-          if (cache.current.has(pg)) { clearInterval(interval); resolve(null); }
-        }, 50);
-      });
-      return cache.current.get(pg) ?? [];
-    }
+  // Silent background preload — never blocks the UI
+  const preloadPage = useCallback(async (pg: number) => {
+    if (cache.current.has(pg) || inFlight.current.has(pg)) return;
     inFlight.current.add(pg);
     try {
       const res = await fetch(`/api/jobs?page=${pg}`);
-      if (!res.ok) return [];
+      if (!res.ok) return;
       const data = await res.json();
-      const jobs: Job[] = data.results ?? [];
-      cache.current.set(pg, jobs);
-      return jobs;
-    } finally {
+      cache.current.set(pg, data.results ?? []);
+    } catch { /* silent */ } finally {
       inFlight.current.delete(pg);
     }
   }, []);
 
-  // Background preload all pages silently
   const preloadAll = useCallback(async (numPages: number) => {
     const BATCH = 5;
     for (let start = 2; start <= numPages; start += BATCH) {
       await Promise.allSettled(
         Array.from({ length: Math.min(BATCH, numPages - start + 1) }, (_, i) =>
-          fetchPage(start + i)
+          preloadPage(start + i)
         )
       );
     }
-  }, [fetchPage]);
+  }, [preloadPage]);
 
   const goTo = useCallback(async (pg: number) => {
     setKeyword(""); setPending("");
+    // Serve instantly from cache if available
     if (cache.current.has(pg)) {
       setPageJobs(cache.current.get(pg)!);
       setCurrentPage(pg);
       document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
+    // Not cached yet — fetch directly, independent of preload
     setLoading(true);
-    const jobs = await fetchPage(pg);
-    setPageJobs(jobs);
-    setCurrentPage(pg);
-    setLoading(false);
-    document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [fetchPage]);
+    try {
+      const res = await fetch(`/api/jobs?page=${pg}`);
+      if (!res.ok) throw new Error("failed");
+      const data = await res.json();
+      const jobs: Job[] = data.results ?? [];
+      cache.current.set(pg, jobs);
+      setPageJobs(jobs);
+      setCurrentPage(pg);
+    } catch (e) {
+      console.error("[careers] goTo error:", e);
+    } finally {
+      setLoading(false);
+      document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
