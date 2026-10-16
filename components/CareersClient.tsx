@@ -310,7 +310,7 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   );
 }
 
-/* ── Main component — proper server-side pagination ── */
+/* ── Main component — lazy load with background preload ── */
 export function CareersClient() {
   const [pageJobs,       setPageJobs]       = useState<Job[]>([]);
   const [loading,        setLoading]        = useState(true);
@@ -323,40 +323,87 @@ export function CareersClient() {
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const closeModal = useCallback(() => setSelectedJob(null), []);
   const cache = useRef<Map<number, Job[]>>(new Map());
+  const inFlight = useRef<Set<number>>(new Set());
 
-  const loadPage = useCallback(async (pg: number) => {
-    setLoading(true);
-    setKeyword("");
-    setPending("");
-
-    // Use cache to avoid re-fetching
-    if (cache.current.has(pg)) {
-      setPageJobs(cache.current.get(pg)!);
-      setCurrentPage(pg);
-      setLoading(false);
-      document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      return;
+  const fetchPage = useCallback(async (pg: number): Promise<Job[]> => {
+    if (cache.current.has(pg)) return cache.current.get(pg)!;
+    if (inFlight.current.has(pg)) {
+      // Wait for the in-flight request to finish
+      await new Promise(resolve => {
+        const interval = setInterval(() => {
+          if (cache.current.has(pg)) { clearInterval(interval); resolve(null); }
+        }, 50);
+      });
+      return cache.current.get(pg) ?? [];
     }
-
+    inFlight.current.add(pg);
     try {
       const res = await fetch(`/api/jobs?page=${pg}`);
-      if (!res.ok) throw new Error("fetch failed");
+      if (!res.ok) return [];
       const data = await res.json();
       const jobs: Job[] = data.results ?? [];
       cache.current.set(pg, jobs);
-      setPageJobs(jobs);
-      setCurrentPage(pg);
-      setTotalPages(data.num_pages ?? 1);
-      setTotalCount(data.count ?? 0);
-    } catch (e) {
-      console.error("[careers] loadPage error:", e);
+      return jobs;
     } finally {
-      setLoading(false);
-      if (pg > 1) document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      inFlight.current.delete(pg);
     }
   }, []);
 
-  useEffect(() => { loadPage(1); }, [loadPage]);
+  // Background preload all pages silently
+  const preloadAll = useCallback(async (numPages: number) => {
+    const BATCH = 5;
+    for (let start = 2; start <= numPages; start += BATCH) {
+      await Promise.allSettled(
+        Array.from({ length: Math.min(BATCH, numPages - start + 1) }, (_, i) =>
+          fetchPage(start + i)
+        )
+      );
+    }
+  }, [fetchPage]);
+
+  const goTo = useCallback(async (pg: number) => {
+    setKeyword(""); setPending("");
+    if (cache.current.has(pg)) {
+      setPageJobs(cache.current.get(pg)!);
+      setCurrentPage(pg);
+      document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    setLoading(true);
+    const jobs = await fetchPage(pg);
+    setPageJobs(jobs);
+    setCurrentPage(pg);
+    setLoading(false);
+    document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [fetchPage]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      inFlight.current.add(1);
+      try {
+        const res = await fetch("/api/jobs?page=1");
+        if (!res.ok || cancelled) return;
+        const data = await res.json();
+        const jobs: Job[] = data.results ?? [];
+        const numPages: number = data.num_pages ?? 1;
+        const count: number = data.count ?? 0;
+        cache.current.set(1, jobs);
+        if (!cancelled) {
+          setPageJobs(jobs);
+          setTotalPages(numPages);
+          setTotalCount(count);
+          setLoading(false);
+          // Silently preload remaining pages in background
+          preloadAll(numPages);
+        }
+      } finally {
+        inFlight.current.delete(1);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [preloadAll]);
 
   // Search filters within the current page only
   const filtered = useMemo(() => {
@@ -389,12 +436,12 @@ export function CareersClient() {
 
   const Pagination = () => (
     <div className="jl-pagination">
-      <button className="jl-pag-btn" onClick={() => loadPage(currentPage - 1)} disabled={currentPage === 1 || loading}>←</button>
+      <button className="jl-pag-btn" onClick={() => goTo(currentPage - 1)} disabled={currentPage === 1 || loading}>←</button>
       {pages.map((n, i) => n === "…"
         ? <span key={`e${i}`} className="jl-pag-ellipsis">…</span>
-        : <button key={n} className={`jl-pag-btn ${currentPage === n ? "active" : ""}`} onClick={() => loadPage(n as number)} disabled={loading}>{n}</button>
+        : <button key={n} className={`jl-pag-btn ${currentPage === n ? "active" : ""}`} onClick={() => goTo(n as number)} disabled={loading}>{n}</button>
       )}
-      <button className="jl-pag-btn" onClick={() => loadPage(currentPage + 1)} disabled={currentPage === totalPages || loading}>→</button>
+      <button className="jl-pag-btn" onClick={() => goTo(currentPage + 1)} disabled={currentPage === totalPages || loading}>→</button>
     </div>
   );
 
