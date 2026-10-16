@@ -330,7 +330,7 @@ export function CareersClient() {
     if (cache.current.has(pg) || inFlight.current.has(pg)) return;
     inFlight.current.add(pg);
     try {
-      const res = await fetch(`/api/jobs?page=${pg}`);
+      const res = await fetch(`/api/jobs?page=${pg}&v=2`);
       if (!res.ok) return;
       const data = await res.json();
       cache.current.set(pg, data.results ?? []);
@@ -362,7 +362,7 @@ export function CareersClient() {
     // Not cached yet — fetch directly, independent of preload
     setLoading(true);
     try {
-      const res = await fetch(`/api/jobs?page=${pg}`);
+      const res = await fetch(`/api/jobs?page=${pg}&v=2`);
       if (!res.ok) throw new Error("failed");
       const data = await res.json();
       const jobs: Job[] = data.results ?? [];
@@ -383,7 +383,7 @@ export function CareersClient() {
       setLoading(true);
       inFlight.current.add(1);
       try {
-        const res = await fetch("/api/jobs?page=1");
+        const res = await fetch("/api/jobs?page=1&v=2");
         if (!res.ok || cancelled) return;
         const data = await res.json();
         const jobs: Job[] = data.results ?? [];
