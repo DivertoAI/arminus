@@ -9,12 +9,12 @@ export async function GET(req: Request) {
 
   try {
     const res = await fetch(
-      `https://apiin.ceipal.com/${API_KEY}/CareerPortalJobPostings/`,
+      `https://apiin.ceipal.com/${API_KEY}/CareerPortalJobPostings/?page=${page}`,
       {
         method: "POST",
-        body: new URLSearchParams({ cp_id: CP_ID, page }),
+        body: new URLSearchParams({ cp_id: CP_ID }),
         signal: AbortSignal.timeout(20_000),
-        cache: "no-store", // don't let Next.js cache POST bodies incorrectly
+        cache: "no-store",
       }
     );
     if (!res.ok) return NextResponse.json({ error: "upstream failed" }, { status: 502 });
