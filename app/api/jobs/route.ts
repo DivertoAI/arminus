@@ -14,8 +14,7 @@ export async function GET(req: Request) {
         method: "POST",
         body: new URLSearchParams({ cp_id: CP_ID, page }),
         signal: AbortSignal.timeout(20_000),
-        // Next.js caches this fetch result for 10 minutes on the server
-        next: { revalidate: 600 },
+        cache: "no-store", // don't let Next.js cache POST bodies incorrectly
       }
     );
     if (!res.ok) return NextResponse.json({ error: "upstream failed" }, { status: 502 });
