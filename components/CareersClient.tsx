@@ -310,8 +310,18 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   );
 }
 
-/* ── Main component — receives jobs pre-fetched at build time ── */
-export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
+function dedupe(jobs: Job[]) {
+  const seen = new Set<string>();
+  return jobs.filter(j => seen.has(j.id) ? false : (seen.add(j.id), true));
+}
+
+/* ── Main component — fetches jobs client-side ── */
+export function CareersClient() {
+  const [jobs,           setJobs]           = useState<Job[]>([]);
+  const [loading,        setLoading]        = useState(true);
+  const [totalCount,     setTotalCount]     = useState(0);
+  const [loadedPages,    setLoadedPages]    = useState(0);
+  const [totalPages,     setTotalPagesState] = useState(1);
   const [page,           setPage]           = useState(1);
   const [keyword,        setKeyword]        = useState("");
   const [pending,        setPending]        = useState("");
@@ -319,10 +329,66 @@ export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const closeModal = useCallback(() => setSelectedJob(null), []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAll() {
+      setLoading(true);
+      setJobs([]);
+      setLoadedPages(0);
+
+      try {
+        // Fetch page 1 first — get total page count
+        const res = await fetch("/api/jobs?page=1");
+        if (!res.ok || cancelled) return;
+        const data = await res.json();
+        const first: Job[] = data.results ?? [];
+        const numPages: number = data.num_pages ?? 1;
+        const count: number = data.count ?? first.length;
+
+        if (!cancelled) {
+          setJobs(first);
+          setTotalCount(count);
+          setTotalPagesState(numPages);
+          setLoadedPages(1);
+          setLoading(false);
+        }
+
+        // Fetch remaining pages in parallel batches of 5
+        const BATCH = 5;
+        for (let start = 2; start <= numPages && !cancelled; start += BATCH) {
+          const batch = Array.from(
+            { length: Math.min(BATCH, numPages - start + 1) },
+            (_, i) => fetch(`/api/jobs?page=${start + i}`).then(r => r.ok ? r.json() : null)
+          );
+          const results = await Promise.allSettled(batch);
+          if (cancelled) break;
+          const newJobs: Job[] = [];
+          for (const r of results) {
+            if (r.status === "fulfilled" && r.value?.results) {
+              newJobs.push(...r.value.results);
+            }
+          }
+          if (newJobs.length && !cancelled) {
+            setJobs(prev => dedupe([...prev, ...newJobs]));
+            setLoadedPages(prev => prev + results.length);
+          }
+        }
+      } catch (e) {
+        console.error("[careers] load error:", e);
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadAll();
+    return () => { cancelled = true; };
+  }, []);
+
   const filtered = useMemo(() => {
-    if (!keyword.trim()) return initialJobs;
+    const sorted = [...jobs].sort((a, b) => new Date(b.created || 0).getTime() - new Date(a.created || 0).getTime());
+    if (!keyword.trim()) return sorted;
     const kw = keyword.toLowerCase();
-    return initialJobs.filter(j =>
+    return sorted.filter(j =>
       (j.public_job_title || j.position_title).toLowerCase().includes(kw) ||
       stripHtml(getDesc(j)).toLowerCase().includes(kw) ||
       (j.skills || "").toLowerCase().includes(kw) ||
@@ -332,27 +398,38 @@ export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
       (j.tax_terms || "").toLowerCase().includes(kw) ||
       (j.employment_type || "").toLowerCase().includes(kw)
     );
-  }, [initialJobs, keyword]);
+  }, [jobs, keyword]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const totalPagesFiltered = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageJobs   = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const search = () => { setKeyword(pending); setPage(1); };
   const reset  = () => { setPending(""); setKeyword(""); setPage(1); };
   const goTo   = (pg: number) => {
-    if (pg < 1 || pg > totalPages) return;
+    if (pg < 1 || pg > totalPagesFiltered) return;
     setPage(pg);
     document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const pages: (number | "…")[] = [];
-  if (totalPages <= 6) { for (let i = 1; i <= totalPages; i++) pages.push(i); }
+  if (totalPagesFiltered <= 6) { for (let i = 1; i <= totalPagesFiltered; i++) pages.push(i); }
   else {
     pages.push(1);
     if (page > 3) pages.push("…");
-    for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) pages.push(i);
-    if (page < totalPages - 2) pages.push("…");
-    pages.push(totalPages);
+    for (let i = Math.max(2, page - 1); i <= Math.min(totalPagesFiltered - 1, page + 1); i++) pages.push(i);
+    if (page < totalPagesFiltered - 2) pages.push("…");
+    pages.push(totalPagesFiltered);
+  }
+
+  if (loading && jobs.length === 0) {
+    return (
+      <div className="jl-root">
+        <div className="jl-loading">
+          <div className="jl-spinner" />
+          <p>Loading open roles…</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -403,18 +480,21 @@ export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
       <div className="jl-meta" id="jl-results">
         <span className="jl-count">
           {filtered.length === 0
-            ? "No roles found — try different keywords"
-            : <>{filtered.length} open {filtered.length === 1 ? "role" : "roles"}{keyword ? ` for "${keyword}"` : ""}</>
+            ? (loading ? "Loading roles…" : "No roles found — try different keywords")
+            : <>
+                {filtered.length} open {filtered.length === 1 ? "role" : "roles"}{keyword ? ` for "${keyword}"` : ""}
+                {loading && <span className="jl-loading-inline"> · loading more…</span>}
+              </>
           }
         </span>
-        {totalPages > 1 && (
+        {totalPagesFiltered > 1 && (
           <div className="jl-pagination">
             <button className="jl-pag-btn" onClick={() => goTo(page - 1)} disabled={page === 1}>←</button>
             {pages.map((n, i) => n === "…"
               ? <span key={`e${i}`} className="jl-pag-ellipsis">…</span>
               : <button key={n} className={`jl-pag-btn ${page === n ? "active" : ""}`} onClick={() => goTo(n as number)}>{n}</button>
             )}
-            <button className="jl-pag-btn" onClick={() => goTo(page + 1)} disabled={page === totalPages}>→</button>
+            <button className="jl-pag-btn" onClick={() => goTo(page + 1)} disabled={page === totalPagesFiltered}>→</button>
           </div>
         )}
       </div>
@@ -465,7 +545,7 @@ export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
       )}
 
       {/* Bottom pagination */}
-      {totalPages > 1 && (
+      {totalPagesFiltered > 1 && (
         <div className="jl-pag-bottom">
           <div className="jl-pagination">
             <button className="jl-pag-btn" onClick={() => goTo(page - 1)} disabled={page === 1}>←</button>
@@ -473,7 +553,7 @@ export function CareersClient({ initialJobs }: { initialJobs: Job[] }) {
               ? <span key={`e${i}`} className="jl-pag-ellipsis">…</span>
               : <button key={n} className={`jl-pag-btn ${page === n ? "active" : ""}`} onClick={() => goTo(n as number)}>{n}</button>
             )}
-            <button className="jl-pag-btn" onClick={() => goTo(page + 1)} disabled={page === totalPages}>→</button>
+            <button className="jl-pag-btn" onClick={() => goTo(page + 1)} disabled={page === totalPagesFiltered}>→</button>
           </div>
         </div>
       )}

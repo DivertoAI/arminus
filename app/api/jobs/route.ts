@@ -1,0 +1,25 @@
+import { NextResponse } from "next/server";
+
+const API_KEY = "N1M4Zy9jcFlNa0F2OTRXS1Zjc2hkUT09";
+const CP_ID   = "Z3RkUkt2OXZJVld2MjFpOVRSTXoxZz09";
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const page = searchParams.get("page") ?? "1";
+
+  try {
+    const res = await fetch(
+      `https://apiin.ceipal.com/${API_KEY}/CareerPortalJobPostings/`,
+      {
+        method: "POST",
+        body: new URLSearchParams({ cp_id: CP_ID, page }),
+        signal: AbortSignal.timeout(15_000),
+      }
+    );
+    if (!res.ok) return NextResponse.json({ error: "upstream failed" }, { status: 502 });
+    const data = await res.json();
+    return NextResponse.json(data);
+  } catch (e) {
+    return NextResponse.json({ error: String(e) }, { status: 500 });
+  }
+}
