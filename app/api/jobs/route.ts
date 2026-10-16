@@ -13,12 +13,20 @@ export async function GET(req: Request) {
       {
         method: "POST",
         body: new URLSearchParams({ cp_id: CP_ID, page }),
-        signal: AbortSignal.timeout(15_000),
+        signal: AbortSignal.timeout(20_000),
+        // Next.js caches this fetch result for 10 minutes on the server
+        next: { revalidate: 600 },
       }
     );
     if (!res.ok) return NextResponse.json({ error: "upstream failed" }, { status: 502 });
     const data = await res.json();
-    return NextResponse.json(data);
+
+    // Cache at the CDN edge for 5 min, serve stale for up to 10 min while revalidating
+    return NextResponse.json(data, {
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+      },
+    });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
   }
