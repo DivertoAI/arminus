@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { SubmitResumeModal } from "@/components/SubmitResumeModal";
 
 /* ── Types ── */
@@ -310,86 +310,59 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   );
 }
 
-function dedupe(jobs: Job[]) {
-  const seen = new Set<string>();
-  return jobs.filter(j => seen.has(j.id) ? false : (seen.add(j.id), true));
-}
-
-/* ── Main component — fetches jobs client-side ── */
+/* ── Main component — proper server-side pagination ── */
 export function CareersClient() {
-  const [jobs,           setJobs]           = useState<Job[]>([]);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [fetchingMore,   setFetchingMore]   = useState(false);
-  const [loadedPages,    setLoadedPages]    = useState(0);
-  const [totalApiPages,  setTotalApiPages]  = useState(1);
-  const [page,           setPage]           = useState(1);
+  const [pageJobs,       setPageJobs]       = useState<Job[]>([]);
+  const [loading,        setLoading]        = useState(true);
+  const [currentPage,    setCurrentPage]    = useState(1);
+  const [totalPages,     setTotalPages]     = useState(1);
+  const [totalCount,     setTotalCount]     = useState(0);
   const [keyword,        setKeyword]        = useState("");
   const [pending,        setPending]        = useState("");
   const [selectedJob,    setSelectedJob]    = useState<Job | null>(null);
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const closeModal = useCallback(() => setSelectedJob(null), []);
+  const cache = useRef<Map<number, Job[]>>(new Map());
 
-  useEffect(() => {
-    let cancelled = false;
+  const loadPage = useCallback(async (pg: number) => {
+    setLoading(true);
+    setKeyword("");
+    setPending("");
 
-    async function loadAll() {
-      setInitialLoading(true);
-      setFetchingMore(false);
-      setJobs([]);
-      setLoadedPages(0);
-
-      try {
-        // Fetch page 1 first — get total page count
-        const res = await fetch("/api/jobs?page=1");
-        if (!res.ok || cancelled) return;
-        const data = await res.json();
-        const first: Job[] = data.results ?? [];
-        const numPages: number = data.num_pages ?? 1;
-
-        if (!cancelled) {
-          setJobs(first);
-          setTotalApiPages(numPages);
-          setLoadedPages(1);
-          setInitialLoading(false);
-          if (numPages > 1) setFetchingMore(true);
-        }
-
-        // Fetch remaining pages in parallel batches of 5
-        const BATCH = 5;
-        for (let start = 2; start <= numPages && !cancelled; start += BATCH) {
-          const batch = Array.from(
-            { length: Math.min(BATCH, numPages - start + 1) },
-            (_, i) => fetch(`/api/jobs?page=${start + i}`).then(r => r.ok ? r.json() : null)
-          );
-          const results = await Promise.allSettled(batch);
-          if (cancelled) break;
-          const newJobs: Job[] = [];
-          for (const r of results) {
-            if (r.status === "fulfilled" && r.value?.results) {
-              newJobs.push(...r.value.results);
-            }
-          }
-          if (!cancelled) {
-            if (newJobs.length) setJobs(prev => dedupe([...prev, ...newJobs]));
-            setLoadedPages(prev => prev + results.length);
-          }
-        }
-        if (!cancelled) setFetchingMore(false);
-      } catch (e) {
-        console.error("[careers] load error:", e);
-        if (!cancelled) { setInitialLoading(false); setFetchingMore(false); }
-      }
+    // Use cache to avoid re-fetching
+    if (cache.current.has(pg)) {
+      setPageJobs(cache.current.get(pg)!);
+      setCurrentPage(pg);
+      setLoading(false);
+      document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
     }
 
-    loadAll();
-    return () => { cancelled = true; };
+    try {
+      const res = await fetch(`/api/jobs?page=${pg}`);
+      if (!res.ok) throw new Error("fetch failed");
+      const data = await res.json();
+      const jobs: Job[] = data.results ?? [];
+      cache.current.set(pg, jobs);
+      setPageJobs(jobs);
+      setCurrentPage(pg);
+      setTotalPages(data.num_pages ?? 1);
+      setTotalCount(data.count ?? 0);
+    } catch (e) {
+      console.error("[careers] loadPage error:", e);
+    } finally {
+      setLoading(false);
+      if (pg > 1) document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }, []);
 
+  useEffect(() => { loadPage(1); }, [loadPage]);
+
+  // Search filters within the current page only
   const filtered = useMemo(() => {
-    const sorted = [...jobs].sort((a, b) => new Date(b.created || 0).getTime() - new Date(a.created || 0).getTime());
-    if (!keyword.trim()) return sorted;
+    if (!keyword.trim()) return pageJobs;
     const kw = keyword.toLowerCase();
-    return sorted.filter(j =>
+    return pageJobs.filter(j =>
       (j.public_job_title || j.position_title).toLowerCase().includes(kw) ||
       stripHtml(getDesc(j)).toLowerCase().includes(kw) ||
       (j.skills || "").toLowerCase().includes(kw) ||
@@ -399,30 +372,33 @@ export function CareersClient() {
       (j.tax_terms || "").toLowerCase().includes(kw) ||
       (j.employment_type || "").toLowerCase().includes(kw)
     );
-  }, [jobs, keyword]);
+  }, [pageJobs, keyword]);
 
-  const totalPagesFiltered = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const pageJobs   = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  const search = () => { setKeyword(pending); setPage(1); };
-  const reset  = () => { setPending(""); setKeyword(""); setPage(1); };
-  const goTo   = (pg: number) => {
-    if (pg < 1 || pg > totalPagesFiltered) return;
-    setPage(pg);
-    document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  const search = () => { setKeyword(pending); };
+  const reset  = () => { setPending(""); setKeyword(""); };
 
   const pages: (number | "…")[] = [];
-  if (totalPagesFiltered <= 6) { for (let i = 1; i <= totalPagesFiltered; i++) pages.push(i); }
+  if (totalPages <= 7) { for (let i = 1; i <= totalPages; i++) pages.push(i); }
   else {
     pages.push(1);
-    if (page > 3) pages.push("…");
-    for (let i = Math.max(2, page - 1); i <= Math.min(totalPagesFiltered - 1, page + 1); i++) pages.push(i);
-    if (page < totalPagesFiltered - 2) pages.push("…");
-    pages.push(totalPagesFiltered);
+    if (currentPage > 3) pages.push("…");
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
+    if (currentPage < totalPages - 2) pages.push("…");
+    pages.push(totalPages);
   }
 
-  if (initialLoading) {
+  const Pagination = () => (
+    <div className="jl-pagination">
+      <button className="jl-pag-btn" onClick={() => loadPage(currentPage - 1)} disabled={currentPage === 1 || loading}>←</button>
+      {pages.map((n, i) => n === "…"
+        ? <span key={`e${i}`} className="jl-pag-ellipsis">…</span>
+        : <button key={n} className={`jl-pag-btn ${currentPage === n ? "active" : ""}`} onClick={() => loadPage(n as number)} disabled={loading}>{n}</button>
+      )}
+      <button className="jl-pag-btn" onClick={() => loadPage(currentPage + 1)} disabled={currentPage === totalPages || loading}>→</button>
+    </div>
+  );
+
+  if (loading && pageJobs.length === 0) {
     return (
       <div className="jl-root">
         <div className="jl-loading">
@@ -480,36 +456,26 @@ export function CareersClient() {
       {/* Results header */}
       <div className="jl-meta" id="jl-results">
         <span className="jl-count">
-          {filtered.length === 0
-            ? "No roles found — try different keywords"
-            : <>
-                {filtered.length} open {filtered.length === 1 ? "role" : "roles"}{keyword ? ` for "${keyword}"` : ""}
-                {fetchingMore && (
-                  <span className="jl-loading-inline"> · loading {loadedPages}/{totalApiPages} pages…</span>
-                )}
-              </>
+          {loading
+            ? <><span className="jl-spinner" style={{ width: 16, height: 16, borderWidth: 2, display: "inline-block", verticalAlign: "middle", marginRight: 8 }} />Loading…</>
+            : filtered.length === 0
+              ? "No roles found — try different keywords"
+              : <>{totalCount} open {totalCount === 1 ? "role" : "roles"}{keyword ? ` matching "${keyword}"` : ""} · page {currentPage} of {totalPages}</>
           }
         </span>
-        {totalPagesFiltered > 1 && (
-          <div className="jl-pagination">
-            <button className="jl-pag-btn" onClick={() => goTo(page - 1)} disabled={page === 1}>←</button>
-            {pages.map((n, i) => n === "…"
-              ? <span key={`e${i}`} className="jl-pag-ellipsis">…</span>
-              : <button key={n} className={`jl-pag-btn ${page === n ? "active" : ""}`} onClick={() => goTo(n as number)}>{n}</button>
-            )}
-            <button className="jl-pag-btn" onClick={() => goTo(page + 1)} disabled={page === totalPagesFiltered}>→</button>
-          </div>
-        )}
+        {totalPages > 1 && <Pagination />}
       </div>
 
       {/* Grid */}
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="jl-state"><div className="jl-spinner" /></div>
+      ) : filtered.length === 0 ? (
         <div className="jl-state">
           <p>No roles match your search. <button className="jl-link" onClick={reset}>Clear filters</button></p>
         </div>
       ) : (
         <div className="jl-grid">
-          {pageJobs.map(job => {
+          {filtered.map(job => {
             const title    = job.public_job_title || job.position_title;
             const location = [formatCity(job.city || job.primary_city), job.country].filter(Boolean).join(", ");
             const desc     = stripHtml(getDesc(job));
@@ -548,17 +514,8 @@ export function CareersClient() {
       )}
 
       {/* Bottom pagination */}
-      {totalPagesFiltered > 1 && (
-        <div className="jl-pag-bottom">
-          <div className="jl-pagination">
-            <button className="jl-pag-btn" onClick={() => goTo(page - 1)} disabled={page === 1}>←</button>
-            {pages.map((n, i) => n === "…"
-              ? <span key={`e${i}`} className="jl-pag-ellipsis">…</span>
-              : <button key={n} className={`jl-pag-btn ${page === n ? "active" : ""}`} onClick={() => goTo(n as number)}>{n}</button>
-            )}
-            <button className="jl-pag-btn" onClick={() => goTo(page + 1)} disabled={page === totalPagesFiltered}>→</button>
-          </div>
-        </div>
+      {totalPages > 1 && !loading && (
+        <div className="jl-pag-bottom"><Pagination /></div>
       )}
 
       {selectedJob && <JobModal job={selectedJob} onClose={closeModal} />}
