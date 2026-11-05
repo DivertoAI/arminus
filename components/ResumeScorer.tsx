@@ -18,6 +18,11 @@ export function ResumeScorer() {
 
   const analyzeResume = async () => {
     if (!file) return;
+    if (file.size > 4 * 1024 * 1024) {
+      setErrorMessage("Your file is larger than 4 MB. Please upload a smaller PDF.");
+      setStatus("error");
+      return;
+    }
     setStatus("analyzing");
 
     try {
@@ -34,10 +39,10 @@ export function ResumeScorer() {
         body: JSON.stringify({ base64, mimeType: file.type || "application/pdf" })
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to analyze");
+        throw Object.assign(new Error(data.error || "Failed to analyze"), { userMessage: data.error as string | undefined });
       }
 
       setScoreData(data);
@@ -46,7 +51,9 @@ export function ResumeScorer() {
     } catch (err: any) {
       console.error(err);
       const msg = err.message?.toLowerCase() || "";
-      if (msg.includes("high demand") || msg.includes("503") || msg.includes("busy")) {
+      if (err.userMessage) {
+        setErrorMessage(err.userMessage);
+      } else if (msg.includes("high demand") || msg.includes("503") || msg.includes("busy")) {
         setErrorMessage("Our servers are currently busy. Please try again in a few moments.");
       } else {
         setErrorMessage("There was an issue analyzing your resume. Please ensure it is a valid text-based PDF.");

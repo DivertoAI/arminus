@@ -42,6 +42,7 @@ export function SubmitResumeModal({ onClose }: Props) {
 
     const file = fileInputRef.current?.files?.[0];
     if (!file) { setErrorMsg("Please attach a resume file."); return; }
+    if (file.size > 4 * 1024 * 1024) { setErrorMsg("Your file is larger than 4 MB. Please upload a smaller file."); return; }
 
     setStatus("submitting");
     setErrorMsg("");
@@ -54,11 +55,15 @@ export function SubmitResumeModal({ onClose }: Props) {
 
     try {
       const res  = await fetch("/api/send-resume", { method: "POST", body: fd });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Failed to send");
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(res.status === 413
+          ? "Your file is too large. Please upload a file under 4 MB."
+          : json.error || "Something went wrong. Please try again.");
+      }
       setStatus("success");
-    } catch (err: any) {
-      setErrorMsg(err.message || "Something went wrong. Please try again.");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
       setStatus("error");
     }
   };

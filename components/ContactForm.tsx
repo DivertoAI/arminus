@@ -7,6 +7,7 @@ export function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
 
     const email = (e.currentTarget.elements.namedItem("Email") as HTMLInputElement).value.trim();
     const phone = (e.currentTarget.elements.namedItem("Phone") as HTMLInputElement).value.trim();
@@ -42,20 +43,20 @@ export function ContactForm() {
         },
         body: JSON.stringify(data)
       });
-      const json = await res.json();
-      
+      const json = await res.json().catch(() => ({}));
+
       if (res.ok && json.success) {
         setStatus("success");
         setErrorMsg("");
-        (e.target as HTMLFormElement).reset();
+        form.reset();
       } else {
         setStatus("error");
-        setErrorMsg("");
-        console.error("Contact API error:", json);
+        setErrorMsg(json.error || "");
       }
     } catch (err) {
       console.error("Fetch error:", err);
       setStatus("error");
+      setErrorMsg("Network error — please check your connection and try again.");
     }
   };
 

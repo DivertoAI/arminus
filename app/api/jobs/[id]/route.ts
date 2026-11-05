@@ -11,7 +11,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     const res = await ceipalGet(`/getJobPostingDetails/${encodeURIComponent(id)}/`);
     if (!res.ok) {
       console.error("[/api/jobs/:id] upstream status", res.status);
-      return NextResponse.json({ error: "Job details unavailable." }, { status: res.status === 404 ? 404 : 502 });
+      return NextResponse.json({ error: "Job details unavailable." }, { status: res.status === 404 || res.status === 400 ? 404 : 502 });
     }
     const data = await res.json();
 

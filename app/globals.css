@@ -5201,6 +5201,40 @@ a.co-val:hover {
   border-radius: var(--r-md);
 }
 
+/* ── Apply form ── */
+.jm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.jm-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.jm-form-grid > label,
+.jm-form label {
+  min-width: 0;
+}
+
+.jm-input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  font-weight: 400;
+  font-size: 0.95rem;
+}
+
+.jm-form input[type="file"] {
+  max-width: 100%;
+}
+
 /* ── Skill tags ── */
 .jm-skills-list {
   display: flex;
@@ -5282,6 +5316,14 @@ a.co-val:hover {
 
   .jm-panel {
     border-radius: var(--r-lg);
+  }
+
+  .jm-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .jm-input {
+    font-size: 16px;
   }
 
   /* Mobile: flowing plain text instead of shaded pills */

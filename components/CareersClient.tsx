@@ -214,26 +214,26 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
                   {submitMsg || "Application submitted successfully!"}
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <form onSubmit={handleSubmit} className="jm-form">
                   <h3 style={{ fontSize: "1.1rem", marginBottom: "8px", marginTop: 0 }}>Submit Application</h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div className="jm-form-grid">
                     <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>
                       First Name *
-                      <input name="firstname" required style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)", fontWeight: 400 }} />
+                      <input name="firstname" required className="jm-input" />
                     </label>
                     <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>
                       Last Name
-                      <input name="lastname" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)", fontWeight: 400 }} />
+                      <input name="lastname" className="jm-input" />
                     </label>
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div className="jm-form-grid">
                     <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>
                       Email
-                      <input name="email" type="email" style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)", fontWeight: 400 }} />
+                      <input name="email" type="email" className="jm-input" />
                     </label>
                     <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>
-                      Mobile Number * <span style={{ fontWeight: 400, fontSize: "0.78rem" }}>(min 10 digits)</span>
-                      <input name="mobile_number" type="tel" required style={{ padding: "10px", borderRadius: "6px", border: "1px solid var(--line)", fontWeight: 400 }} />
+                      <span>Mobile Number * <span style={{ fontWeight: 400, fontSize: "0.78rem" }}>(min 10 digits)</span></span>
+                      <input name="mobile_number" type="tel" required className="jm-input" />
                     </label>
                   </div>
                   <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: "0.9rem", fontWeight: 600, marginTop: 4 }}>
@@ -355,6 +355,7 @@ export function CareersClient() {
   const [selectedJob,    setSelectedJob]    = useState<Job | null>(null);
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const [loadError,      setLoadError]      = useState(false);
+  const [cacheTick,      setCacheTick]      = useState(0);
   const failedPage = useRef(1);
   const closeModal = useCallback(() => setSelectedJob(null), []);
   const cache = useRef<Map<number, Job[]>>(new Map());
@@ -369,6 +370,7 @@ export function CareersClient() {
       if (!res.ok) return;
       const data = await res.json();
       cache.current.set(pg, data.results ?? []);
+      setCacheTick(t => t + 1);
     } catch { /* silent */ } finally {
       inFlight.current.delete(pg);
     }
@@ -403,6 +405,7 @@ export function CareersClient() {
       const data = await res.json();
       const jobs: Job[] = data.results ?? [];
       cache.current.set(pg, jobs);
+      setCacheTick(t => t + 1);
       setPageJobs(jobs);
       setCurrentPage(pg);
     } catch (e) {
@@ -427,6 +430,7 @@ export function CareersClient() {
       const jobs: Job[] = data.results ?? [];
       const numPages: number = data.num_pages ?? 1;
       cache.current.set(1, jobs);
+      setCacheTick(t => t + 1);
       setPageJobs(jobs);
       setCurrentPage(1);
       setTotalPages(numPages);
@@ -456,11 +460,15 @@ export function CareersClient() {
     else goTo(failedPage.current);
   };
 
-  // Search filters within the current page only
+  const searching = keyword.trim().length > 0;
+  const loadedPages = cache.current.size;
+
+  // Search covers every page loaded so far (all pages are preloaded in the background)
   const filtered = useMemo(() => {
-    if (!keyword.trim()) return pageJobs;
-    const kw = keyword.toLowerCase();
-    return pageJobs.filter(j =>
+    if (!searching) return pageJobs;
+    const kw = keyword.trim().toLowerCase();
+    const pool = [...cache.current.entries()].sort((a, b) => a[0] - b[0]).flatMap(([, jobs]) => jobs);
+    return pool.filter(j =>
       (j.public_job_title || j.position_title).toLowerCase().includes(kw) ||
       stripHtml(getDesc(j)).toLowerCase().includes(kw) ||
       (j.skills || "").toLowerCase().includes(kw) ||
@@ -470,7 +478,10 @@ export function CareersClient() {
       (j.tax_terms || "").toLowerCase().includes(kw) ||
       (j.employment_type || "").toLowerCase().includes(kw)
     );
-  }, [pageJobs, keyword]);
+  }, [pageJobs, keyword, searching, cacheTick]);
+
+  const MAX_SEARCH_RESULTS = 60;
+  const visibleJobs = searching ? filtered.slice(0, MAX_SEARCH_RESULTS) : filtered;
 
   const search = () => { setKeyword(pending); };
   const reset  = () => { setPending(""); setKeyword(""); };
@@ -570,10 +581,12 @@ export function CareersClient() {
             ? <><span className="jl-spinner" style={{ width: 16, height: 16, borderWidth: 2, display: "inline-block", verticalAlign: "middle", marginRight: 8 }} />Loading…</>
             : filtered.length === 0
               ? "No roles found — try different keywords"
-              : <>{totalCount} open {totalCount === 1 ? "role" : "roles"}{keyword ? ` matching "${keyword}"` : ""} · page {currentPage} of {totalPages}</>
+              : searching
+                ? <>{filtered.length} {filtered.length === 1 ? "role" : "roles"} matching &ldquo;{keyword.trim()}&rdquo;{loadedPages < totalPages ? " · still loading all roles…" : ""}{filtered.length > MAX_SEARCH_RESULTS ? ` · showing first ${MAX_SEARCH_RESULTS}, refine your search to narrow down` : ""}</>
+                : <>{totalCount} open {totalCount === 1 ? "role" : "roles"} · page {currentPage} of {totalPages}</>
           }
         </span>
-        {totalPages > 1 && <Pagination />}
+        {totalPages > 1 && !searching && <Pagination />}
       </div>
 
       {loadError && pageJobs.length > 0 && (
@@ -591,7 +604,7 @@ export function CareersClient() {
         </div>
       ) : (
         <div className="jl-grid">
-          {filtered.map(job => {
+          {visibleJobs.map(job => {
             const title    = job.public_job_title || job.position_title;
             const location = [formatCity(job.city || job.primary_city), job.country].filter(Boolean).join(", ");
             const desc     = stripHtml(getDesc(job));
@@ -630,7 +643,7 @@ export function CareersClient() {
       )}
 
       {/* Bottom pagination */}
-      {totalPages > 1 && !loading && (
+      {totalPages > 1 && !loading && !searching && (
         <div className="jl-pag-bottom"><Pagination /></div>
       )}
 

@@ -1,12 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
+const ALLOWED_MIME = new Set(["application/pdf", "image/png", "image/jpeg", "text/plain"]);
+const MAX_BASE64_CHARS = 5_500_000; // ~4 MB file
+
 export async function POST(req: NextRequest) {
   try {
-    const { base64, mimeType } = await req.json();
+    const body = await req.json().catch(() => null);
+    const base64 = body?.base64;
+    const mimeType = body?.mimeType || "application/pdf";
+    if (typeof base64 !== "string" || !base64) {
+      return NextResponse.json({ error: "Please upload a resume to analyze." }, { status: 400 });
+    }
+    if (base64.length > MAX_BASE64_CHARS) {
+      return NextResponse.json({ error: "Your file is too large. Please upload a file under 4 MB." }, { status: 413 });
+    }
+    if (!ALLOWED_MIME.has(mimeType)) {
+      return NextResponse.json({ error: "Unsupported file type. Please upload a PDF." }, { status: 400 });
+    }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+      console.error("[/api/analyze] GEMINI_API_KEY is not set");
+      return NextResponse.json({ error: "The analyzer is unavailable right now. Please try again shortly." }, { status: 503 });
     }
 
     const promptText = `You are an expert Applicant Tracking System (ATS) and Senior Technical Recruiter. Your task is to critically analyze the provided text extracted from a candidate's resume and evaluate it for a modern B2B tech/enterprise market.
@@ -51,23 +68,26 @@ Note: the overall_score should be an integer between 0 and 100. Status should be
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
+        signal: AbortSignal.timeout(50_000),
       }
     );
 
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      const msg = data.error?.message || "Gemini API error";
-      return NextResponse.json({ error: msg }, { status: response.status });
+      console.error("[/api/analyze] Gemini status", response.status, data?.error?.message);
+      return NextResponse.json({ error: "The analyzer is unavailable right now. Please try again shortly." }, { status: 502 });
     }
 
-    const rawText = data.candidates[0].content.parts[0].text;
-    const result = JSON.parse(rawText);
-    return NextResponse.json(result);
+    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!rawText) {
+      return NextResponse.json({ error: "We couldn't analyze this file. Please try a different PDF." }, { status: 422 });
+    }
+    return NextResponse.json(JSON.parse(rawText));
 
-  } catch (err: any) {
+  } catch (err) {
     console.error("[/api/analyze]", err);
-    return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "The analyzer is unavailable right now. Please try again shortly." }, { status: 502 });
   }
 }
