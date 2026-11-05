@@ -84,11 +84,6 @@ function getDesc(j: Job) {
 
 /* ── Job Detail Modal — uses pre-built data, no client-side fetch ── */
 function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
-  const [isApplying, setIsApplying] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
-  const [mobileError, setMobileError] = useState("");
-
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
@@ -103,50 +98,6 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
   const skills   = job.skills ? job.skills.split(",").map(s => s.trim()).filter(Boolean) : [];
   const taxTerms = job.tax_terms ? job.tax_terms.split(",").map(t => t.trim()).filter(Boolean) : [];
   const validPay = (job.pay_rates ?? []).map(payLabel).filter(Boolean) as string[];
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus("idle");
-
-    const form = e.currentTarget;
-    const formData = new FormData();
-    
-    // Auto-fill the job ID
-    formData.append("job_id", job.id);
-    
-    // Extract standard fields
-    formData.append("standard_fields.firstname", (form.elements.namedItem("firstname") as HTMLInputElement).value);
-    formData.append("standard_fields.lastname", (form.elements.namedItem("lastname") as HTMLInputElement).value);
-    formData.append("standard_fields.email", (form.elements.namedItem("email") as HTMLInputElement).value);
-    formData.append("standard_fields.mobile_number", (form.elements.namedItem("mobile_number") as HTMLInputElement).value);
-    
-    const fileInput = form.elements.namedItem("resume") as HTMLInputElement;
-    if (fileInput.files && fileInput.files[0]) {
-      formData.append("document_fields.1", fileInput.files[0]);
-    }
-
-    try {
-      // Route through our secure server-side proxy — token never touches the browser
-      const res = await fetch("/api/apply", {
-        method: "POST",
-        body: formData
-      });
-
-      if (res.ok) {
-        setSubmitStatus("success");
-      } else {
-        const errText = await res.text();
-        console.error("Apply error:", errText);
-        setSubmitStatus("error");
-      }
-    } catch (err) {
-      console.error("Apply network error:", err);
-      setSubmitStatus("error");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="jm-overlay" onClick={onClose} role="dialog" aria-modal aria-label={title}>
@@ -177,134 +128,74 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
         </div>
 
         <div className="jm-body">
-          {isApplying ? (
-            <div className="jm-form-container" style={{ padding: "16px 0" }}>
-              {submitStatus === "success" ? (
-                <div style={{ padding: "20px", background: "#EAF9F5", color: "#1F8A5B", borderRadius: "8px", fontWeight: 600 }}>
-                  Application submitted successfully!
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  <h3 style={{ fontSize: "1.1rem", marginBottom: "16px", marginTop: 0 }}>Submit Application</h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                    <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>First Name *</label>
-                      <input name="firstname" required style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Last Name (Optional)</label>
-                      <input name="lastname" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    </div>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                    <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Email (Optional)</label>
-                      <input name="email" type="email" style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--line)" }} />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>Mobile Number *</label>
-                      <input 
-                        name="mobile_number" 
-                        type="tel" 
-                        required 
-                        style={{ width: "100%", padding: "10px", borderRadius: "6px", border: `1px solid ${mobileError ? 'red' : 'var(--line)'}` }} 
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          const hasInvalidChars = new RegExp("[^0-9+\\\\-\\\\s()]").test(val);
-                          if (hasInvalidChars) {
-                            setMobileError("Please enter digits only.");
-                            e.target.setCustomValidity("Please enter digits only.");
-                          } else {
-                            setMobileError("");
-                            e.target.setCustomValidity("");
-                          }
-                        }}
-                      />
-                      {mobileError && <span style={{ color: "red", fontSize: "0.8rem", marginTop: "4px", display: "block" }}>{mobileError}</span>}
-                    </div>
-                  </div>
-                  
-                  <div style={{ marginTop: "8px" }}>
-                    <label style={{ display: "block", marginBottom: "6px", fontSize: "0.9rem", fontWeight: 600 }}>Resume / CV Document *</label>
-                    <input name="resume" type="file" accept=".pdf,.doc,.docx" required style={{ width: "100%" }} />
-                  </div>
-
-                  {submitStatus === "error" && (
-                    <div style={{ color: "red", fontSize: "0.9rem", marginTop: "8px" }}>Submission failed — please try again. If the problem persists, email your CV directly to <a href="mailto:contactus@arminus.in" style={{ color: "inherit" }}>contactus@arminus.in</a>.</div>
-                  )}
-
-                  <div style={{ display: "flex", gap: "12px", marginTop: "16px", justifyContent: "flex-end" }}>
-                    <button type="button" onClick={() => setIsApplying(false)} className="btn btn-ghost" style={{ padding: "10px 24px" }}>
-                      Cancel
-                    </button>
-                    <button type="submit" disabled={isSubmitting} className="btn btn-blue" style={{ padding: "10px 24px" }}>
-                      {isSubmitting ? "Submitting..." : "Submit Application"}
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
-          ) : (
-            <>
-              <div className="jm-meta-strip">
-                {job.job_code && (
-                  <div className="jm-meta-item">
-                    <span className="jm-meta-label">Job code</span>
-                    <span className="jm-meta-val">{job.job_code}</span>
-                  </div>
-                )}
-                {job.closing_date && job.closing_date.trim() && job.closing_date !== "null" && (
-                  <div className="jm-meta-item">
-                    <span className="jm-meta-label">Closes</span>
-                    <span className="jm-meta-val">{job.closing_date.split(" ")[0]}</span>
-                  </div>
-                )}
-                <div className="jm-meta-item">
-                  <span className="jm-meta-label">Posted</span>
-                  <span className="jm-meta-val">{timeAgo(job.created)}</span>
-                </div>
+          <div className="jm-meta-strip">
+            {job.job_code && (
+              <div className="jm-meta-item">
+                <span className="jm-meta-label">Job code</span>
+                <span className="jm-meta-val">{job.job_code}</span>
               </div>
+            )}
+            {job.closing_date && job.closing_date.trim() && job.closing_date !== "null" && (
+              <div className="jm-meta-item">
+                <span className="jm-meta-label">Closes</span>
+                <span className="jm-meta-val">{job.closing_date.split(" ")[0]}</span>
+              </div>
+            )}
+            <div className="jm-meta-item">
+              <span className="jm-meta-label">Posted</span>
+              <span className="jm-meta-val">{timeAgo(job.created)}</span>
+            </div>
+          </div>
 
-              {validPay.length > 0 && (
-                <div className="jm-section">
-                  <p className="jm-section-label">Compensation</p>
-                  <div className="jm-pay-list">
-                    {validPay.map((p, i) => <span key={i} className="jm-pay-badge">{p}</span>)}
-                  </div>
-                </div>
-              )}
-
-              {skills.length > 0 && (
-                <div className="jm-section">
-                  <p className="jm-section-label">Skills</p>
-                  <div className="jm-skills-list">
-                    {skills.map(s => <span key={s} className="jm-skill">{s}</span>)}
-                  </div>
-                </div>
-              )}
-
-              {desc ? (
-                <div className="jm-section">
-                  <p className="jm-section-label">About the role</p>
-                  <div className="jm-desc" dangerouslySetInnerHTML={{ __html: desc }} />
-                </div>
-              ) : (
-                <div className="jm-section">
-                  <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>Full description available after clicking Apply.</p>
-                </div>
-              )}
-            </>
+          {validPay.length > 0 && (
+            <div className="jm-section">
+              <p className="jm-section-label">Compensation</p>
+              <div className="jm-pay-list">
+                {validPay.map((p, i) => <span key={i} className="jm-pay-badge">{p}</span>)}
+              </div>
+            </div>
           )}
+
+          {skills.length > 0 && (
+            <div className="jm-section">
+              <p className="jm-section-label">Skills</p>
+              <div className="jm-skills-list">
+                {skills.map(s => <span key={s} className="jm-skill">{s}</span>)}
+              </div>
+            </div>
+          )}
+
+          <div className="jm-section">
+            <p className="jm-section-label">About the role</p>
+            {desc
+              ? <div className="jm-desc" dangerouslySetInnerHTML={{ __html: desc }} />
+              : <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>Full description available on the application page.</p>
+            }
+            {applyUrl && (
+              <a
+                href={applyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "inline-block", marginTop: 12, fontSize: "0.875rem", color: "var(--blue)", textDecoration: "underline" }}
+              >
+                View full job description →
+              </a>
+            )}
+          </div>
         </div>
 
-        {!isApplying && (
-          <div className="jm-foot">
-            <button className="btn btn-blue" onClick={() => setIsApplying(true)}>
+        <div className="jm-foot">
+          {applyUrl ? (
+            <a href={applyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-blue">
               Apply Now
-            </button>
-            <button className="btn btn-ghost" onClick={onClose}>Close</button>
-          </div>
-        )}
+            </a>
+          ) : (
+            <a href="mailto:contactus@arminus.in" className="btn btn-blue">
+              Apply via Email
+            </a>
+          )}
+          <button className="btn btn-ghost" onClick={onClose}>Close</button>
+        </div>
       </div>
     </div>
   );
