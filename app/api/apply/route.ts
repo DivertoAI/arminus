@@ -1,61 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ceipalPost } from "@/lib/ceipal";
 
-async function getCeipalToken(): Promise<string> {
-  const email    = process.env.CEIPAL_EMAIL;
-  const password = process.env.CEIPAL_PASSWORD;
-  const apiKey   = process.env.CEIPAL_API_KEY;
-
-  if (!email || !password || !apiKey) {
-    throw new Error("Ceipal credentials not configured on server.");
-  }
-
-  const res = await fetch("https://api.ceipal.com/v1/createAuthtoken", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-    body: JSON.stringify({ email, password, api_key: apiKey })
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch Ceipal auth token.");
-
-  const data = await res.json();
-  if (!data.access_token) throw new Error("Invalid Ceipal token response.");
-
-  return data.access_token;
-}
-
-async function submitToCeipal(token: string, formData: FormData): Promise<Response> {
-  return fetch("https://api.ceipal.com/v2/applyJobWithOutRegistration/", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
-  });
-}
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
-    const token    = await getCeipalToken();
-    const formData = await req.formData();
+    const incoming = await req.formData();
 
-    let res = await submitToCeipal(token, formData);
+    // v2 expects camelCase `jobId`; accept the legacy `job_id` from older clients
+    const jobId = (incoming.get("jobId") ?? incoming.get("job_id")) as string | null;
+    if (!jobId) return NextResponse.json({ error: "Missing jobId" }, { status: 400 });
 
-    // Retry once on Ceipal 5xx (upstream connect errors are intermittent)
+    const out = new FormData();
+    out.append("jobId", jobId);
+    for (const [key, value] of incoming.entries()) {
+      if (key === "jobId" || key === "job_id") continue;
+      out.append(key, value);
+    }
+
+    let res = await ceipalPost("/applyJobWithOutRegistration/", out);
+
+    // Retry once on Ceipal 5xx (upstream errors are intermittent)
     if (res.status >= 500) {
       await new Promise(r => setTimeout(r, 1500));
-      res = await submitToCeipal(token, formData);
+      res = await ceipalPost("/applyJobWithOutRegistration/", out);
     }
+
+    const text = await res.text();
+    let body: unknown = text;
+    try { body = JSON.parse(text); } catch { /* keep raw text */ }
 
     if (res.ok) {
-      return NextResponse.json({ success: true });
+      // 201 = created, 200 = already_applied; both mean the candidate is on file
+      return NextResponse.json({ success: true, result: body });
     }
 
-    const errText = await res.text();
-    console.error("[/api/apply] Ceipal error status:", res.status);
-    console.error("[/api/apply] Ceipal error body:", errText);
-    console.error("[/api/apply] Ceipal error headers:", JSON.stringify(Object.fromEntries(res.headers.entries())));
-    return NextResponse.json({ error: errText }, { status: res.status });
-
-  } catch (err: any) {
+    console.error("[/api/apply] Ceipal error", res.status, text);
+    return NextResponse.json({ error: body }, { status: res.status });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Internal server error";
     console.error("[/api/apply]", err);
-    return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

@@ -38,6 +38,14 @@ export interface Job {
   closing_date: string;
   job_code: string;
   job_status?: string;
+  experience?: string;
+  department?: string;
+  number_of_positions?: number | string;
+  duration?: string;
+  work_authorization?: string;
+  education?: string;
+  hours?: string | number;
+  posted?: string;
 }
 
 const PAGE_SIZE = 12;
@@ -83,10 +91,28 @@ function getDesc(j: Job) {
 }
 
 /* ── Job Detail Modal — uses pre-built data, no client-side fetch ── */
-function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
+function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) {
+  const [detail, setDetail] = useState<Job | null>(null);
+  const [detailLoading, setDetailLoading] = useState(true);
+  const job: Job = detail ? { ...listJob, ...detail } : listJob;
   const [isApplying,   setIsApplying]   = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/jobs/${encodeURIComponent(listJob.id)}?v=3`);
+        if (!res.ok) return;
+        const d = await res.json();
+        if (!cancelled) setDetail(d);
+      } catch { /* fall back to list data */ } finally {
+        if (!cancelled) setDetailLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [listJob.id]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -119,7 +145,7 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
     }
 
     const formData = new FormData();
-    formData.append("job_id", job.id);
+    formData.append("jobId", listJob.id);
     formData.append("standard_fields.firstname", (form.elements.namedItem("firstname") as HTMLInputElement).value);
     formData.append("standard_fields.lastname",  (form.elements.namedItem("lastname")  as HTMLInputElement).value);
     formData.append("standard_fields.email",     email);
@@ -233,6 +259,20 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
                   <span className="jm-meta-label">Posted</span>
                   <span className="jm-meta-val">{timeAgo(job.created)}</span>
                 </div>
+                {([
+                  ["Experience", job.experience],
+                  ["Department", job.department],
+                  ["Openings",   job.number_of_positions],
+                  ["Duration",   job.duration],
+                  ["Hours / week", job.hours],
+                ] as [string, string | number | undefined][])
+                  .filter(([, v]) => v !== undefined && v !== null && String(v).trim() !== "" && String(v) !== "0")
+                  .map(([label, v]) => (
+                    <div className="jm-meta-item" key={label}>
+                      <span className="jm-meta-label">{label}</span>
+                      <span className="jm-meta-val">{String(v)}</span>
+                    </div>
+                  ))}
               </div>
 
               {validPay.length > 0 && (
@@ -257,12 +297,17 @@ function JobModal({ job, onClose }: { job: Job; onClose: () => void }) {
                 <p className="jm-section-label">About the role</p>
                 {desc
                   ? <div className="jm-desc" dangerouslySetInnerHTML={{ __html: desc }} />
-                  : <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>Full description available on the application page.</p>
+                  : detailLoading
+                    ? <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>Loading full description…</p>
+                    : <p style={{ color: "var(--ink-3)", fontStyle: "italic" }}>No description provided for this role.</p>
                 }
+                {detailLoading && desc && (
+                  <p style={{ color: "var(--ink-3)", fontSize: "0.8rem", margin: "8px 0 0" }}>Loading more details…</p>
+                )}
                 {applyUrl && (
                   <a href={applyUrl} target="_blank" rel="noopener noreferrer"
                     style={{ display: "inline-block", marginTop: 12, fontSize: "0.875rem", color: "var(--blue)", textDecoration: "underline" }}>
-                    View full job description →
+                    View on candidate portal →
                   </a>
                 )}
               </div>
@@ -301,7 +346,7 @@ export function CareersClient() {
     if (cache.current.has(pg) || inFlight.current.has(pg)) return;
     inFlight.current.add(pg);
     try {
-      const res = await fetch(`/api/jobs?page=${pg}&v=2`);
+      const res = await fetch(`/api/jobs?page=${pg}&v=3`);
       if (!res.ok) return;
       const data = await res.json();
       cache.current.set(pg, data.results ?? []);
@@ -333,7 +378,7 @@ export function CareersClient() {
     // Not cached yet — fetch directly, independent of preload
     setLoading(true);
     try {
-      const res = await fetch(`/api/jobs?page=${pg}&v=2`);
+      const res = await fetch(`/api/jobs?page=${pg}&v=3`);
       if (!res.ok) throw new Error("failed");
       const data = await res.json();
       const jobs: Job[] = data.results ?? [];
@@ -354,7 +399,7 @@ export function CareersClient() {
       setLoading(true);
       inFlight.current.add(1);
       try {
-        const res = await fetch("/api/jobs?page=1&v=2");
+        const res = await fetch("/api/jobs?page=1&v=3");
         if (!res.ok || cancelled) return;
         const data = await res.json();
         const jobs: Job[] = data.results ?? [];
