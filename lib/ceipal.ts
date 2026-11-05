@@ -5,9 +5,9 @@ let cached: { token: string; expires: number } | null = null;
 export async function getCeipalToken(): Promise<string> {
   if (cached && Date.now() < cached.expires) return cached.token;
 
-  const email    = process.env.CEIPAL_EMAIL;
-  const password = process.env.CEIPAL_PASSWORD;
-  const apiKey   = process.env.CEIPAL_API_KEY;
+  const email    = process.env.CEIPAL_EMAIL?.trim();
+  const password = process.env.CEIPAL_PASSWORD?.trim();
+  const apiKey   = process.env.CEIPAL_API_KEY?.trim();
   if (!email || !password || !apiKey) throw new Error("Ceipal credentials not configured on server.");
 
   const res = await fetch(`${BASE}/createAuthtoken/`, {
@@ -17,7 +17,10 @@ export async function getCeipalToken(): Promise<string> {
     cache: "no-store",
     signal: AbortSignal.timeout(25_000),
   });
-  if (!res.ok) throw new Error(`Ceipal auth failed (${res.status})`);
+  if (!res.ok) {
+    const body = (await res.text()).slice(0, 300);
+    throw new Error(`Ceipal auth failed (${res.status}) [email:${email.length} pw:${password.length} key:${apiKey.length}] ${body}`);
+  }
   const data = await res.json();
   if (!data.access_token) throw new Error("Invalid Ceipal token response.");
 
