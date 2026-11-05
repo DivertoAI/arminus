@@ -5284,6 +5284,29 @@ a.co-val:hover {
     border-radius: var(--r-lg);
   }
 
+  /* Mobile: flowing plain text instead of shaded pills */
+  .jm-skills-list,
+  .jm-pay-list {
+    display: block;
+    line-height: 1.7;
+  }
+
+  .jm-skill,
+  .jm-pay-badge {
+    display: inline;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    font-size: 0.9rem;
+    color: var(--ink-2);
+  }
+
+  .jm-skill:not(:last-child)::after,
+  .jm-pay-badge:not(:last-child)::after {
+    content: ", ";
+  }
+
   .jm-head,
   .jm-body,
   .jm-foot {

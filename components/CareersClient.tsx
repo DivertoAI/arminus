@@ -98,6 +98,7 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
   const [isApplying,   setIsApplying]   = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitMsg, setSubmitMsg] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -135,14 +136,16 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
     setSubmitStatus("idle");
     const form = e.currentTarget;
 
+    const fail = (msg: string) => { setSubmitMsg(msg); setSubmitStatus("error"); setIsSubmitting(false); };
+
     const email  = (form.elements.namedItem("email")  as HTMLInputElement).value.trim();
     const mobile = (form.elements.namedItem("mobile_number") as HTMLInputElement).value.trim();
-    if (email && (!email.includes("@") || !email.includes("."))) {
-      setIsSubmitting(false); return;
-    }
-    if (mobile.replace(/\D/g, "").length < 10) {
-      setIsSubmitting(false); return;
-    }
+    if (email && (!email.includes("@") || !email.includes("."))) return fail("Please enter a valid email address.");
+    if (mobile.replace(/\D/g, "").length < 10) return fail("Mobile number must be at least 10 digits.");
+
+    const file = (form.elements.namedItem("resume") as HTMLInputElement).files?.[0];
+    // Vercel functions reject request bodies over 4.5 MB
+    if (file && file.size > 4 * 1024 * 1024) return fail("Your resume is larger than 4 MB. Please upload a smaller file.");
 
     const formData = new FormData();
     formData.append("jobId", listJob.id);
@@ -155,9 +158,21 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
 
     try {
       const res = await fetch("/api/apply", { method: "POST", body: formData });
-      setSubmitStatus(res.ok ? "success" : "error");
+      if (res.ok) {
+        const out = await res.json().catch(() => ({}));
+        setSubmitMsg(out.status === "already_applied"
+          ? "You've already applied for this role — your application is on file with our team."
+          : "Application submitted successfully!");
+        setSubmitStatus("success");
+      } else if (res.status === 429) {
+        fail("We're receiving a lot of applications right now. Please try again in a minute.");
+      } else if (res.status === 413) {
+        fail("Your resume is too large. Please upload a file under 4 MB.");
+      } else {
+        fail("Submission failed — please try again.");
+      }
     } catch {
-      setSubmitStatus("error");
+      fail("Network error — please check your connection and try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -196,7 +211,7 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
             <div style={{ padding: "16px 0" }}>
               {submitStatus === "success" ? (
                 <div style={{ padding: "20px", background: "#EAF9F5", color: "#1F8A5B", borderRadius: "8px", fontWeight: 600 }}>
-                  Application submitted successfully!
+                  {submitMsg || "Application submitted successfully!"}
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -227,8 +242,10 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
                   </label>
                   {submitStatus === "error" && (
                     <p style={{ color: "var(--coral)", fontSize: "0.875rem", margin: 0 }}>
-                      Submission failed — please try again or email your CV to{" "}
-                      <a href="mailto:contactus@arminus.in" style={{ color: "inherit" }}>contactus@arminus.in</a>.
+                      {submitMsg || "Submission failed — please try again."}{" "}
+                      You can also{" "}
+                      {applyUrl && <><a href={applyUrl} target="_blank" rel="noopener noreferrer" style={{ color: "inherit" }}>apply on our candidate portal</a> or{" "}</>}
+                      email your CV to <a href="mailto:contactus@arminus.in" style={{ color: "inherit" }}>contactus@arminus.in</a>.
                     </p>
                   )}
                   <div style={{ display: "flex", gap: "12px", marginTop: "8px", justifyContent: "flex-end" }}>
@@ -337,6 +354,8 @@ export function CareersClient() {
   const [pending,        setPending]        = useState("");
   const [selectedJob,    setSelectedJob]    = useState<Job | null>(null);
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
+  const [loadError,      setLoadError]      = useState(false);
+  const failedPage = useRef(1);
   const closeModal = useCallback(() => setSelectedJob(null), []);
   const cache = useRef<Map<number, Job[]>>(new Map());
   const inFlight = useRef<Set<number>>(new Set());
@@ -346,7 +365,7 @@ export function CareersClient() {
     if (cache.current.has(pg) || inFlight.current.has(pg)) return;
     inFlight.current.add(pg);
     try {
-      const res = await fetch(`/api/jobs?page=${pg}&v=3`);
+      const res = await fetch(`/api/jobs?page=${pg}&v=4`);
       if (!res.ok) return;
       const data = await res.json();
       cache.current.set(pg, data.results ?? []);
@@ -377,8 +396,9 @@ export function CareersClient() {
     }
     // Not cached yet — fetch directly, independent of preload
     setLoading(true);
+    setLoadError(false);
     try {
-      const res = await fetch(`/api/jobs?page=${pg}&v=3`);
+      const res = await fetch(`/api/jobs?page=${pg}&v=4`);
       if (!res.ok) throw new Error("failed");
       const data = await res.json();
       const jobs: Job[] = data.results ?? [];
@@ -387,39 +407,54 @@ export function CareersClient() {
       setCurrentPage(pg);
     } catch (e) {
       console.error("[careers] goTo error:", e);
+      failedPage.current = pg;
+      setLoadError(true);
     } finally {
       setLoading(false);
       document.getElementById("jl-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, []);
 
+  const loadFirst = useCallback(async (isCancelled: () => boolean = () => false) => {
+    setLoading(true);
+    setLoadError(false);
+    inFlight.current.add(1);
+    try {
+      const res = await fetch("/api/jobs?page=1&v=4");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (isCancelled()) return;
+      const jobs: Job[] = data.results ?? [];
+      const numPages: number = data.num_pages ?? 1;
+      cache.current.set(1, jobs);
+      setPageJobs(jobs);
+      setCurrentPage(1);
+      setTotalPages(numPages);
+      setTotalCount(data.count ?? 0);
+      setLoading(false);
+      // Silently preload remaining pages in background
+      preloadAll(numPages);
+    } catch (e) {
+      if (isCancelled()) return;
+      console.error("[careers] initial load error:", e);
+      failedPage.current = 1;
+      setLoadError(true);
+      setLoading(false);
+    } finally {
+      inFlight.current.delete(1);
+    }
+  }, [preloadAll]);
+
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      setLoading(true);
-      inFlight.current.add(1);
-      try {
-        const res = await fetch("/api/jobs?page=1&v=3");
-        if (!res.ok || cancelled) return;
-        const data = await res.json();
-        const jobs: Job[] = data.results ?? [];
-        const numPages: number = data.num_pages ?? 1;
-        const count: number = data.count ?? 0;
-        cache.current.set(1, jobs);
-        if (!cancelled) {
-          setPageJobs(jobs);
-          setTotalPages(numPages);
-          setTotalCount(count);
-          setLoading(false);
-          // Silently preload remaining pages in background
-          preloadAll(numPages);
-        }
-      } finally {
-        inFlight.current.delete(1);
-      }
-    })();
+    loadFirst(() => cancelled);
     return () => { cancelled = true; };
-  }, [preloadAll]);
+  }, [loadFirst]);
+
+  const retry = () => {
+    if (pageJobs.length === 0) loadFirst();
+    else goTo(failedPage.current);
+  };
 
   // Search filters within the current page only
   const filtered = useMemo(() => {
@@ -460,6 +495,18 @@ export function CareersClient() {
       <button className="jl-pag-btn" onClick={() => goTo(currentPage + 1)} disabled={currentPage === totalPages || loading}>→</button>
     </div>
   );
+
+  if (loadError && pageJobs.length === 0) {
+    return (
+      <div className="jl-root">
+        <div className="jl-state">
+          <p>We couldn't load the open roles right now.{" "}
+            <button className="jl-link" onClick={retry}>Try again</button>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading && pageJobs.length === 0) {
     return (
@@ -528,6 +575,12 @@ export function CareersClient() {
         </span>
         {totalPages > 1 && <Pagination />}
       </div>
+
+      {loadError && pageJobs.length > 0 && (
+        <div className="jl-state">
+          <p>We couldn't load that page. <button className="jl-link" onClick={retry}>Try again</button></p>
+        </div>
+      )}
 
       {/* Grid */}
       {loading ? (

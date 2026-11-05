@@ -27,19 +27,21 @@ export async function POST(req: NextRequest) {
     }
 
     const text = await res.text();
-    let body: unknown = text;
-    try { body = JSON.parse(text); } catch { /* keep raw text */ }
+    let body: Record<string, unknown> = {};
+    try { body = JSON.parse(text); } catch { /* non-JSON upstream body */ }
 
     if (res.ok) {
       // 201 = created, 200 = already_applied; both mean the candidate is on file
-      return NextResponse.json({ success: true, result: body });
+      return NextResponse.json({ success: true, status: body.status ?? "created" });
     }
 
-    console.error("[/api/apply] Ceipal error", res.status, text);
-    return NextResponse.json({ error: body }, { status: res.status });
+    console.error("[/api/apply] Ceipal error", res.status, text.slice(0, 500));
+    if (res.status === 429) {
+      return NextResponse.json({ error: "busy" }, { status: 429 });
+    }
+    return NextResponse.json({ error: "failed" }, { status: res.status >= 500 ? 502 : 400 });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Internal server error";
     console.error("[/api/apply]", err);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json({ error: "failed" }, { status: 502 });
   }
 }
