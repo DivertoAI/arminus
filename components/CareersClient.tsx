@@ -140,6 +140,8 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
 
     const email  = (form.elements.namedItem("email")  as HTMLInputElement).value.trim();
     const mobile = (form.elements.namedItem("mobile_number") as HTMLInputElement).value.trim();
+    const last = (form.elements.namedItem("lastname") as HTMLInputElement).value.trim();
+    if (!last) return fail("Please enter your last name.");
     if (!email) return fail("Please enter your email address.");
     if (!email.includes("@") || !email.includes(".")) return fail("Please enter a valid email address.");
     if (mobile.replace(/\D/g, "").length < 10) return fail("Mobile number must be at least 10 digits.");
@@ -151,7 +153,7 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
     const formData = new FormData();
     formData.append("jobId", listJob.id);
     formData.append("standard_fields.firstname", (form.elements.namedItem("firstname") as HTMLInputElement).value);
-    formData.append("standard_fields.lastname",  (form.elements.namedItem("lastname")  as HTMLInputElement).value);
+    formData.append("standard_fields.lastname",  last);
     formData.append("standard_fields.email",     email);
     formData.append("standard_fields.mobile_number", mobile);
     const fileInput = form.elements.namedItem("resume") as HTMLInputElement;
@@ -223,8 +225,8 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
                       <input name="firstname" required className="jm-input" />
                     </label>
                     <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>
-                      Last Name
-                      <input name="lastname" className="jm-input" />
+                      Last Name *
+                      <input name="lastname" required className="jm-input" />
                     </label>
                   </div>
                   <div className="jm-form-grid">
