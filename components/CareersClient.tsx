@@ -140,7 +140,8 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
 
     const email  = (form.elements.namedItem("email")  as HTMLInputElement).value.trim();
     const mobile = (form.elements.namedItem("mobile_number") as HTMLInputElement).value.trim();
-    if (email && (!email.includes("@") || !email.includes("."))) return fail("Please enter a valid email address.");
+    if (!email) return fail("Please enter your email address.");
+    if (!email.includes("@") || !email.includes(".")) return fail("Please enter a valid email address.");
     if (mobile.replace(/\D/g, "").length < 10) return fail("Mobile number must be at least 10 digits.");
 
     const file = (form.elements.namedItem("resume") as HTMLInputElement).files?.[0];
@@ -228,8 +229,8 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
                   </div>
                   <div className="jm-form-grid">
                     <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>
-                      Email
-                      <input name="email" type="email" className="jm-input" />
+                      Email *
+                      <input name="email" type="email" required className="jm-input" />
                     </label>
                     <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--ink-2)" }}>
                       <span>Mobile Number * <span style={{ fontWeight: 400, fontSize: "0.78rem" }}>(min 10 digits)</span></span>
