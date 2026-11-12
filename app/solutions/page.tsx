@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     "Gov-Tech staffing India", "executive search India", "IT manpower solutions",
     "Big 4 staffing partner India", "contract staffing compliance India", "CXO search India",
   ],
-  alternates: { canonical: "https://arminus.co.in/solutions" },
+  alternates: { canonical: "https://www.arminus.co.in/solutions" },
 };
 
 const services = [

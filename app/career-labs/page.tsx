@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "LinkedIn profile optimization", "career coaching India", "job interview preparation",
     "resume writing India", "ATS resume score", "career labs India", "interview coaching India",
   ],
-  alternates: { canonical: "https://arminus.co.in/career-labs" },
+  alternates: { canonical: "https://www.arminus.co.in/career-labs" },
 };
 
 const services = [

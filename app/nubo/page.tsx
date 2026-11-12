@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     "sovereign cloud India", "cloud infrastructure India", "AI-ready platform",
     "private cloud alternative", "NNP Nubo", "IT infrastructure India", "GitOps India",
   ],
-  alternates: { canonical: "https://arminus.co.in/nubo" },
+  alternates: { canonical: "https://www.arminus.co.in/nubo" },
 };
 
 const features = [

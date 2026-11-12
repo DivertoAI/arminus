@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     "technology recruitment firm", "Pankaj Kathuria Arminus", "IIT IIM staffing company",
     "IT staffing Kolkata", "recruitment agency Gurugram", "staffing company Bengaluru",
   ],
-  alternates: { canonical: "https://arminus.co.in/about" },
+  alternates: { canonical: "https://www.arminus.co.in/about" },
 };
 
 const offices = [
@@ -65,7 +65,7 @@ export default function AboutPage() {
             <Reveal>
               <div>
                 <div className="sec-eyebrow"><span className="ln" /> Our philosophy</div>
-                <h2 className="page-hero-title">The Power of <span className="ital blue">Us.</span></h2>
+                <h1 className="page-hero-title">The Power of <span className="ital blue">Us.</span></h1>
                 <p className="sec-sub" style={{ maxWidth: "56ch", marginTop: "18px" }}>
                   The Power of Us is a fusion of technology and empathy. By empowering our teams with
                   generative AI tools, we spend less time on paperwork and more time on what matters —

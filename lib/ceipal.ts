@@ -4,9 +4,10 @@ const BASE = "https://api.ceipal.com/v2";
 // does not invalidate older ones) and rate limits are enforced per token, so a
 // per-instance cache is safe. Refresh a little early.
 const TOKEN_TTL_MS = 50 * 60_000;
-const AUTH_TIMEOUT_MS = 15_000;
-const GET_TIMEOUT_MS = 20_000;
-const POST_TIMEOUT_MS = 45_000;
+// Ceipal can take 15+ s per call when busy; keep auth + call under the 60 s function limit.
+const AUTH_TIMEOUT_MS = 20_000;
+const GET_TIMEOUT_MS = 35_000;
+const POST_TIMEOUT_MS = 35_000;
 
 let cached: { token: string; expires: number } | null = null;
 let inFlight: Promise<string> | null = null;

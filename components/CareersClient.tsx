@@ -104,7 +104,7 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`/api/jobs/${encodeURIComponent(listJob.id)}?v=3`);
+        const res = await fetch(`/api/jobs/${encodeURIComponent(listJob.id)}?v=3`, { signal: AbortSignal.timeout(15_000) });
         if (!res.ok) return;
         const d = await res.json();
         if (!cancelled) setDetail(d);
@@ -343,6 +343,22 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
   );
 }
 
+// Ceipal can be slow or briefly unavailable; retry transient failures before giving up.
+async function fetchJobsPage(pg: number, attempts = 3): Promise<{ results?: Job[]; num_pages?: number; count?: number }> {
+  let lastErr: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(`/api/jobs?page=${pg}&v=4`);
+      if (res.ok) return await res.json();
+      lastErr = new Error(`HTTP ${res.status}`);
+    } catch (e) {
+      lastErr = e;
+    }
+    if (i < attempts - 1) await new Promise(r => setTimeout(r, 1500 * (i + 1)));
+  }
+  throw lastErr;
+}
+
 /* ── Main component — lazy load with background preload ── */
 export function CareersClient() {
   const [pageJobs,       setPageJobs]       = useState<Job[]>([]);
@@ -356,7 +372,13 @@ export function CareersClient() {
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const [loadError,      setLoadError]      = useState(false);
   const [cacheTick,      setCacheTick]      = useState(0);
+  const [slow,           setSlow]           = useState(false);
   const failedPage = useRef(1);
+  useEffect(() => {
+    if (!loading) { setSlow(false); return; }
+    const t = setTimeout(() => setSlow(true), 6000);
+    return () => clearTimeout(t);
+  }, [loading]);
   const closeModal = useCallback(() => setSelectedJob(null), []);
   const cache = useRef<Map<number, Job[]>>(new Map());
   const inFlight = useRef<Set<number>>(new Set());
@@ -366,9 +388,7 @@ export function CareersClient() {
     if (cache.current.has(pg) || inFlight.current.has(pg)) return;
     inFlight.current.add(pg);
     try {
-      const res = await fetch(`/api/jobs?page=${pg}&v=4`);
-      if (!res.ok) return;
-      const data = await res.json();
+      const data = await fetchJobsPage(pg, 2);
       cache.current.set(pg, data.results ?? []);
       setCacheTick(t => t + 1);
     } catch { /* silent */ } finally {
@@ -400,9 +420,7 @@ export function CareersClient() {
     setLoading(true);
     setLoadError(false);
     try {
-      const res = await fetch(`/api/jobs?page=${pg}&v=4`);
-      if (!res.ok) throw new Error("failed");
-      const data = await res.json();
+      const data = await fetchJobsPage(pg, 3);
       const jobs: Job[] = data.results ?? [];
       cache.current.set(pg, jobs);
       setCacheTick(t => t + 1);
@@ -423,9 +441,7 @@ export function CareersClient() {
     setLoadError(false);
     inFlight.current.add(1);
     try {
-      const res = await fetch("/api/jobs?page=1&v=4");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+      const data = await fetchJobsPage(1, 3);
       if (isCancelled()) return;
       const jobs: Job[] = data.results ?? [];
       const numPages: number = data.num_pages ?? 1;
@@ -525,6 +541,7 @@ export function CareersClient() {
         <div className="jl-loading">
           <div className="jl-spinner" />
           <p>Loading open roles…</p>
+          {slow && <p style={{ fontSize: "0.85rem", opacity: 0.7 }}>This is taking a little longer than usual — hang tight.</p>}
         </div>
       </div>
     );

@@ -18,10 +18,11 @@ export async function POST(req: NextRequest) {
       out.append(key, value);
     }
 
+    const started = Date.now();
     let res = await ceipalPost("/applyJobWithOutRegistration/", out);
 
-    // Retry once on Ceipal 5xx (upstream errors are intermittent)
-    if (res.status >= 500) {
+    // Retry once on a fast Ceipal 5xx (skipped if the first attempt was slow, to stay under the time limit)
+    if (res.status >= 500 && Date.now() - started < 12_000) {
       await new Promise(r => setTimeout(r, 1500));
       res = await ceipalPost("/applyJobWithOutRegistration/", out);
     }

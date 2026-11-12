@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     "recruitment agency contact", "staffing company Kolkata", "staffing company Gurugram",
     "IT recruitment Bangalore", "submit hiring brief India",
   ],
-  alternates: { canonical: "https://arminus.co.in/contact" },
+  alternates: { canonical: "https://www.arminus.co.in/contact" },
 };
 
 const channels = [

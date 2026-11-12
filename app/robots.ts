@@ -4,6 +4,6 @@ export const dynamic = "force-static";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: { userAgent: "*", allow: "/" },
-    sitemap: "https://arminus.co.in/sitemap.xml",
+    sitemap: "https://www.arminus.co.in/sitemap.xml",
   };
 }

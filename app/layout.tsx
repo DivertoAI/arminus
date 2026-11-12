@@ -20,7 +20,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://arminus.co.in"),
+  metadataBase: new URL("https://www.arminus.co.in"),
   title: {
     default: "Arminus | IT Staffing & Recruitment Company India",
     template: "%s | Arminus",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: "Arminus | IT Staffing & Recruitment Company India",
     description:
       "Pan-India IT staffing company with 17+ years experience. Permanent placement, contract staffing, executive search & Gov-Tech deployments.",
-    url: "https://arminus.co.in",
+    url: "https://www.arminus.co.in",
     siteName: "Arminus",
     type: "website",
     images: [{ url: "/arminus-logo.png", width: 800, height: 400, alt: "Arminus Software" }],
@@ -67,13 +67,13 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "StaffingAgency",
   name: "Arminus Software Pvt Ltd",
-  url: "https://arminus.co.in",
-  logo: "https://arminus.co.in/assets/arminus-logo.png",
+  url: "https://www.arminus.co.in",
+  logo: "https://www.arminus.co.in/arminus-logo.png",
   description:
     "Pan-India IT staffing company offering permanent placement, contract staffing, executive search, Gov-Tech deployments and Career Labs services.",
   foundingDate: "2009",
   numberOfEmployees: { "@type": "QuantitativeValue", value: 200 },
-  email: "contactus@arminus.com",
+  email: "contactus@arminus.in",
   telephone: ["+91-9874014979", "+91-33-40601004", "+1-732-481-9410"],
   address: {
     "@type": "PostalAddress",

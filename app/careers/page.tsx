@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "contract IT jobs India", "permanent IT jobs India", "technology jobs Bengaluru",
     "technology jobs Gurugram", "Gov-Tech jobs India", "IT jobs Kolkata",
   ],
-  alternates: { canonical: "https://arminus.co.in/careers" },
+  alternates: { canonical: "https://www.arminus.co.in/careers" },
 };
 
 /* ── Page ── */
@@ -76,7 +76,7 @@ export default function CareersPage() {
       <BigCTA
         heading={<>Don&apos;t see the <span className="ital">right role?</span></>}
         lede="Send us your resume anyway. Most of our placements start with a conversation long before the perfect opening appears."
-        primary={{ href: "mailto:contactus@arminus.com?subject=Resume%20Submission", label: "Send your resume" }}
+        primary={{ href: "mailto:contactus@arminus.in?subject=Resume%20Submission", label: "Send your resume" }}
         secondary={{ href: "/career-labs", label: "Get interview-ready" }}
       />
     </main>
