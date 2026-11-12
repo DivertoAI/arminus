@@ -47,9 +47,9 @@ const channels = [
 ];
 
 const offices = [
-  { tag: "Headquarters", name: "Kolkata", addr: "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V, Kolkata 700091", img: "/kolkata-office.jpg" },
-  { tag: "NCR Operations", name: "Gurugram", addr: "JMD Megapolis, Sohna Road, Gurugram, Haryana", img: "/gurugram-office.jpg" },
-  { tag: "Engineering Desk", name: "Bengaluru", addr: "Site No 5, House No 272, Yelahanka RTO Bypass Road, Inganayakanahalli, Rajankunte, Vinayaka Layout, Bengaluru 560064", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
+  { tag: "Headquarters", name: "Kolkata", addr: "Bengal ECO Intelligent Park, Unit No. 21, 13th Floor, Plot No. 3, Block EM, Sector V, Bidhannagar, Salt Lake City, Kolkata 700091, West Bengal, India", img: "/kolkata-office.jpg" },
+  { tag: "NCR Operations", name: "Gurugram", addr: "Unit No. 1237, JMD Megapolis, 12th Floor, Sohna Road, Sector 48, Gurugram, Haryana 122018, India", img: "/gurugram-office.jpg" },
+  { tag: "Engineering Desk", name: "Bengaluru", addr: "Site No. 5, House No. 272, Yelahanka RTO Bypass Road, P.O. Inganayakanahalli, P.S. Rajankunte, Aryan Public School, Vinayaka Layout, Bengaluru 560064, Karnataka, India", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80&auto=format&fit=crop" },
 ];
 
 export default function ContactPage() {

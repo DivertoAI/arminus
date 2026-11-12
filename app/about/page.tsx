@@ -18,9 +18,9 @@ export const metadata: Metadata = {
 };
 
 const offices = [
-  { tag: "Headquarters", name: "Kolkata (Headquarters)", d: "Strategy, leadership and our central recruitment engine. Bengal Eco Intelligent Park, Sector V.", img: "/kolkata-office.jpg" },
-  { tag: "NCR Operations", name: "Gurugram", d: "Account operations and large-scale Gov-Tech deployments. JMD Megapolis, Sohna Road.", img: "/gurugram-office.jpg" },
-  { tag: "Engineering Desk", name: "Bengaluru", d: "IT and engineering specialist recruitment. Site No 5, House No 272, Yelahanka RTO Bypass Road, Inganayakanahalli, Rajankunte, Vinayaka Layout.", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80&auto=format&fit=crop" },
+  { tag: "Headquarters", name: "Kolkata (Headquarters)", d: "Strategy, leadership and our central recruitment engine. Bengal ECO Intelligent Park, Unit No. 21, 13th Floor, Plot No. 3, Block EM, Sector V, Bidhannagar, Salt Lake City, Kolkata 700091, West Bengal, India.", img: "/kolkata-office.jpg" },
+  { tag: "NCR Operations", name: "Gurugram", d: "Account operations and large-scale Gov-Tech deployments. Unit No. 1237, JMD Megapolis, 12th Floor, Sohna Road, Sector 48, Gurugram, Haryana 122018, India.", img: "/gurugram-office.jpg" },
+  { tag: "Engineering Desk", name: "Bengaluru", d: "IT and engineering specialist recruitment. Site No. 5, House No. 272, Yelahanka RTO Bypass Road, P.O. Inganayakanahalli, P.S. Rajankunte, Aryan Public School, Vinayaka Layout, Bengaluru 560064, Karnataka, India.", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80&auto=format&fit=crop" },
 ];
 
 const leaders = [

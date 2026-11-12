@@ -78,11 +78,50 @@ const organizationSchema = {
   address: {
     "@type": "PostalAddress",
     streetAddress:
-      "Bengal Eco Intelligent Park, Unit #21, 13th Floor, Tower 1, Block EM, Sector V",
+      "Bengal ECO Intelligent Park, Unit No. 21, 13th Floor, Plot No. 3, Block EM, Sector V, Bidhannagar, Salt Lake City",
     addressLocality: "Kolkata",
+    addressRegion: "West Bengal",
     postalCode: "700091",
     addressCountry: "IN",
   },
+  location: [
+    {
+      "@type": "Place",
+      name: "Arminus Kolkata (Headquarters)",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Bengal ECO Intelligent Park, Unit No. 21, 13th Floor, Plot No. 3, Block EM, Sector V, Bidhannagar, Salt Lake City",
+        addressLocality: "Kolkata",
+        addressRegion: "West Bengal",
+        postalCode: "700091",
+        addressCountry: "IN",
+      },
+    },
+    {
+      "@type": "Place",
+      name: "Arminus Gurugram",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Unit No. 1237, JMD Megapolis, 12th Floor, Sohna Road, Sector 48",
+        addressLocality: "Gurugram",
+        addressRegion: "Haryana",
+        postalCode: "122018",
+        addressCountry: "IN",
+      },
+    },
+    {
+      "@type": "Place",
+      name: "Arminus Bengaluru",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Site No. 5, House No. 272, Yelahanka RTO Bypass Road, P.O. Inganayakanahalli, P.S. Rajankunte, Aryan Public School, Vinayaka Layout",
+        addressLocality: "Bengaluru",
+        addressRegion: "Karnataka",
+        postalCode: "560064",
+        addressCountry: "IN",
+      },
+    },
+  ],
   areaServed: ["India", "United States", "Europe"],
   sameAs: [
     "https://www.linkedin.com/company/665038",
