@@ -70,6 +70,6 @@ export function ceipalGet(path: string): Promise<Response> {
   return withReauth(path, { headers: { Accept: "application/json" } }, GET_TIMEOUT_MS);
 }
 
-export function ceipalPost(path: string, body: FormData): Promise<Response> {
-  return withReauth(path, { method: "POST", body }, POST_TIMEOUT_MS);
+export function ceipalPost(path: string, body: FormData, timeoutMs: number = POST_TIMEOUT_MS): Promise<Response> {
+  return withReauth(path, { method: "POST", body }, timeoutMs);
 }

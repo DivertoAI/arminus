@@ -148,7 +148,8 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
 
     const file = (form.elements.namedItem("resume") as HTMLInputElement).files?.[0];
     // Vercel functions reject request bodies over 4.5 MB
-    if (file && file.size > 4 * 1024 * 1024) return fail("Your resume is larger than 4 MB. Please upload a smaller file.");
+    // (Ceipal slows down sharply on bigger files, so keep applications small)
+    if (file && file.size > 2 * 1024 * 1024) return fail("Your resume is larger than 2 MB. Please upload a smaller file (or email it to contactus@arminus.in).");
 
     const formData = new FormData();
     formData.append("jobId", listJob.id);
@@ -170,7 +171,9 @@ function JobModal({ job: listJob, onClose }: { job: Job; onClose: () => void }) 
       } else if (res.status === 429) {
         fail("We're receiving a lot of applications right now. Please try again in a minute.");
       } else if (res.status === 413) {
-        fail("Your resume is too large. Please upload a file under 4 MB.");
+        fail("Your resume is too large. Please upload a file under 2 MB.");
+      } else if (res.status === 504) {
+        fail("This is taking longer than expected — your application may already have been received. Please wait a minute and try once more, or email your CV to contactus@arminus.in.");
       } else {
         fail("Submission failed — please try again.");
       }

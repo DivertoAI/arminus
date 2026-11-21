@@ -3,6 +3,9 @@ import { ceipalPost } from "@/lib/ceipal";
 
 export const maxDuration = 60;
 
+// Ceipal gets slow on bigger resumes (~15s at 2 MB, 35s+ at 3 MB), so allow nearly the full function budget.
+const APPLY_TIMEOUT_MS = 55_000;
+
 export async function POST(req: NextRequest) {
   try {
     const incoming = await req.formData();
@@ -19,12 +22,12 @@ export async function POST(req: NextRequest) {
     }
 
     const started = Date.now();
-    let res = await ceipalPost("/applyJobWithOutRegistration/", out);
+    let res = await ceipalPost("/applyJobWithOutRegistration/", out, APPLY_TIMEOUT_MS);
 
     // Retry once on a fast Ceipal 5xx (skipped if the first attempt was slow, to stay under the time limit)
     if (res.status >= 500 && Date.now() - started < 12_000) {
       await new Promise(r => setTimeout(r, 1500));
-      res = await ceipalPost("/applyJobWithOutRegistration/", out);
+      res = await ceipalPost("/applyJobWithOutRegistration/", out, APPLY_TIMEOUT_MS);
     }
 
     const text = await res.text();
@@ -43,6 +46,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "failed" }, { status: res.status >= 500 ? 502 : 400 });
   } catch (err: unknown) {
     console.error("[/api/apply]", err);
+    // Ceipal may still have saved the application even though it was too slow to answer
+    if (err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError")) {
+      return NextResponse.json({ error: "timeout" }, { status: 504 });
+    }
     return NextResponse.json({ error: "failed" }, { status: 502 });
   }
 }
